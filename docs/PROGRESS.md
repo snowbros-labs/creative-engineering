@@ -39,7 +39,7 @@ build stands. Newest entries last. Only record what was actually run/verified.
 - Root OSS docs, architecture, reference audit, CI workflow, changesets, package READMEs written.
 
 ## RESUME HERE (next steps, in order)
-1. Re-run mount-cycle check (vite dev on 4181, cycle #pg-tab-3d ↔ #pg-tab-easing 24×, expect 0
+1. DONE: mount-cycle re-run after fix → 0 context warnings (was 1). Still add a regression test.
    context warnings). Add a unit/e2e regression for it.
 2. `npx biome check . --write` then fix remaining lint; `pnpm run build`; `pnpm -r typecheck`;
    `pnpm test`; `pnpm validate:skill`; `pnpm check:packages` (publint); showcase e2e.
