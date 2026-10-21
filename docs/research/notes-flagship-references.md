@@ -60,3 +60,23 @@ was observed, not confirmed in source.
    JetBrains Mono labels, a header that becomes a floating pill once you scroll.
 5. **One recurring motif** (Lando's contours ↔ our lattice): the crystal reappears as glyphs,
    plotted lines and the system map rather than adding new decorations.
+
+## Second pass (deeper, hands-on)
+
+- **landonorris.com — verified while scrolling:** a scattered photo collage at different depths
+  with tiny mono captions ("MONACO, 2023"); an "ON TRACK / OFF TRACK" pair (serif over bold
+  grotesk) with a **hand-drawn scribble written over the type** in the accent colour; helmet cards
+  framed with notched corners and captions with the year in accent; the contour-line motif runs
+  through light and dark sections; Lenis smooth scroll; 4 sticky elements.
+- **messenger.abeto.co — verified after pressing BEGIN:** a hand-drawn, wobbly-ink "LOADING"
+  envelope — even the loading state is drawn by hand. The 3D world did not initialise in headless
+  Chromium (inferred: GPU requirement), so its in-world interaction is not verified here.
+- **scoutmotors.com — verified while scrolling:** a giant headline with a **ring of numbered
+  archival cards orbiting it**, a thin circle guide and crosshair hairlines, paper grain, one
+  line of the headline in orange; later a dark cinematic night video.
+- **Applied:** `annotate()` (hand-drawn orange redlines over the words that carry the argument —
+  Lando's scribble + Abeto's ink, as an engineer's pen); the Labs index as an orbit of chips around
+  the headline on a drafting ellipse (Scout's ring, as a working navigation, not a carousel).
+- **Not applied:** Lando's photo collage (we have no photography and won't fake it); Bruno's
+  driving world (play as primary navigation hurts findability for a developer product); Scout's
+  autoplay video (cost and no footage).

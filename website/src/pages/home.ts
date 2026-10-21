@@ -16,7 +16,15 @@ import {
   segment,
   setHapticsEnabled,
 } from '@snowbros/core';
-import { createCursor, magnetic, marquee, pressable, proximity } from '@snowbros/fx';
+import {
+  type AnnotationType,
+  annotate,
+  createCursor,
+  magnetic,
+  marquee,
+  pressable,
+  proximity,
+} from '@snowbros/fx';
 import { inView, scrollProgress, scrollVelocity, scrub } from '@snowbros/motion';
 import { buildLattice } from '../lattice/geometry.js';
 import { latticeSvg } from '../lattice/svg.js';
@@ -265,6 +273,81 @@ for (const root of $$('[data-lab]')) {
 // ----------------------------------------------------------------- 04 system, 05 start
 initSystem(shell);
 initCopyButtons(shell);
+
+// ----------------------------------------------------------------- redlines
+// An engineer's orange pen marks the few words that carry the argument, drawn as they arrive.
+// Seeded per word so the wobble is stable; reduced motion shows them already drawn.
+$$<HTMLElement>('[data-redline]').forEach((el, i) => {
+  shell.add(
+    annotate(el, {
+      type: el.dataset.redline as AnnotationType,
+      color: 'var(--accent)',
+      strokeWidth: el.dataset.redline === 'circle' ? 2.25 : 2.5,
+      roughness: 0.55,
+      seed: 7 + i * 13,
+      duration: el.dataset.redline === 'circle' ? 0.9 : 0.6,
+      delay: 0.25,
+    }),
+  );
+});
+
+// ----------------------------------------------------------------- labs orbit
+// Lab chips ride an ellipse around the Labs headline; scroll turns the ring (scrubbed, smoothed).
+// Desktop + full motion only — otherwise they stay a plain, wrapping row of links.
+const orbit = $('[data-orbit]');
+if (orbit) {
+  shell.add(
+    createMediaContext({
+      '(min-width: 1000px) and full-motion': (scope) => {
+        orbit.dataset.orbit = 'on';
+        const chips = $$<HTMLAnchorElement>('.lab-index a', orbit);
+        const guide = $<SVGSVGElement>('[data-orbit-guide]', orbit);
+        let w = 0;
+        let h = 0;
+        let spin = 0;
+        const layout = () => {
+          w = orbit.clientWidth;
+          h = orbit.clientHeight;
+          if (guide)
+            guide.innerHTML = `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${w * 0.44}" ry="${h * 0.4}"/><line x1="0" y1="${h / 2}" x2="${w}" y2="${h / 2}"/><line x1="${w / 2}" y1="0" x2="${w / 2}" y2="${h}"/>`;
+          place();
+        };
+        const place = () => {
+          chips.forEach((chip, i) => {
+            const a = (i / chips.length) * Math.PI * 2 - Math.PI / 2 + spin;
+            const x = w / 2 + Math.cos(a) * w * 0.44 - chip.offsetWidth / 2;
+            const y = h / 2 + Math.sin(a) * h * 0.4 - chip.offsetHeight / 2;
+            chip.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+          });
+        };
+        const p = scrollProgress(orbit, { start: 'top bottom', end: 'bottom top' });
+        scope.add(p);
+        scope.add(
+          scrub(
+            {
+              duration: 0,
+              seek: (v) => {
+                spin = (v - 0.5) * Math.PI * 0.9;
+                place();
+              },
+            },
+            p,
+            { smooth: 8 },
+          ),
+        );
+        layout();
+        const ro = new ResizeObserver(layout);
+        ro.observe(orbit);
+        scope.add(() => {
+          ro.disconnect();
+          delete orbit.dataset.orbit;
+          if (guide) guide.innerHTML = '';
+          for (const c of chips) c.style.transform = '';
+        });
+      },
+    }),
+  );
+}
 
 // ----------------------------------------------------------------- rooms
 // Dark sections arrive as rooms opening on the warm page: a rounded inset that widens to full

@@ -148,6 +148,43 @@ grids:
 }
 ```
 
+### `annotate(el, options?)`
+
+Hand-drawn markup ("redline") over text or any element: `underline`, `circle`, `box`, `strike`,
+`cross` or `bracket`. The mark is a seeded, wobbly SVG path (`roughness` 0–1, stable per `seed`)
+drawn with `drawPath` when the element enters the view (or on `play()`), rebuilt on resize, and
+one-per-line for wrapped inline text. Decorative (`aria-hidden`, no pointer events). `color`
+accepts CSS variables.
+
+```ts
+annotate(document.querySelector('em')!, { type: 'circle', color: 'var(--accent)' });
+```
+
+### `pressable(el, options?)`
+
+Physical press depth for real buttons/links: writes `--sb-press` (0 up → 1 down). Presses snap down
+instantly, releases spring back (optionally overshooting); pointer, touch and Space/Enter all
+work; an optional `haptic` fires on press. CSS decides what depth looks like:
+
+```css
+.key {
+  translate: 0 calc(var(--sb-press, 0) * 2px);
+  box-shadow: 0 calc((1 - var(--sb-press, 0)) * 3px) 0 var(--edge);
+}
+```
+
+### `proximity(targets, options?)`
+
+Pointer distance as data: each target gets `--sb-proximity` (0 far → 1 under the pointer), eased,
+with one listener and one sleeping frame loop for all targets. Use it for variable-font weight,
+dock-style scaling or colour. Fine pointers only; values jump under reduced motion.
+
+```css
+.word {
+  font-variation-settings: "wght" calc(320 + 420 * var(--sb-proximity, 0));
+}
+```
+
 ## Accessibility and reduced-motion policy
 
 | Effect         | Reduced motion                                                                          | Touch / no hover          | Assistive tech                                            |

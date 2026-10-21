@@ -190,6 +190,18 @@ test.describe('flagship', () => {
     await expect(page).toHaveURL(/#labs$/);
   });
 
+  test('labs orbit on desktop, plain row under reduced motion; redlines draw', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/#labs');
+    await expect(page.locator('[data-orbit]')).toHaveAttribute('data-orbit', 'on');
+    await expect(page.locator('[data-orbit-guide] ellipse')).toHaveCount(1);
+    // Chips remain real links in document order.
+    await expect(page.locator('.lab-index a').first()).toHaveAttribute('href', '#lab-motion');
+    await expect(page.locator('#labs-title [data-redline] svg path')).toHaveCount(2);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await expect(page.locator('[data-orbit]')).not.toHaveAttribute('data-orbit', 'on');
+  });
+
   test('internal links resolve (site + composed demos)', async ({ page, request }) => {
     await page.goto('/');
     const hrefs = await page.$$eval('a[href^="./"], a[href^="#"]', (as) =>

@@ -1,3 +1,9 @@
+export {
+  type AnnotateHandle,
+  type AnnotateOptions,
+  type AnnotationType,
+  annotate,
+} from './annotate.js';
 export { type CursorHandle, type CursorOptions, type CursorState, createCursor } from './cursor.js';
 export { type DrawPathHandle, type DrawPathPlayOptions, drawPath } from './draw.js';
 export { type FlowFieldHandle, type FlowFieldOptions, flowField } from './flowfield.js';
