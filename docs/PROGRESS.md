@@ -84,13 +84,16 @@ build stands. Newest entries last. Only record what was actually run/verified.
   pin, WebGL upgrade, reduced motion flow, 390 px no overflow, axe serious/critical = 0, labs,
   18× Space-lab remount without WebGL context warnings, links incl. /demos/).
 
+- npm: all eight `@snowbros/*` published at 0.1.0 (owner authenticated; the last five were
+  confirmed live with an uncached registry read). Verified: clean `npm install` of core, motion,
+  fx, react, elements, tokens and ESM import of `haptic`, `timeline`, `pressable`.
+- Website exported for Vercel to `VED2107/snowbros-website` (private) via
+  `tools/export-website.mjs`; standalone `npm install && npm run build` verified.
+
 ## RESUME HERE (next steps, in order)
 
-1. npm publish (owner must supply OTP):
-   `pnpm -r --filter "./packages/**" publish --access public --no-git-checks --otp=<code>`.
-   Afterwards verify with `npm view @snowbros/<pkg> version`, then update README "not on npm yet",
-   the dashboard registry copy, and the playground claim "runs on the published packages".
-2. Deploy the composed site (`pnpm --filter @snowbros/website run build:site` → `website/dist`)
-   to a host (GitHub Pages workflow not yet written).
+1. Import `VED2107/snowbros-website` on Vercel (owner). Re-export after site changes.
+2. Showcase e2e: re-run `playground › no horizontal overflow at 390px` (timeout raised to 90 s,
+   not yet re-verified — run was stopped at the owner's request because the laptop was lagging).
 3. Remaining audit items: playground type-hierarchy review; showcase stat numbers are hard-coded;
-   flowField option docs.
+   flowField option docs (units).

@@ -6,9 +6,8 @@ which tool fits the project already in front of it. The packages are the hands �
 dependency-free libraries with correct cleanup, reduced-motion behaviour and performance budgets
 built in.
 
-> **Status: 0.1 — pre-release.** The packages are not on npm yet. Everything below works from a
-> clone of this repository today; npm install commands will work once 0.1.0 is published (tracked
-> in [`docs/PROGRESS.md`](docs/PROGRESS.md)).
+> **Status: 0.1 — early release.** All eight `@snowbros/*` packages are on npm at 0.1.0. APIs may
+> still change before 1.0 (see [`VERSIONING.md`](VERSIONING.md)).
 
 ## What's inside
 
@@ -54,8 +53,6 @@ node ~/.claude/skills/snowbros-creative/scripts/audit-motion.mjs .
 ```
 
 ## Use the packages
-
-Once published:
 
 ```bash
 npm install @snowbros/core @snowbros/motion          # add fx / scene / react / elements as needed

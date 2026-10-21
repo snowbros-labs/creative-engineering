@@ -504,7 +504,7 @@ function initCapabilities() {
 }
 
 // ------------------------------------------------------------------ registry check
-const REGISTRY_URL = 'https://registry.npmjs.org/@snowbros%2Fatlas';
+const REGISTRY_URL = 'https://registry.npmjs.org/@snowbros%2Fcore';
 
 function initRegistry(s: Scope) {
   const btn = $<HTMLButtonElement>('[data-registry-check]');
@@ -540,7 +540,7 @@ function initRegistry(s: Scope) {
       const when = data.time?.[latest];
       body.dataset.registryState = 'success';
       body.innerHTML = `<div class="ops-registry-result"><dl>
-        <div><dt class="label">Package</dt><dd>@snowbros/atlas</dd></div>
+        <div><dt class="label">Package</dt><dd>@snowbros/core</dd></div>
         <div><dt class="label">Latest</dt><dd data-registry-version></dd></div>
         <div><dt class="label">Published</dt><dd data-registry-time></dd></div>
         <div><dt class="label">Scope</dt><dd style="color:var(--ok)">reachable</dd></div></dl></div>`;
