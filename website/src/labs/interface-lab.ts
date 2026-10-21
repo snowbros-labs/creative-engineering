@@ -3,7 +3,7 @@
  * with real package sizes, and a validated form that composes real install commands.
  * Reduced motion: FLIP and bar growth skip to the end state.
  */
-import type { Scope } from '@snowbros/core';
+import { haptic, type Scope } from '@snowbros/core';
 import { animate, flip } from '@snowbros/motion';
 
 // Sum of gzipped dist/*.js per package (unminified), measured 2026-10-21 from this repo.
@@ -29,6 +29,7 @@ export function init(root: HTMLElement, scope: Scope): void {
     let ascending = false;
     scope.listen(sortBtn, 'click', async () => {
       ascending = !ascending;
+      haptic('select');
       const items = Array.from(list.querySelectorAll<HTMLLIElement>('li'));
       await flip(
         items,
@@ -124,6 +125,7 @@ export function init(root: HTMLElement, scope: Scope): void {
       if (ne) ne.textContent = needs.length ? '' : 'Pick at least one capability.';
       if (!needs.length) ok = false;
       if (!ok) {
+        haptic('error');
         (stack ? form.querySelector<HTMLInputElement>('input[name="need"]') : stackEl)?.focus();
         return;
       }
@@ -139,6 +141,7 @@ export function init(root: HTMLElement, scope: Scope): void {
       const cmd = pm === 'npm' ? 'npm install' : pm === 'yarn' ? 'yarn add' : `${pm} add`;
       code.textContent = `${cmd} ${[...pkgs].join(' ')}\n\n# and give your agent the skill\ngit clone https://github.com/snowbros-labs/creative-engineering\ncp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/`;
       out.hidden = false;
+      haptic('success');
       animate(out, { opacity: [0, 1], y: [8, 0] }, { duration: 0.2, ease: FUNCTIONAL });
     });
     const edit = root.querySelector('[data-compose-edit]');

@@ -6,15 +6,17 @@
 import '../styles/base.css';
 import '../styles/home.css';
 import {
+  canVibrate,
   createMediaContext,
   createSignal,
   motionPreference,
   prefersReducedMotion,
   type Scope,
   segment,
+  setHapticsEnabled,
 } from '@snowbros/core';
-import { magnetic, marquee } from '@snowbros/fx';
-import { inView, scrollProgress, scrollVelocity, splitText } from '@snowbros/motion';
+import { createCursor, magnetic, marquee, pressable, proximity } from '@snowbros/fx';
+import { inView, scrollProgress, scrollVelocity } from '@snowbros/motion';
 import { initInstrument } from '../sections/instrument.js';
 import { initSystem } from '../sections/system.js';
 import { brandMark, initShell } from '../shell.js';
@@ -77,32 +79,116 @@ for (const link of navLinks) {
 // Magnetic CTAs on fine pointers only (fx no-ops on touch and under reduced motion).
 for (const el of $$('[data-magnetic]')) shell.add(magnetic(el, { strength: 0.25, radius: 40 }));
 
+// Every control has physical press depth (+ an optional haptic tick on supporting phones).
+// Armed lazily on hover/focus (which always precede press), so controls that labs render later
+// are covered without a MutationObserver.
+const pressed = new WeakSet<Element>();
+const PRESSABLE = '.btn, .node, .lab-index a, .bar';
+const armPress = (e: Event) => {
+  const el = (e.target as Element | null)?.closest<HTMLElement>(PRESSABLE);
+  if (!el || pressed.has(el)) return;
+  pressed.add(el);
+  shell.add(pressable(el, { haptic: el.matches('.bar') ? 'select' : 'press' }));
+};
+shell.listen(document, 'pointerover', armPress, { passive: true });
+shell.listen(document, 'focusin', armPress);
+
+// Haptics are opt-out and only offered where the device can vibrate. Never essential.
+const hapticsBtn = $<HTMLButtonElement>('[data-haptics-toggle]');
+if (hapticsBtn && canVibrate()) {
+  let on = true;
+  try {
+    on = localStorage.getItem('sb-haptics') !== 'off';
+  } catch {
+    // storage blocked: default on
+  }
+  const sync = () => {
+    setHapticsEnabled(on);
+    hapticsBtn.setAttribute('aria-pressed', String(on));
+    hapticsBtn.textContent = `Haptics: ${on ? 'on' : 'off'}`;
+  };
+  hapticsBtn.hidden = false;
+  sync();
+  shell.listen(hapticsBtn, 'click', () => {
+    on = !on;
+    try {
+      localStorage.setItem('sb-haptics', on ? 'on' : 'off');
+    } catch {
+      // ignore
+    }
+    sync();
+  });
+}
+
+// Cursor follower names what the pointer can do here. Augments, never hides, the native cursor.
+shell.add(
+  createCursor({
+    size: 10,
+    states: {
+      strum: { scale: 6.4, label: 'Strum' },
+      drag: { scale: 5.6, label: 'Drag' },
+      open: { scale: 5.6, label: 'Open' },
+      play: { scale: 5.6, label: 'Play' },
+    },
+  }),
+);
+
 // ----------------------------------------------------------------- 01 instrument
 const clock = createSignal(0);
 initInstrument(shell, clock);
 
 // ----------------------------------------------------------------- 02 thesis
-// Words ink in as the paragraph crosses the viewport. Reduced motion → keep (fully legible).
-const thesis = $('[data-scroll-words]');
-if (thesis) {
+// Two voices: grotesk words thicken toward the pointer (proximity → variable weight), serif words
+// lift. Words also ink in with scroll. Reduced motion → keep (fully legible, static weight).
+const manifesto = $('[data-manifesto]');
+if (manifesto) {
+  const words = wrapWords(manifesto);
+  shell.add(proximity(words, { radius: 220, rate: 9 }));
   shell.add(
     createMediaContext({
       'full-motion': (scope) => {
-        const split = splitText(thesis, { by: ['words'] });
-        scope.add(() => split.revert());
-        const p = scrollProgress(thesis, { start: 'top 85%', end: 'bottom 50%' });
+        const p = scrollProgress(manifesto, { start: 'top 85%', end: 'bottom 50%' });
         scope.add(p);
-        const n = split.words.length;
+        const n = words.length;
         const paint = (v: number) => {
-          split.words.forEach((w, i) => {
-            w.style.opacity = String(0.18 + segment(v, i / n - 0.04, (i + 1) / n + 0.04) * 0.82);
+          words.forEach((w, i) => {
+            w.style.opacity = String(0.16 + segment(v, i / n - 0.04, (i + 1) / n + 0.04) * 0.84);
           });
         };
         paint(p.get());
         scope.add(p.subscribe(paint));
+        scope.add(() => {
+          for (const w of words) w.style.opacity = '';
+        });
       },
     }),
   );
+}
+
+/** Wrap each word in `.w` (and each `<em>` as one `.w-em` unit) without changing the text. */
+function wrapWords(root: HTMLElement): HTMLElement[] {
+  const out: HTMLElement[] = [];
+  for (const node of Array.from(root.childNodes)) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const frag = document.createDocumentFragment();
+      for (const part of (node.textContent ?? '').split(/(\s+)/)) {
+        if (!part) continue;
+        if (/^\s+$/.test(part)) frag.append(' ');
+        else {
+          const span = document.createElement('span');
+          span.className = 'w';
+          span.textContent = part;
+          frag.append(span);
+          out.push(span);
+        }
+      }
+      node.replaceWith(frag);
+    } else if (node instanceof HTMLElement) {
+      node.classList.add('w', 'w-em');
+      out.push(node);
+    }
+  }
+  return out;
 }
 
 // ----------------------------------------------------------------- 03 labs (lazy)

@@ -16,6 +16,7 @@ import {
 } from '@snowbros/core';
 import { animate, pin, revealText, scrub } from '@snowbros/motion';
 import { buildLattice, type Lattice, project } from '../lattice/geometry.js';
+import type { LatticeView } from '../lattice/scene.js';
 import { latticeSvg } from '../lattice/svg.js';
 
 const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) =>
@@ -85,6 +86,7 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
 
   const lattice = buildLattice({ seed: 11, detail: 0.7, relief: 0.12 });
   const hero = $('[data-hero]', section)!;
+  const stage = $('.instrument-stage', section)!;
   const dims = $$('.dim', section);
   const coda = $('[data-coda]', section);
   const callouts = $$('[data-callout]', section);
@@ -144,6 +146,8 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
           hero.style.opacity = String(1 - h);
           hero.style.transform = `translate3d(0, ${-h * 12}vh, 0)`;
           hero.style.visibility = h >= 1 ? 'hidden' : '';
+          if (h < 0.5 && host.dataset.render === 'webgl') stage.dataset.cursor = 'strum';
+          else delete stage.dataset.cursor;
 
           // Chapters: six equal slices of 12 %–90 %.
           const c = segment(p, 0.12, 0.9) * 6;
@@ -230,34 +234,68 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
           ),
         );
 
-        // Upgrade to WebGL after first paint, when available. Failure keeps the SVG.
-        if (capabilities().webgl) {
-          let cancelled = false;
-          scope.add(() => {
-            cancelled = true;
-          });
-          const load = () =>
-            import('../lattice/scene.js')
-              .then(({ mountLattice }) => {
-                if (cancelled) return;
-                const glScope = scope.child();
-                svgEl?.remove();
-                attach(mountLattice(host, glScope, lattice));
-                host.dataset.render = 'webgl';
-              })
-              .catch((error) => console.warn('[site] WebGL lattice unavailable, using SVG', error));
-          if (typeof requestIdleCallback === 'function')
-            requestIdleCallback(load, { timeout: 1200 });
-          else setTimeout(load, 300);
-        }
+        upgradeToWebGL(scope, host, lattice, (view3d) => {
+          svgEl?.remove();
+          attach(view3d);
+        });
       },
 
-      // ------------------------------------------------------------ flow layout
-      'not all and (min-width: 800px), reduced-motion': (scope) => {
+      // ------------------------------------------------------------ phones, full motion
+      // No pin: the lattice sits behind the headline and grows once; tap it to pluck an arm
+      // (with a haptic tick where the device supports vibration).
+      '(max-width: 799px) and full-motion': (scope) => {
+        const svg = latticeSvg(lattice, { rotZ: 0.12, tilt: 0 });
+        host.append(svg);
+        scope.add(() => svg.remove());
+        upgradeToWebGL(scope, host, lattice, (view3d) => {
+          svg.remove();
+          view3d.setPose({ rotZ: 0.12, tilt: 0.25, x: 0.12, y: 0.32, scale: 0.92 });
+          const g = { v: 0 };
+          scope.add(
+            animate(
+              g,
+              { v: [0, 1] },
+              {
+                duration: 1.6,
+                ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                onUpdate: () => view3d.setGrowth(g.v),
+              },
+            ),
+          );
+        });
+      },
+
+      // ------------------------------------------------------------ reduced motion
+      'reduced-motion': (scope) => {
         const svg = latticeSvg(lattice, { rotZ: 0.12, tilt: 0 });
         host.append(svg);
         scope.add(() => svg.remove());
       },
     }),
   );
+}
+
+/** Swap the SVG for the WebGL lattice after first paint, when available. Failure keeps the SVG. */
+function upgradeToWebGL(
+  scope: Scope,
+  host: HTMLElement,
+  lattice: Lattice,
+  onMount: (view: LatticeView) => void,
+): void {
+  if (!capabilities().webgl) return;
+  let cancelled = false;
+  scope.add(() => {
+    cancelled = true;
+    delete host.dataset.render;
+  });
+  const load = () =>
+    import('../lattice/scene.js')
+      .then(({ mountLattice }) => {
+        if (cancelled) return;
+        onMount(mountLattice(host, scope.child(), lattice));
+        host.dataset.render = 'webgl';
+      })
+      .catch((error) => console.warn('[site] WebGL lattice unavailable, using SVG', error));
+  if (typeof requestIdleCallback === 'function') requestIdleCallback(load, { timeout: 1200 });
+  else setTimeout(load, 300);
 }

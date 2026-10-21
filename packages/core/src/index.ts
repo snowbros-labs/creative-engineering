@@ -1,6 +1,7 @@
 export * from './contract.js';
 export * from './ease.js';
 export * from './env.js';
+export * from './haptics.js';
 export * from './math.js';
 export * from './media.js';
 export * from './scope.js';

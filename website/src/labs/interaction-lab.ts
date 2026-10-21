@@ -5,6 +5,7 @@
  */
 import {
   createSpringValue,
+  haptic,
   Priority,
   prefersReducedMotion,
   type Scope,
@@ -85,7 +86,10 @@ export function init(root: HTMLElement, scope: Scope): void {
     };
     const loop = ({ delta }: { delta: number }) => {
       if (holding && !done) {
+        const before = Math.floor(held * 4);
         held += delta;
+        // A detent every quarter: you can feel the charge build (where vibration exists).
+        if (Math.floor(held * 4) > before && held < 1) haptic('tick', { throttle: 0 });
         spring.set(Math.min(1, held / 1));
         if (held >= 1) complete();
       }
@@ -116,6 +120,7 @@ export function init(root: HTMLElement, scope: Scope): void {
       }
       holding = true;
       held = 0;
+      haptic('press');
       if (status) status.textContent = 'Holding…';
       start();
     };
@@ -133,6 +138,7 @@ export function init(root: HTMLElement, scope: Scope): void {
       hold.dataset.done = 'true';
       spring.set(1);
       label.textContent = 'Shipped';
+      haptic('success');
       if (status) status.textContent = 'Shipped. Press again to reset.';
     };
 

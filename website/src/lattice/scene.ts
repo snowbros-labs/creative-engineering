@@ -2,7 +2,7 @@
  * WebGL lattice. Loaded lazily (three.js stays out of the first paint). Renders on demand only:
  * a frame is drawn when growth, pose, focus or pointer tilt actually change.
  */
-import { clamp, createSpringValue, damp, type Scope } from '@snowbros/core';
+import { clamp, createSpringValue, damp, haptic, type Scope } from '@snowbros/core';
 import { createStage, pointerParallax } from '@snowbros/scene';
 import {
   BufferGeometry,
@@ -290,8 +290,9 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
   });
 
   // ------------------------------------------------------------------ strum
-  // Crossing an arm with the pointer plucks it: an underdamped spring per arm drives the
-  // displacement uniform. Renders only while a string is still moving. Fine pointers only.
+  // Crossing an arm with a fine pointer strums it; a tap or click plucks the nearest arm (the
+  // touch-screen way to play). An underdamped spring per arm drives the displacement uniform;
+  // frames render only while a string still moves. Optional haptic tick on supporting phones.
   const strings = Array.from({ length: 6 }, () =>
     createSpringValue(0, { stiffness: 520, damping: 5, mass: 1 }, 0.0002),
   );
@@ -304,6 +305,50 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
   let lastX = 0;
   let lastY = 0;
   let lastT = 0;
+
+  /** Project a client point onto the crystal plane (local coords), or null. */
+  const toLocal = (clientX: number, clientY: number): Vector3 | null => {
+    const r = container.getBoundingClientRect();
+    if (clientY < r.top || clientY > r.bottom) return null;
+    ndc.set(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, stage.camera);
+    crystal.updateMatrixWorld(true);
+    normal.set(0, 0, 1).transformDirection(crystal.matrixWorld);
+    plane.setFromNormalAndCoplanarPoint(normal, hit.setFromMatrixPosition(crystal.matrixWorld));
+    if (!ray.ray.intersectPlane(plane, hit)) return null;
+    return crystal.worldToLocal(hit);
+  };
+  const armAt = (p: Vector3) => {
+    const ang = Math.atan2(p.y, p.x) - Math.PI / 2;
+    return ((Math.round(ang / (Math.PI / 3)) % 6) + 6) % 6;
+  };
+  const pluck = (arm: number, amp: number) => {
+    strings[arm]!.jump(amp);
+    strings[arm]!.set(0);
+    haptic('tick');
+    stage.invalidate();
+  };
+
+  scope.listen(
+    window,
+    'pointerdown',
+    (e: PointerEvent) => {
+      if (shared.uGrowth.value < 0.95) return;
+      if (
+        (e.target as Element | null)?.closest(
+          'a, button, input, select, textarea, label, [tabindex]',
+        )
+      )
+        return;
+      const p = toLocal(e.clientX, e.clientY);
+      if (!p) return;
+      const rad = Math.hypot(p.x, p.y);
+      if (rad < 0.15 || rad > 1.12) return;
+      pluck(armAt(p), e.pointerType === 'touch' ? 0.07 : 0.055);
+    },
+    { passive: true },
+  );
+
   const fine =
     typeof matchMedia === 'function' && matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (fine) {
@@ -317,33 +362,19 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
         lastY = e.clientY;
         lastT = now;
         if (shared.uGrowth.value < 0.95) return;
-        const r = container.getBoundingClientRect();
-        if (e.clientY < r.top || e.clientY > r.bottom) return;
-        ndc.set(
-          ((e.clientX - r.left) / r.width) * 2 - 1,
-          -((e.clientY - r.top) / r.height) * 2 + 1,
-        );
-        ray.setFromCamera(ndc, stage.camera);
-        crystal.updateMatrixWorld(true);
-        normal.set(0, 0, 1).transformDirection(crystal.matrixWorld);
-        plane.setFromNormalAndCoplanarPoint(normal, hit.setFromMatrixPosition(crystal.matrixWorld));
-        if (!ray.ray.intersectPlane(plane, hit)) return;
-        crystal.worldToLocal(hit);
-        const rad = Math.hypot(hit.x, hit.y);
+        const p = toLocal(e.clientX, e.clientY);
+        if (!p) return;
+        const rad = Math.hypot(p.x, p.y);
         if (rad < 0.22 || rad > 1.05) {
           lastSide.fill(0);
           return;
         }
-        const ang = Math.atan2(hit.y, hit.x) - Math.PI / 2;
-        const arm = ((Math.round(ang / (Math.PI / 3)) % 6) + 6) % 6;
+        const arm = armAt(p);
         const a = (arm * Math.PI) / 3 + Math.PI / 2;
-        const side = Math.cos(a) * hit.y - Math.sin(a) * hit.x;
+        const side = Math.cos(a) * p.y - Math.sin(a) * p.x;
         const sign = Math.sign(side);
         if (Math.abs(side) < 0.14 && lastSide[arm] && sign && sign !== lastSide[arm]) {
-          const amp = clamp(speed * 0.02, 0.018, 0.075) * -sign;
-          strings[arm]!.jump(amp);
-          strings[arm]!.set(0);
-          stage.invalidate();
+          pluck(arm, clamp(speed * 0.02, 0.018, 0.075) * -sign);
         }
         for (let i = 0; i < 6; i++) lastSide[i] = i === arm ? sign : 0;
       },

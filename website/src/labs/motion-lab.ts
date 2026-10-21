@@ -126,6 +126,13 @@ export function init(root: HTMLElement, scope: Scope): void {
     tl.seek(Number(scrubEl.value));
     if (scrubOut) scrubOut.textContent = Number(scrubEl.value).toFixed(3);
   });
+  // Clicking the specimen replays it — the bench is the play button.
+  const specimen = root.querySelector('[data-ml-specimen]');
+  if (specimen)
+    scope.listen(specimen, 'click', (e: Event) => {
+      if ((e.target as Element).closest('input, label')) return;
+      play();
+    });
   const playBtn = root.querySelector('[data-ml-play]');
   const resetBtn = root.querySelector('[data-ml-reset]');
   if (playBtn) scope.listen(playBtn, 'click', play);

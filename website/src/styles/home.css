@@ -105,12 +105,80 @@ p {
   background: color-mix(in oklab, var(--bg) 74%, transparent);
   border-bottom-color: transparent;
 }
-.site-header[data-scrolled="true"] {
-  border-bottom-color: var(--line);
+/* Once you scroll, the bar lifts off the page into a floating, segmented pill. */
+.site-header {
+  transition:
+    transform var(--sb-motion-duration-moderate) var(--ease-ui),
+    background-color var(--sb-motion-duration-moderate) var(--ease-ui);
 }
 .site-header .header-row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
+  transition:
+    max-width var(--sb-motion-duration-slow) var(--sb-motion-easing-emphasized),
+    padding var(--sb-motion-duration-slow) var(--sb-motion-easing-emphasized),
+    background-color var(--sb-motion-duration-moderate) var(--ease-ui),
+    box-shadow var(--sb-motion-duration-moderate) var(--ease-ui),
+    border-color var(--sb-motion-duration-moderate) var(--ease-ui);
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+.site-header[data-scrolled="true"] {
+  background: transparent;
+  backdrop-filter: none;
+}
+.site-header[data-scrolled="true"] .header-row {
+  max-width: 1180px;
+  padding: 6px 6px 6px 22px;
+  background: color-mix(in oklab, var(--paper-2) 90%, transparent);
+  border-color: var(--line);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 12px 32px -12px rgba(70, 45, 20, 0.22);
+  backdrop-filter: saturate(1.3) blur(12px);
+}
+.site-header[data-scrolled="true"] .nav-links {
+  padding: 0 6px;
+  border-inline: 1px solid var(--line);
+}
+
+/* Tactile press depth (fx pressable → --sb-press). `translate` composes with magnetic transforms. */
+.btn,
+.node,
+.lab-index a {
+  translate: 0 calc(var(--sb-press, 0) * 2px);
+}
+.btn:active {
+  transform: none;
+}
+.btn-accent,
+.btn-ink {
+  box-shadow: 0 calc((1 - var(--sb-press, 0)) * 3px) 0 0 var(--edge, rgba(0, 0, 0, 0.35));
+}
+.btn-accent {
+  --edge: #a63a0d;
+}
+.btn-ink {
+  --edge: #000;
+}
+.theme-dark .btn-ink {
+  --edge: #a99c8b;
+}
+.hero-ctas .btn {
+  min-height: 52px;
+  padding: 0 26px;
+  font-size: 1rem;
+}
+
+/* Cursor follower (fx createCursor): a small signal dot that names what the pointer can do. */
+.sb-cursor {
+  color: var(--accent);
+}
+.sb-cursor span {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .brand {
   gap: 12px;
@@ -548,6 +616,9 @@ p {
 }
 
 @media (max-width: 799px) {
+  .lattice-host canvas {
+    opacity: 0.55;
+  }
   .lattice-host > .lattice-svg {
     opacity: 0.42;
     top: calc(var(--header-h) + 34svh);
@@ -595,9 +666,31 @@ p {
   grid-column: 1 / span 3;
 }
 .thesis-text {
-  grid-column: 4 / -1;
-  font: 400 clamp(1.875rem, 3.6vw, 3.5rem) / 1.08 var(--font-display);
+  grid-column: 3 / -1;
+}
+/* Two voices in one sentence: a variable grotesk that leans in toward the reader's pointer, and
+   the italic serif for the words that carry the argument. */
+.manifesto {
+  font: 400 clamp(2.125rem, 4.3vw, 4.5rem) / 1.04 var(--font-sans);
+  letter-spacing: -0.035em;
+  text-wrap: pretty;
+}
+.manifesto .w {
+  display: inline-block;
+  font-variation-settings: "wght" calc(340 + 420 * var(--sb-proximity, 0));
+  transition: opacity 0.2s linear;
+}
+.thesis .manifesto em,
+.thesis .manifesto .w-em {
+  font: italic 400 1.12em / 1 var(--font-display);
   letter-spacing: -0.01em;
+  padding-inline: 0.04em;
+}
+.thesis .manifesto .w-em.w {
+  translate: 0 calc(var(--sb-proximity, 0) * -0.08em);
+}
+.manifesto .hot {
+  color: var(--accent-ink);
 }
 .principles {
   margin: clamp(56px, 10vh, 120px) 0 0;
@@ -676,6 +769,11 @@ p {
 .lab-interaction {
   --bg: var(--bone);
 }
+/* Golden-hour light pooling in from the top of the dark rooms. */
+.lab.theme-dark,
+.start {
+  background-image: radial-gradient(70% 45% at 50% 0%, rgba(240, 120, 50, 0.11), transparent 72%);
+}
 .lab-interface {
   --bg: var(--paper-2);
 }
@@ -729,6 +827,9 @@ p {
   border-radius: var(--sb-radius-lg);
   background: color-mix(in oklab, var(--bg) 55%, #fffaf2);
   overflow: clip;
+}
+.specimen-type {
+  cursor: pointer;
 }
 .specimen {
   grid-column: 1;
