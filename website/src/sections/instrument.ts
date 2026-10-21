@@ -177,8 +177,10 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
           // Labels accumulate: by the end the crystal is a labelled diagram of the system.
           callouts.forEach((el, i) => {
             const on = Math.max(segment(c, i + 0.1, i + 0.4), all);
-            el.style.opacity = String(on);
-            el.dataset.on = String(Math.round(cc) === i && all < 0.5 && inChapters > 0.5);
+            // The arm being explained points at the chapter text, which already names it; its
+            // label would sit on top of that text, so it waits for the finished diagram.
+            const explaining = Math.round(cc) === i && all < 0.5 && inChapters > 0.5;
+            el.style.opacity = String(explaining ? 0 : on);
           });
         };
 
@@ -249,7 +251,8 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
         scope.add(() => svg.remove());
         upgradeToWebGL(scope, host, lattice, (view3d) => {
           svg.remove();
-          view3d.setPose({ rotZ: 0.12, tilt: 0.25, x: 0.12, y: 0.32, scale: 0.92 });
+          // Above and right of the headline, so lines cross the type less.
+          view3d.setPose({ rotZ: 0.12, tilt: 0.25, x: 0.3, y: 0.55, scale: 0.82 });
           const g = { v: 0 };
           scope.add(
             animate(

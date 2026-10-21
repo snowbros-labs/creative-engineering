@@ -403,8 +403,12 @@ p {
   vertical-align: 1px;
 }
 @media (hover: hover) and (pointer: fine) {
-  [data-render="webgl"] ~ .hero .strum-hint,
-  .instrument:has([data-render="webgl"]) .strum-hint {
+  .instrument:has([data-render="webgl"]) .strum-hint:not(.tap-hint) {
+    display: inline;
+  }
+}
+@media (pointer: coarse) {
+  .instrument:has([data-render="webgl"]) .tap-hint {
     display: inline;
   }
 }
@@ -618,29 +622,12 @@ p {
   .hero-title {
     font-size: clamp(3rem, 14.5vw, 5.5rem);
   }
+  .hero-meta .readout {
+    display: none;
+  }
   .hero-meta .strum-hint {
-    display: none;
-    margin-left: auto;
-    color: var(--fg-muted);
-  }
-  .strum-hint::before {
-    content: "";
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    margin-right: 10px;
-    border-radius: 50%;
-    background: var(--accent);
-    vertical-align: 1px;
-  }
-  @media (hover: hover) and (pointer: fine) {
-    [data-render="webgl"] ~ .hero .strum-hint,
-    .instrument:has([data-render="webgl"]) .strum-hint {
-      display: inline;
-    }
-  }
-  .readout {
-    display: none;
+    margin-left: 0;
+    flex-basis: 100%;
   }
   .ruler-y {
     display: none;
@@ -1856,9 +1843,14 @@ select[aria-invalid="true"] {
   padding-top: 48px;
 }
 .footer-mark {
-  font: 400 clamp(4.5rem, 19vw, 20rem) / 0.8 var(--font-display);
-  letter-spacing: -0.04em;
-  margin-left: -0.04em;
+  display: flex;
+  justify-content: space-between;
+  font: 400 clamp(4.5rem, 18.5vw, 19rem) / 0.82 var(--font-sans);
+  letter-spacing: -0.06em;
+  margin-left: -0.03em;
+}
+.footer-mark span {
+  font-variation-settings: "wght" calc(300 + 520 * var(--sb-proximity, 0));
 }
 .footer-cols {
   display: grid;
@@ -1894,10 +1886,6 @@ html.js:not([data-motion="reduced"]) [data-hero-ctas] {
   to {
     opacity: 1;
   }
-}
-.instrument[data-mode="pinned"] .callouts li[data-on="true"] {
-  border-color: var(--accent);
-  color: var(--accent-ink);
 }
 .instrument[data-mode="pinned"] .callouts li {
   position: absolute;

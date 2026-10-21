@@ -17,7 +17,7 @@ import {
   setHapticsEnabled,
 } from '@snowbros/core';
 import { createCursor, magnetic, marquee, pressable, proximity } from '@snowbros/fx';
-import { inView, scrollProgress, scrollVelocity } from '@snowbros/motion';
+import { inView, scrollProgress, scrollVelocity, scrub } from '@snowbros/motion';
 import { buildLattice } from '../lattice/geometry.js';
 import { latticeSvg } from '../lattice/svg.js';
 import { initInstrument } from '../sections/instrument.js';
@@ -265,6 +265,40 @@ for (const root of $$('[data-lab]')) {
 // ----------------------------------------------------------------- 04 system, 05 start
 initSystem(shell);
 initCopyButtons(shell);
+
+// ----------------------------------------------------------------- rooms
+// Dark sections arrive as rooms opening on the warm page: a rounded inset that widens to full
+// bleed as the section enters (scrubbed, smoothed). Reduced motion → plain full-bleed sections.
+for (const room of $$('.lab.theme-dark, .start')) {
+  shell.add(
+    createMediaContext({
+      'full-motion': (scope) => {
+        const p = scrollProgress(room, { start: 'top bottom', end: 'top 30%' });
+        scope.add(p);
+        const paint = (v: number) => {
+          const e = 1 - v;
+          room.style.clipPath = `inset(0px ${(e * 5).toFixed(3)}vw 0px ${(e * 5).toFixed(3)}vw round ${(e * 44).toFixed(1)}px)`;
+        };
+        scope.add(scrub({ duration: 0, seek: paint }, p, { smooth: 12 }));
+        scope.add(() => {
+          room.style.clipPath = '';
+        });
+      },
+    }),
+  );
+}
+
+// Footer wordmark: the same variable grotesk as the manifesto; letters thicken under the pointer.
+const mark = $('.footer-mark');
+if (mark) {
+  const letters = Array.from(mark.textContent ?? '').map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  });
+  mark.replaceChildren(...letters);
+  shell.add(proximity(letters, { radius: 320, rate: 8 }));
+}
 
 // ----------------------------------------------------------------- footer marquee
 // Speed boosted by scroll velocity. Reduced motion → static (fx policy); pauses on hover/focus.
