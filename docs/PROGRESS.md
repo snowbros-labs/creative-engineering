@@ -48,3 +48,5 @@ build stands. Newest entries last. Only record what was actually run/verified.
 5. User authorized: create public GitHub repo `snowbros-labs/creative-engineering`, push; then
    `npm publish` all `@snowbros/*` packages (npm logged in as ved-chauhan, owns @snowbros scope).
 6. THEN website/ flagship with full effort, using the skill (home-scene.ts + home.css missing).
+7. Design-hook findings to fix: dashboard.html — 3× cramped padding + 1× functional text < 11px;
+   playground.html — flat type hierarchy (heading/body < 1.25× step).
