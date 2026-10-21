@@ -133,6 +133,7 @@ test.describe('playground', () => {
   });
 
   test('no horizontal overflow at 390px', async ({ page }) => {
+    test.setTimeout(90_000); // mounts the 3D pattern: slow on headless SwiftShader
     await page.setViewportSize({ width: 390, height: 844 });
     for (const id of ['easing', '3d', 'scroll-scrub']) {
       await page.goto(`/playground.html#pattern=${id}`);

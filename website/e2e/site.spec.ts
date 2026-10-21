@@ -170,6 +170,26 @@ test.describe('flagship', () => {
     await expect(page.locator('[data-system-detail]')).toContainText('@snowbros/react');
   });
 
+  test('menu: opens as a dialog, focuses the first entry, glyph answers hover, Escape restores focus', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const toggle = page.locator('[data-menu-toggle]');
+    await toggle.click();
+    const menu = page.locator('[data-menu]');
+    await expect(menu).toHaveAttribute('data-open', 'true');
+    await expect(page.locator('.menu-index a').first()).toBeFocused();
+    await page.locator('.menu-index a[href="#system"]').hover();
+    await expect(page.locator('[data-menu-glyph] svg')).toHaveClass(/has-focus/);
+    await page.keyboard.press('Escape');
+    await expect(menu).toHaveAttribute('data-open', 'false');
+    await expect(toggle).toBeFocused();
+    await toggle.click();
+    await page.locator('.menu-index a[href="#labs"]').click();
+    await expect(menu).toHaveAttribute('data-open', 'false');
+    await expect(page).toHaveURL(/#labs$/);
+  });
+
   test('internal links resolve (site + composed demos)', async ({ page, request }) => {
     await page.goto('/');
     const hrefs = await page.$$eval('a[href^="./"], a[href^="#"]', (as) =>

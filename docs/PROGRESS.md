@@ -58,13 +58,39 @@ build stands. Newest entries last. Only record what was actually run/verified.
 - detect-stack pnpm-workspace bug confirmed fixed (walks up; reports pnpm + workspaceRoot).
 - Root README written. Flagship brief saved: `docs/briefs/FLAGSHIP_WEBSITE.md`.
 
+- Pushed: GitHub repo `snowbros-labs/creative-engineering` created (public) and `main` pushed;
+  remote head verified with `git ls-remote` after each push.
+- npm publish attempted: blocked by npm 2FA (`ERR_PNPM_OTP_NON_INTERACTIVE`). All 8 names were
+  verified free (E404) and `npm whoami` = ved-chauhan. Needs the owner's OTP (see RESUME HERE).
+
+## 2026-10-21 (session 2) — flagship website
+
+- Direction + plan: `docs/briefs/FLAGSHIP_DIRECTION.md` ("Lattice: one crystal, one clock").
+  Reference study (live, verified vs inferred): `docs/research/notes-flagship-references.md`
+  (note: scoutmotor.com is a domain-for-sale page; scoutmotors.com was studied instead).
+- Built `website/`: procedural lattice (shared geometry → WebGL growth/focus/strum shaders, SVG
+  fallback), pinned Instrument sequence (hero → six chapters → labelled diagram), strum + tap to
+  pluck, kinetic two-voice manifesto, Labs A–F (motion timeline bench, interaction primitives,
+  on-demand 3D stage with remount, interface lab with FLIP/keyboard chart/install composer,
+  procedural effects, playground deep links), system map (real dependency closure), adoption
+  journey, editorial menu (circular reveal, lattice glyph answers hover), floating segmented nav,
+  warm palette + paper grain, cursor labels, haptics with opt-out on touch devices.
+- Toolkit additions found necessary by the flagship (with unit tests): `@snowbros/core`
+  `haptic()`/`hapticPatterns`/`setHapticsEnabled`/`canVibrate`; `@snowbros/fx` `pressable()` and
+  `proximity()`. Bug found + fixed: proximity rects went stale after font swap.
+- API ergonomics finding (not changed): `flowField` `speed` is px/s and `density` per px²; the old
+  site passed 0.5/0.6 and rendered nothing visible. Worth clearer docs or validation.
+- Verified: lint clean, packages build, typecheck, 102 unit tests, website e2e (composed build:
+  pin, WebGL upgrade, reduced motion flow, 390 px no overflow, axe serious/critical = 0, labs,
+  18× Space-lab remount without WebGL context warnings, links incl. /demos/).
+
 ## RESUME HERE (next steps, in order)
 
-1. Push to GitHub `snowbros-labs/creative-engineering` (user authorized).
-2. Flagship website per `docs/briefs/FLAGSHIP_WEBSITE.md`, using the skill workflow. `website/`
-   currently renders unstyled: `src/styles/home.css` and `src/pages/home-scene.ts` never written.
-   Website typecheck fails until home-scene exists.
-3. After the flagship exercises the APIs: `npm publish` all `@snowbros/*` 0.1.0 (npm user
-   ved-chauhan owns the scope; authorized). Then update README/dashboard "not published" copy and
-   the playground claim "runs on the published packages".
-4. Remaining audit items: playground type-hierarchy review; showcase stat numbers are hard-coded.
+1. npm publish (owner must supply OTP):
+   `pnpm -r --filter "./packages/**" publish --access public --no-git-checks --otp=<code>`.
+   Afterwards verify with `npm view @snowbros/<pkg> version`, then update README "not on npm yet",
+   the dashboard registry copy, and the playground claim "runs on the published packages".
+2. Deploy the composed site (`pnpm --filter @snowbros/website run build:site` → `website/dist`)
+   to a host (GitHub Pages workflow not yet written).
+3. Remaining audit items: playground type-hierarchy review; showcase stat numbers are hard-coded;
+   flowField option docs.

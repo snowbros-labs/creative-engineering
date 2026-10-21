@@ -81,6 +81,12 @@ p {
   margin: 0;
 }
 
+.btn[hidden] {
+  display: none;
+}
+.btn {
+  white-space: nowrap;
+}
 .btn-ink {
   --btn-bg: var(--fg);
   --btn-fg: var(--bg);
@@ -214,22 +220,6 @@ p {
   background: var(--accent);
   transform-origin: 0 50%;
   transform: scaleX(0);
-}
-.menu-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.menu-panel {
-  background: var(--charcoal);
-  color: var(--cream);
-}
-.menu-panel .icon-btn {
-  color: inherit;
-  border-color: rgba(255, 255, 255, 0.25);
-}
-.menu-panel .label {
-  color: var(--fg-faint);
 }
 @media (max-width: 1080px) {
   .brand-sub,
@@ -1922,4 +1912,214 @@ html.js:not([data-motion="reduced"]) [data-hero-ctas] {
   border-radius: var(--sb-radius-sm);
   opacity: 0;
   white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ menu: an editorial index */
+.menu-panel {
+  --fg: var(--cream);
+  --fg-muted: #bdb1a2;
+  --line: color-mix(in oklab, var(--cream) 12%, transparent);
+  --line-strong: color-mix(in oklab, var(--cream) 24%, transparent);
+  grid-template-rows: auto 1fr auto;
+  background:
+    radial-gradient(60% 50% at 85% 10%, rgba(240, 120, 50, 0.14), transparent 70%), var(--charcoal);
+  color: var(--cream);
+  /* Circular reveal from the menu button (origin set from its position in JS). */
+  clip-path: circle(0% at var(--mx, 100%) var(--my, 0%));
+  transition:
+    clip-path 0.62s cubic-bezier(0.65, 0, 0.35, 1),
+    visibility 0s linear 0.62s;
+}
+.menu-panel[data-open="true"] {
+  clip-path: circle(150% at var(--mx, 100%) var(--my, 0%));
+  transition:
+    clip-path 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+    visibility 0s;
+}
+.menu-head {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: var(--header-h);
+}
+.menu-clock {
+  margin-left: auto;
+  color: var(--accent);
+}
+.menu-panel .icon-btn {
+  color: inherit;
+  border-color: rgba(245, 239, 228, 0.25);
+}
+.menu-panel .label {
+  color: var(--fg-faint);
+}
+.menu-body {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  overflow-y: auto;
+}
+.menu-panel .menu-index {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: block;
+  border-top: 1px solid var(--line);
+}
+.mi-row {
+  overflow: clip;
+  border-bottom: 1px solid var(--line);
+}
+.menu-panel .menu-index a {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 16px;
+  padding: clamp(10px, 2vh, 18px) 0;
+  text-decoration: none;
+  font: inherit;
+}
+.menu-panel .menu-index a::before {
+  content: none;
+}
+.mi-n {
+  font: 500 0.75rem / 1 var(--font-mono);
+  color: var(--accent);
+}
+.mi-t {
+  font: 400 clamp(2.5rem, 6.4vw, 6rem) / 0.95 var(--font-sans);
+  letter-spacing: -0.04em;
+  font-variation-settings: "wght" calc(320 + 380 * var(--sb-proximity, 0));
+  transition:
+    translate 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.2s linear;
+}
+.mi-d {
+  font: 400 0.8125rem / 1.3 var(--font-mono);
+  color: var(--fg-muted);
+  text-align: right;
+  opacity: 0.7;
+  transition: opacity 0.2s linear;
+}
+/* Hover / focus: the word switches voice — sans to serif italic — and leans right. */
+.menu-index a:hover .mi-t,
+.menu-index a:focus-visible .mi-t {
+  font-family: var(--font-display);
+  font-style: italic;
+  letter-spacing: -0.01em;
+  translate: 0.25em 0;
+  color: #fff8ee;
+}
+.menu-index a:hover .mi-d,
+.menu-index a:focus-visible .mi-d {
+  opacity: 1;
+}
+.menu-side {
+  display: grid;
+  gap: 28px;
+  align-content: center;
+}
+.menu-glyph {
+  width: min(320px, 100%);
+  aspect-ratio: 1;
+  justify-self: center;
+}
+.menu-glyph .lattice-line {
+  stroke: var(--cream);
+  transition:
+    stroke 0.25s linear,
+    opacity 0.25s linear;
+}
+.menu-glyph .lattice-node {
+  fill: var(--cream);
+}
+.menu-glyph .lattice-node.tip {
+  fill: var(--charcoal);
+}
+.menu-glyph svg {
+  transition: rotate 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.menu-quick {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--sb-radius-lg);
+}
+.menu-quick pre {
+  margin: 0;
+  font: 400 0.75rem / 1.5 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.menu-quick .btn {
+  justify-self: start;
+  --btn-fg: var(--cream);
+}
+.menu-panel .menu-ext {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+.me-row {
+  overflow: clip;
+}
+.menu-panel .menu-ext a {
+  display: inline-block;
+  font: 500 0.9375rem / 1.4 var(--font-sans);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.menu-panel .menu-ext a::before {
+  content: none;
+}
+.menu-panel .menu-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 20px;
+  border-top: 1px solid var(--line);
+}
+.menu-toggles {
+  display: flex;
+  gap: 8px;
+}
+.menu-toggles .btn {
+  --btn-fg: var(--cream);
+}
+@media (max-width: 860px) {
+  .menu-panel .menu-foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .menu-body {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    padding-top: 12px;
+  }
+  .mi-d {
+    display: none;
+  }
+  .menu-panel .menu-index a {
+    grid-template-columns: 36px minmax(0, 1fr);
+  }
+  .menu-glyph {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-panel,
+  .menu-panel[data-open="true"] {
+    transition: visibility 0s;
+  }
+}
+html[data-motion="reduced"] .menu-panel,
+html[data-motion="reduced"] .menu-panel[data-open="true"] {
+  transition: visibility 0s;
 }

@@ -60,27 +60,44 @@
       </div>
     </header>
 
-    <div id="menu" class="menu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+    <div id="menu" class="menu-panel" role="dialog" aria-modal="true" aria-label="Menu" data-menu>
       <div class="wrap menu-head">
-        <span class="label">Menu</span>
+        <span class="label">Index</span>
+        <span class="label menu-clock" aria-hidden="true">t = <span data-menu-clock>0.000</span></span>
         <button class="icon-btn" type="button" data-menu-close>
           <span class="visually-hidden">Close menu</span>
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13" stroke="currentColor" stroke-width="1.5" /></svg>
         </button>
       </div>
-      <ol>
-        <li><a href="#instrument">Instrument</a></li>
-        <li><a href="#labs">Labs</a></li>
-        <li><a href="#system">System</a></li>
-        <li><a href="#start">Start</a></li>
-        <li><a href="https://github.com/snowbros-labs/creative-engineering">GitHub ↗</a></li>
-      </ol>
-      <div class="menu-foot">
-        <span class="label">MIT OR Apache-2.0</span>
-        <button class="btn btn-ghost btn-sm" type="button" data-haptics-toggle aria-pressed="true" hidden>Haptics: on</button>
-        <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false">
-          <span data-motion-label>Motion: full</span>
-        </button>
+      <div class="wrap menu-body">
+        <ol class="menu-index">
+          <li class="mi-row"><a href="#instrument" data-arm="0"><span class="mi-n">01</span><span class="mi-t">Instrument</span><span class="mi-d">The lattice and six dimensions</span></a></li>
+          <li class="mi-row"><a href="#labs" data-arm="1"><span class="mi-n">02</span><span class="mi-t">Labs</span><span class="mi-d">Six working benches</span></a></li>
+          <li class="mi-row"><a href="#system" data-arm="3"><span class="mi-n">03</span><span class="mi-t">System</span><span class="mi-d">Packages and what they bring</span></a></li>
+          <li class="mi-row"><a href="#start" data-arm="5"><span class="mi-n">04</span><span class="mi-t">Start</span><span class="mi-d">From curiosity to commit</span></a></li>
+        </ol>
+        <aside class="menu-side" aria-label="Quick start">
+          <div class="menu-glyph" data-menu-glyph aria-hidden="true"></div>
+          <div class="menu-quick">
+            <p class="label">Give your agent the skill</p>
+            <pre><code data-code="menu-skill">cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pre>
+            <button class="btn btn-ghost btn-sm" type="button" data-copy="menu-skill">Copy</button>
+          </div>
+          <ul class="menu-ext">
+            <li class="me-row"><a href="https://github.com/snowbros-labs/creative-engineering">GitHub ↗</a></li>
+            <li class="me-row"><a href="./demos/playground.html">Playground</a></li>
+            <li class="me-row"><a href="./demos/dashboard.html">Toolkit Ops</a></li>
+          </ul>
+        </aside>
+      </div>
+      <div class="wrap menu-foot">
+        <span class="label">MIT OR Apache-2.0 · v0.1</span>
+        <div class="menu-toggles">
+          <button class="btn btn-ghost btn-sm" type="button" data-haptics-toggle aria-pressed="true" hidden>Haptics: on</button>
+          <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false">
+            <span data-motion-label>Motion: full</span>
+          </button>
+        </div>
       </div>
     </div>
 

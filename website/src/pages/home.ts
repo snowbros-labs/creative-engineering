@@ -9,6 +9,7 @@ import {
   canVibrate,
   createMediaContext,
   createSignal,
+  haptic,
   motionPreference,
   prefersReducedMotion,
   type Scope,
@@ -17,6 +18,8 @@ import {
 } from '@snowbros/core';
 import { createCursor, magnetic, marquee, pressable, proximity } from '@snowbros/fx';
 import { inView, scrollProgress, scrollVelocity } from '@snowbros/motion';
+import { buildLattice } from '../lattice/geometry.js';
+import { latticeSvg } from '../lattice/svg.js';
 import { initInstrument } from '../sections/instrument.js';
 import { initSystem } from '../sections/system.js';
 import { brandMark, initShell } from '../shell.js';
@@ -95,7 +98,9 @@ shell.listen(document, 'focusin', armPress);
 
 // Haptics are opt-out and only offered where the device can vibrate. Never essential.
 const hapticsBtn = $<HTMLButtonElement>('[data-haptics-toggle]');
-if (hapticsBtn && canVibrate()) {
+// Desktop Chrome exposes navigator.vibrate but has no motor: only offer it on touch devices.
+const touchDevice = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+if (hapticsBtn && canVibrate() && touchDevice) {
   let on = true;
   try {
     on = localStorage.getItem('sb-haptics') !== 'off';
@@ -136,6 +141,40 @@ shell.add(
 // ----------------------------------------------------------------- 01 instrument
 const clock = createSignal(0);
 initInstrument(shell, clock);
+
+// ----------------------------------------------------------------- menu: the index
+// The panel opens as a circle grown from the menu button; the lattice glyph turns to point the
+// hovered entry's arm at it; words thicken toward the pointer. Shell owns focus + Escape.
+const menu = $('[data-menu]');
+const menuToggle = $('[data-menu-toggle]');
+if (menu && menuToggle) {
+  shell.listen(menuToggle, 'click', () => {
+    const r = menuToggle.getBoundingClientRect();
+    menu.style.setProperty('--mx', `${r.left + r.width / 2}px`);
+    menu.style.setProperty('--my', `${r.top + r.height / 2}px`);
+    haptic('select');
+  });
+  const glyphHost = $('[data-menu-glyph]', menu);
+  const glyph = latticeSvg(buildLattice({ seed: 11, detail: 0.55 }), { nodes: true });
+  glyphHost?.append(glyph);
+  const point = (arm: number | null) => {
+    glyph.classList.toggle('has-focus', arm !== null);
+    for (const el of $$<SVGElement>('[data-arm]', glyph))
+      el.classList.toggle('is-focus', arm !== null && Number(el.dataset.arm) === arm);
+    // Arm k points at 90° + 60k (CCW). Turn it to point left, toward the list.
+    glyph.style.rotate = arm === null ? '0deg' : `${-(90 - 60 * arm)}deg`;
+  };
+  const items = $$<HTMLAnchorElement>('.menu-index a', menu);
+  for (const a of items) {
+    const arm = Number(a.dataset.arm);
+    shell.listen(a, 'pointerenter', () => point(arm));
+    shell.listen(a, 'focus', () => point(arm));
+    shell.listen(a, 'pointerleave', () => point(null));
+  }
+  shell.add(proximity($$('.mi-t', menu), { radius: 260 }));
+  const menuClock = $('[data-menu-clock]', menu);
+  if (menuClock) shell.add(page.subscribe((v) => (menuClock.textContent = v.toFixed(3))));
+}
 
 // ----------------------------------------------------------------- 02 thesis
 // Two voices: grotesk words thicken toward the pointer (proximity → variable weight), serif words
