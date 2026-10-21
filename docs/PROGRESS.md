@@ -59,6 +59,7 @@ build stands. Newest entries last. Only record what was actually run/verified.
 - Root README written. Flagship brief saved: `docs/briefs/FLAGSHIP_WEBSITE.md`.
 
 ## RESUME HERE (next steps, in order)
+
 1. Push to GitHub `snowbros-labs/creative-engineering` (user authorized).
 2. Flagship website per `docs/briefs/FLAGSHIP_WEBSITE.md`, using the skill workflow. `website/`
    currently renders unstyled: `src/styles/home.css` and `src/pages/home-scene.ts` never written.

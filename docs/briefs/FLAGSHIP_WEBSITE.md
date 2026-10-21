@@ -114,3 +114,11 @@ docs, reproducible examples, reliable build/deploy, still useful if optional fea
 
 Work in the repo, commit meaningfully, keep PROGRESS.md truthful, decide creatively without asking
 for approval, never claim a deployment that did not succeed. (Owner instruction: no parallel agents.)
+
+## Addendum (owner, 2026-10-21)
+
+References to study for quality (never copy layouts or proprietary work): landonorris.com,
+bruno-simon.com, messenger.abeto.co, scoutmotor.com. Keep the **warm** SNOWBROS identity —
+cream/off-white, black type, restrained orange, premium editorial — "warm, tactile, intelligent,
+creative, technically ambitious", never a generic dark dev-tool page. Asymmetric compositions,
+tactile surfaces, subtle texture, occasional immersive moments, equally thoughtful mobile.

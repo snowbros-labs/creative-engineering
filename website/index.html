@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SNOWBROS Creative Engineering</title>
+    <title>SNOWBROS Creative Engineering — design and engineering as one instrument</title>
     <meta
       name="description"
-      content="An open-source AI skill and modular toolkit for scroll choreography, interactive 3D and premium product interfaces — accessible, measured, framework-agnostic."
+      content="An open-source AI skill and a toolkit of small, measured libraries for motion, scroll choreography, interactive 3D and product interfaces. MIT or Apache-2.0."
     />
-    <meta name="theme-color" content="#f3f2ee" />
+    <meta name="theme-color" content="#f5efe4" />
+    <meta property="og:title" content="SNOWBROS Creative Engineering" />
+    <meta
+      property="og:description"
+      content="An AI skill plus a modular toolkit for motion, scroll choreography, interactive 3D and premium interfaces."
+    />
+    <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,27 +22,36 @@
       href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // Tell CSS that JS (and therefore motion) will run, so hidden start states never strand content.
+      document.documentElement.classList.add('js');
+    </script>
     <script type="module" src="/src/pages/home.ts"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <div class="page-progress" aria-hidden="true"><span data-page-progress></span></div>
 
     <header class="site-header">
-      <div class="wrap">
-        <a class="brand" href="#top" aria-label="SNOWBROS Creative Engineering — top of page" data-brand>SNOWBROS</a>
+      <div class="wrap header-row">
+        <a class="brand" href="#top" aria-label="SNOWBROS Creative Engineering, back to top" data-brand>
+          <span>SNOWBROS</span><span class="brand-sub">Creative Engineering</span>
+        </a>
         <nav aria-label="Primary">
           <ul class="nav-links">
-            <li><a href="#principles">Principles</a></li>
-            <li><a href="#story">Method</a></li>
-            <li><a href="#packages">Toolkit</a></li>
-            <li><a href="./demos/playground.html">Playground</a></li>
-            <li><a href="./demos/dashboard.html">Dashboard</a></li>
+            <li><a href="#instrument" data-nav>Instrument</a></li>
+            <li><a href="#labs" data-nav>Labs</a></li>
+            <li><a href="#system" data-nav>System</a></li>
+            <li><a href="#start" data-nav>Start</a></li>
           </ul>
         </nav>
         <div class="header-actions">
           <button class="btn btn-ghost btn-sm motion-toggle" type="button" data-motion-toggle aria-pressed="false">
             <span data-motion-label>Motion: full</span>
           </button>
+          <a class="btn btn-ink btn-sm header-gh" href="https://github.com/snowbros-labs/creative-engineering">
+            GitHub <span aria-hidden="true">↗</span>
+          </a>
           <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
             <span class="visually-hidden">Open menu</span>
             <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6h14M2 12h14" stroke="currentColor" stroke-width="1.5" /></svg>
@@ -47,67 +62,139 @@
 
     <div id="menu" class="menu-panel" role="dialog" aria-modal="true" aria-label="Menu">
       <div class="wrap menu-head">
-        <span class="label" style="color: var(--sb-color-mist)">Menu</span>
-        <button class="icon-btn" type="button" data-menu-close style="border-color: rgba(255,255,255,.25)">
+        <span class="label">Menu</span>
+        <button class="icon-btn" type="button" data-menu-close>
           <span class="visually-hidden">Close menu</span>
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13" stroke="currentColor" stroke-width="1.5" /></svg>
         </button>
       </div>
       <ol>
-        <li><a href="#principles">Principles</a></li>
-        <li><a href="#story">Method</a></li>
-        <li><a href="#packages">Toolkit</a></li>
-        <li><a href="./demos/playground.html">Playground</a></li>
-        <li><a href="./demos/dashboard.html">Dashboard</a></li>
+        <li><a href="#instrument">Instrument</a></li>
+        <li><a href="#labs">Labs</a></li>
+        <li><a href="#system">System</a></li>
+        <li><a href="#start">Start</a></li>
+        <li><a href="https://github.com/snowbros-labs/creative-engineering">GitHub ↗</a></li>
       </ol>
       <div class="menu-foot">
-        <span class="label" style="color: var(--sb-color-mist)">MIT OR Apache-2.0</span>
-        <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false" style="--fg: var(--sb-color-snow)">
+        <span class="label">MIT OR Apache-2.0</span>
+        <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false">
           <span data-motion-label>Motion: full</span>
         </button>
       </div>
     </div>
 
     <main id="main">
-      <!-- 01 — HERO -->
-      <section class="hero" id="top" aria-labelledby="hero-title">
-        <canvas class="hero-field" aria-hidden="true"></canvas>
-        <div class="wrap hero-inner">
-          <div class="hero-meta">
-            <span class="label">Creative engineering toolkit</span>
-            <span class="label">v0.1 — open source</span>
-            <span class="label hero-coords" aria-hidden="true">N 00°00′ · one clock</span>
+      <!-- ============================================================ 01 INSTRUMENT -->
+      <section class="instrument" id="instrument" aria-labelledby="hero-title" data-instrument>
+        <div class="instrument-stage" id="top">
+          <div class="lattice-host" data-lattice aria-hidden="true"></div>
+          <svg class="callout-lines" data-callout-lines aria-hidden="true"></svg>
+
+          <div class="frame" aria-hidden="true">
+            <span class="reg reg-tl"></span><span class="reg reg-tr"></span>
+            <span class="reg reg-bl"></span><span class="reg reg-br"></span>
+            <div class="ruler ruler-x"></div>
+            <div class="ruler ruler-y"></div>
           </div>
-          <h1 class="display hero-title" id="hero-title">Motion with <em>intent</em>, engineered to&nbsp;last.</h1>
-          <div class="hero-foot">
-            <p class="lede">
-              An AI skill and a modular toolkit for scroll choreography, interactive 3D and premium product
-              interfaces — built to respect every device, every framework and every user's preferences.
-            </p>
-            <div class="hero-ctas">
-              <a class="btn btn-accent" href="#install" data-magnetic data-cursor="go">Get the skill</a>
-              <a class="btn btn-ghost" href="./demos/playground.html" data-magnetic>Open the playground</a>
+
+          <div class="wrap hero" data-hero>
+            <div class="hero-meta">
+              <span class="label">Open source · MIT / Apache-2.0</span>
+              <span class="label">v0.1</span>
+              <span class="label readout" aria-hidden="true">t = <span data-clock>0.000</span></span>
+              <span class="label strum-hint" aria-hidden="true" data-strum-hint>Strum the lattice with your cursor</span>
             </div>
+            <h1 class="hero-title display" id="hero-title" data-hero-title>
+              Design and engineering, <em>played as one instrument.</em>
+            </h1>
+            <div class="hero-foot">
+              <p class="lede" data-hero-lede>
+                An open-source AI skill and a toolkit of small, measured libraries for motion, scroll
+                choreography, interactive 3D and product interfaces. The skill decides what a project
+                needs. The libraries build it — and clean up after themselves.
+              </p>
+              <div class="hero-ctas" data-hero-ctas>
+                <a class="btn btn-accent" href="#labs" data-magnetic>Explore the labs</a>
+                <a class="btn btn-ghost" href="#start" data-magnetic>Install</a>
+              </div>
+            </div>
+            <a class="scroll-cue label" href="#dimensions"><span aria-hidden="true">↓</span> Six dimensions</a>
           </div>
-          <a class="scroll-cue label" href="#principles"><span aria-hidden="true">↓</span> Scroll</a>
+
+          <div class="dimensions" id="dimensions" data-dimensions>
+            <h2 class="visually-hidden">Six dimensions of the toolkit</h2>
+            <ol class="dim-list">
+              <li class="dim" data-dim="0">
+                <span class="dim-glyph" data-glyph="0"></span>
+                <p class="label dim-index">01 / Skill</p>
+                <h3 class="dim-title">Judgement, packaged.</h3>
+                <p class="dim-body">An agent skill that reads your project before touching it — framework, design system, existing libraries — then commits to a direction and the smallest change that achieves it.</p>
+                <p class="dim-uses mono">skills/snowbros-creative · detect-stack · audit-motion</p>
+              </li>
+              <li class="dim" data-dim="1">
+                <span class="dim-glyph" data-glyph="1"></span>
+                <p class="label dim-index">02 / Motion</p>
+                <h3 class="dim-title">One clock for every frame.</h3>
+                <p class="dim-body">Timelines, springs, scroll progress and sticky pinning share a single frame loop that sleeps when nothing moves. Every pattern ships a designed reduced-motion alternative.</p>
+                <p class="dim-uses mono">@snowbros/core · @snowbros/motion</p>
+              </li>
+              <li class="dim" data-dim="2">
+                <span class="dim-glyph" data-glyph="2"></span>
+                <p class="label dim-index">03 / Interaction</p>
+                <h3 class="dim-title">Controls that answer back.</h3>
+                <p class="dim-body">Magnetic targets, tilt, spotlight and spring feedback — with pointer, touch and keyboard treated as equals, never as afterthoughts.</p>
+                <p class="dim-uses mono">@snowbros/fx · springs from @snowbros/core</p>
+              </li>
+              <li class="dim" data-dim="3">
+                <span class="dim-glyph" data-glyph="3"></span>
+                <p class="label dim-index">04 / Space</p>
+                <h3 class="dim-title">3D that knows when to stop.</h3>
+                <p class="dim-body">Managed three.js stages render on demand, cap pixel ratio by device tier, fall back to SVG, and hand their GPU context back when they leave. This crystal is one.</p>
+                <p class="dim-uses mono">@snowbros/scene · three (optional peer)</p>
+              </li>
+              <li class="dim" data-dim="4">
+                <span class="dim-glyph" data-glyph="4"></span>
+                <p class="label dim-index">05 / Effects</p>
+                <h3 class="dim-title">Texture without assets.</h3>
+                <p class="dim-body">Procedural fields, masked reveals, scramble and path drawing — generated in code, so they scale, theme and respect preferences.</p>
+                <p class="dim-uses mono">@snowbros/fx</p>
+              </li>
+              <li class="dim" data-dim="5">
+                <span class="dim-glyph" data-glyph="5"></span>
+                <p class="label dim-index">06 / Interface</p>
+                <h3 class="dim-title">Calm where work happens.</h3>
+                <p class="dim-body">Functional motion for dashboards, tables and forms: short, interruptible, explaining what changed and nothing more. Adapters for React and Web Components.</p>
+                <p class="dim-uses mono">@snowbros/react · @snowbros/elements · @snowbros/tokens</p>
+              </li>
+            </ol>
+            <p class="dim-coda" data-coda>
+              <span class="label">Six dimensions, one lattice.</span>
+              Every arm is a package you can adopt on its own.
+            </p>
+          </div>
+
+          <ul class="callouts" data-callouts aria-hidden="true">
+            <li data-callout="0">Skill</li><li data-callout="1">Motion</li><li data-callout="2">Interaction</li>
+            <li data-callout="3">Space</li><li data-callout="4">Effects</li><li data-callout="5">Interface</li>
+          </ul>
         </div>
       </section>
 
-      <!-- 02 — MANIFESTO -->
-      <section class="manifesto" id="principles" aria-labelledby="principles-title">
+      <!-- ============================================================ 02 THESIS -->
+      <section class="thesis" id="thesis" aria-labelledby="thesis-title">
         <div class="wrap grid-12">
-          <div class="manifesto-side">
-            <span class="label">02 — Principles</span>
-            <h2 class="visually-hidden" id="principles-title">Principles</h2>
+          <div class="thesis-side">
+            <p class="label">02 — Thesis</p>
+            <h2 class="visually-hidden" id="thesis-title">Thesis</h2>
           </div>
-          <p class="manifesto-text" data-scroll-words>
-            Most motion on the web is decoration. We build motion that explains — what changed, where it went,
-            what to do next. One clock drives every frame. Native scroll stays native. Reduced motion is a
-            feature, not an afterthought. And nothing ships until it has been measured.
+          <p class="thesis-text" data-scroll-words>
+            Most motion on the web is decoration. We build motion that explains — what changed, where
+            it went, what to do next. One clock drives every frame. Native scroll stays native. Reduced
+            motion is a design, not a switch. And nothing ships until it has been measured.
           </p>
         </div>
-        <div class="wrap principles">
-          <dl class="principles-list">
+        <div class="wrap">
+          <dl class="principles">
             <div><dt class="label">Causality</dt><dd>Every movement shows what caused it and where things went.</dd></div>
             <div><dt class="label">Frequency</dt><dd>The more often an action happens, the less it should move.</dd></div>
             <div><dt class="label">Interruptible</dt><dd>Nobody waits for an animation. Scroll, click and keys always win.</dd></div>
@@ -116,158 +203,427 @@
         </div>
       </section>
 
-      <!-- 03 — PINNED STORY -->
-      <section class="story theme-dark" id="story" aria-labelledby="story-title">
-        <div class="story-stage">
-          <div class="wrap story-grid">
-            <div class="story-copy">
-              <span class="label">03 — Method</span>
-              <h2 class="h2" id="story-title">From reconnaissance<br />to release.</h2>
-              <ol class="chapters">
-                <li class="chapter" data-chapter="0">
-                  <span class="chapter-index label">01 / Recon</span>
-                  <p class="h3">Read the project before touching it.</p>
-                  <p class="muted">Detect the stack, the design system and the constraints. Prefer what the project already uses.</p>
-                </li>
-                <li class="chapter" data-chapter="1">
-                  <span class="chapter-index label">02 / Direction</span>
-                  <p class="h3">Three real directions, then commit.</p>
-                  <p class="muted">Genuinely different concepts with trade-offs — not three shades of the same dark gradient.</p>
-                </li>
-                <li class="chapter" data-chapter="2">
-                  <span class="chapter-index label">03 / Engineering</span>
-                  <p class="h3">One clock. One scroll model. Measured.</p>
-                  <p class="muted">Sticky pinning, cached layout, a single frame loop, GPU resources disposed — verified in a real browser.</p>
-                </li>
-              </ol>
-              <div class="story-progress" aria-hidden="true"><span></span></div>
-            </div>
-            <div class="story-visual" aria-hidden="true">
-              <div class="story-canvas"></div>
-              <span class="label story-readout">progress <span data-readout>0.000</span></span>
-            </div>
-          </div>
+      <!-- ============================================================ 03 LABS -->
+      <section class="labs" id="labs" aria-labelledby="labs-title">
+        <div class="wrap labs-head">
+          <p class="label">03 — Labs</p>
+          <h2 class="h1" id="labs-title">Working benches, <em>not screenshots.</em></h2>
+          <p class="lede">Every specimen below runs on the toolkit, in this page, right now. Change the parameters; the code changes with you.</p>
+          <nav class="lab-index" aria-label="Labs">
+            <a href="#lab-motion"><span class="mono">A</span> Motion</a>
+            <a href="#lab-interaction"><span class="mono">B</span> Interaction</a>
+            <a href="#lab-space"><span class="mono">C</span> Space</a>
+            <a href="#lab-interface"><span class="mono">D</span> Interface</a>
+            <a href="#lab-effects"><span class="mono">E</span> Effects</a>
+            <a href="#lab-playground"><span class="mono">F</span> Playground</a>
+          </nav>
         </div>
-      </section>
 
-      <!-- 04 — PACKAGES (horizontal on desktop) -->
-      <section class="packages" id="packages" aria-labelledby="packages-title">
-        <div class="packages-stage">
-          <div class="wrap packages-head">
-            <span class="label">04 — Toolkit</span>
-            <h2 class="h2" id="packages-title">Eight packages.<br /><em>Adopt one.</em></h2>
-          </div>
-          <ul class="rail" data-rail>
-            <li class="pkg"><span class="label">01</span><h3 class="pkg-name">core</h3><p>One shared frame loop, easings, analytic springs, lifecycle scopes, capability and reduced-motion detection. Zero dependencies.</p><code>@snowbros/core</code></li>
-            <li class="pkg"><span class="label">02</span><h3 class="pkg-name">motion</h3><p>Timelines, scroll progress, sticky pinning, scrubbing, accessible text splitting, FLIP and view transitions.</p><code>@snowbros/motion</code></li>
-            <li class="pkg"><span class="label">03</span><h3 class="pkg-name">fx</h3><p>Magnetic and tilt interactions, cursors, image reveals, scramble, path drawing, marquees, flow fields.</p><code>@snowbros/fx</code></li>
-            <li class="pkg"><span class="label">04</span><h3 class="pkg-name">scene</h3><p>Three.js stages with adaptive quality, scroll camera rigs, inertia, procedural materials and graceful fallbacks.</p><code>@snowbros/scene</code></li>
-            <li class="pkg"><span class="label">05</span><h3 class="pkg-name">react</h3><p>Hooks and components with StrictMode-safe cleanup and no per-frame re-renders.</p><code>@snowbros/react</code></li>
-            <li class="pkg"><span class="label">06</span><h3 class="pkg-name">elements</h3><p>Light-DOM Web Components for Vue, Svelte, Astro or plain HTML. Progress exposed as a CSS variable.</p><code>@snowbros/elements</code></li>
-            <li class="pkg"><span class="label">07</span><h3 class="pkg-name">tokens</h3><p>Functional and expressive motion scales, sourced from published systems, as DTCG JSON, CSS and TS.</p><code>@snowbros/tokens</code></li>
-            <li class="pkg"><span class="label">08</span><h3 class="pkg-name">adapters</h3><p>Share one loop with Lenis, GSAP or Motion and scrub their timelines — without bundling them.</p><code>@snowbros/adapters</code></li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- 05 — FUNCTIONAL VS EXPRESSIVE -->
-      <section class="modes" id="motion" aria-labelledby="modes-title">
-        <div class="wrap">
-          <div class="modes-head">
-            <span class="label">05 — Two vocabularies</span>
-            <h2 class="h2" id="modes-title">Functional for tasks.<br />Expressive for stories.</h2>
-          </div>
-          <div class="modes-grid">
-            <article class="mode-card" aria-labelledby="functional-title">
-              <header>
-                <h3 class="h3" id="functional-title">Functional</h3>
-                <p class="label">240 ms · cubic-bezier(0.2, 0, 0, 1) · FLIP</p>
-              </header>
-              <div class="mini-app">
-                <div class="mini-toolbar">
-                  <span class="label" id="queue-label">Release queue</span>
-                  <button class="btn btn-ghost btn-sm" type="button" data-sort aria-describedby="queue-label">Sort by priority</button>
+        <!-- ------------------------------------------------ A MOTION -->
+        <article class="lab lab-motion" id="lab-motion" aria-labelledby="lab-motion-title" data-lab="motion">
+          <div class="wrap lab-grid">
+            <header class="lab-head">
+              <p class="label"><span class="lab-letter">A</span> Motion lab</p>
+              <h3 class="h2" id="lab-motion-title">Choreograph a sentence.</h3>
+              <p class="muted">Split text accessibly, pick a curve, set the stagger, then play or scrub the timeline by hand.</p>
+              <p class="lab-uses mono">splitText · timeline · stagger · cubicBezier · springEase</p>
+            </header>
+            <div class="bench">
+              <div class="specimen specimen-type" aria-live="off">
+                <p class="specimen-line" data-ml-text>Every frame has a reason.</p>
+                <div class="scrubber">
+                  <label class="label" for="ml-scrub">Timeline</label>
+                  <input id="ml-scrub" type="range" min="0" max="1" step="0.001" value="1" data-ml-scrub />
+                  <output class="mono" for="ml-scrub" data-ml-scrub-out>1.000</output>
                 </div>
-                <ul class="mini-list" data-mini-list aria-live="polite">
-                  <li data-p="3"><span class="chip"><span class="dot"></span>P3</span>Docs: platform profiles</li>
-                  <li data-p="1"><span class="chip chip-hot"><span class="dot"></span>P1</span>Pin: overflow ancestor warning</li>
-                  <li data-p="2"><span class="chip"><span class="dot"></span>P2</span>Scene: context-loss recovery</li>
-                  <li data-p="1"><span class="chip chip-hot"><span class="dot"></span>P1</span>Split text: grapheme safety</li>
-                  <li data-p="4"><span class="chip"><span class="dot"></span>P4</span>Tokens: dark theme set</li>
-                </ul>
               </div>
-              <p class="muted">Short, quiet, interruptible. It explains where each row went — then gets out of the way.</p>
-            </article>
-            <article class="mode-card" aria-labelledby="expressive-title">
-              <header>
-                <h3 class="h3" id="expressive-title">Expressive</h3>
-                <p class="label">scroll-scrubbed · clip-path · counter-scale</p>
-              </header>
-              <figure class="reveal-figure" data-image-reveal>
-                <div class="reveal-media"><canvas class="drift-canvas" aria-hidden="true"></canvas></div>
-                <figcaption class="label">Procedural drift, rendered live — no image assets</figcaption>
-              </figure>
-              <p class="muted">Slower, decisive curves tied to the reader's own scroll. Reserved for moments that deserve them.</p>
-            </article>
+              <form class="controls" data-ml-form onsubmit="return false">
+                <fieldset class="seg">
+                  <legend class="label">Split by</legend>
+                  <label><input type="radio" name="by" value="lines" /><span class="seg-opt">Lines</span></label>
+                  <label><input type="radio" name="by" value="words" checked /><span class="seg-opt">Words</span></label>
+                  <label><input type="radio" name="by" value="chars" /><span class="seg-opt">Chars</span></label>
+                </fieldset>
+                <fieldset class="curves">
+                  <legend class="label">Curve</legend>
+                  <label><input type="radio" name="ease" value="editorial" checked /><span class="curve"><svg viewBox="0 0 40 40" aria-hidden="true"><path data-curve="editorial" /></svg>Editorial</span></label>
+                  <label><input type="radio" name="ease" value="spring" /><span class="curve"><svg viewBox="0 0 40 40" aria-hidden="true"><path data-curve="spring" /></svg>Spring</span></label>
+                  <label><input type="radio" name="ease" value="snap" /><span class="curve"><svg viewBox="0 0 40 40" aria-hidden="true"><path data-curve="snap" /></svg>Snap</span></label>
+                  <label><input type="radio" name="ease" value="linear" /><span class="curve"><svg viewBox="0 0 40 40" aria-hidden="true"><path data-curve="linear" /></svg>Linear</span></label>
+                </fieldset>
+                <div class="slider">
+                  <label for="ml-stagger">Stagger</label>
+                  <input id="ml-stagger" name="stagger" type="range" min="0" max="0.12" step="0.005" value="0.04" />
+                  <output class="mono" for="ml-stagger" data-out="stagger">40 ms</output>
+                </div>
+                <div class="slider">
+                  <label for="ml-duration">Duration</label>
+                  <input id="ml-duration" name="duration" type="range" min="0.2" max="1.6" step="0.05" value="0.8" />
+                  <output class="mono" for="ml-duration" data-out="duration">800 ms</output>
+                </div>
+                <fieldset class="seg">
+                  <legend class="label">Enter from</legend>
+                  <label><input type="radio" name="from" value="below" checked /><span class="seg-opt">Below</span></label>
+                  <label><input type="radio" name="from" value="above" /><span class="seg-opt">Above</span></label>
+                  <label><input type="radio" name="from" value="fade" /><span class="seg-opt">Fade</span></label>
+                </fieldset>
+                <div class="control-actions">
+                  <button class="btn btn-accent btn-sm" type="button" data-ml-play>Play</button>
+                  <button class="btn btn-ghost btn-sm" type="button" data-ml-reset>Reset</button>
+                </div>
+              </form>
+              <div class="code" data-code-wrap>
+                <div class="code-head"><span class="label">Code</span><button class="btn btn-ghost btn-sm" type="button" data-copy="ml">Copy</button></div>
+                <pre tabindex="-1"><code data-code="ml"></code></pre>
+              </div>
+            </div>
           </div>
+        </article>
+
+        <!-- ------------------------------------------------ B INTERACTION -->
+        <article class="lab lab-interaction" id="lab-interaction" aria-labelledby="lab-ix-title" data-lab="interaction">
+          <div class="wrap lab-grid">
+            <header class="lab-head">
+              <p class="label"><span class="lab-letter">B</span> Interaction lab</p>
+              <h3 class="h2" id="lab-ix-title">Feel the difference.</h3>
+              <p class="muted">Three primitives, each usable by pointer, touch and keyboard. On touch screens the pointer-only effects step aside instead of misfiring.</p>
+              <p class="lab-uses mono">magnetic · tilt · spotlight · createSpringValue</p>
+            </header>
+            <div class="ix-grid">
+              <div class="ix-cell">
+                <div class="ix-stage ix-magnet">
+                  <button class="magnet-btn" type="button" data-ix-magnet><span class="magnet-label">Pull me</span></button>
+                </div>
+                <p class="ix-caption"><span class="mono">magnetic()</span> The target leans toward a fine pointer within 80 px, then springs home. <span data-ix-magnet-out class="mono muted">0 activations</span></p>
+              </div>
+              <div class="ix-cell">
+                <div class="ix-stage ix-tilt">
+                  <button type="button" class="pass" data-ix-tilt aria-label="Access pass. Tilt with the pointer, or focus it and use the arrow keys; Escape levels it.">
+                    <span class="pass-top"><span class="label">Access</span><span class="mono">SB-0001</span></span>
+                    <span class="pass-name">Creative<br />Engineering</span>
+                    <span class="pass-foot"><span class="mono">v0.1</span><span class="pass-mark" data-pass-mark></span></span>
+                  </button>
+                </div>
+                <p class="ix-caption"><span class="mono">tilt() + spotlight()</span> Perspective tilt and a light that follows the pointer. Keyboard: focus the pass, use arrow keys.</p>
+              </div>
+              <div class="ix-cell">
+                <div class="ix-stage ix-hold">
+                  <button class="hold-btn" type="button" data-ix-hold aria-describedby="hold-help">
+                    <svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" class="hold-track" /><circle cx="22" cy="22" r="20" class="hold-ring" data-hold-ring /></svg>
+                    <span data-hold-label>Hold to ship</span>
+                  </button>
+                  <p class="visually-hidden" id="hold-help">Press and hold with pointer, Space or Enter for one second.</p>
+                  <p class="hold-status mono" role="status" data-hold-status></p>
+                </div>
+                <p class="ix-caption"><span class="mono">createSpringValue()</span> Hold for one second — release early and the spring rewinds. Works with Space and Enter.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ------------------------------------------------ C SPACE -->
+        <article class="lab lab-space theme-dark" id="lab-space" aria-labelledby="lab-space-title" data-lab="space">
+          <div class="wrap lab-grid">
+            <header class="lab-head">
+              <p class="label"><span class="lab-letter">C</span> Space lab</p>
+              <h3 class="h2" id="lab-space-title">Grow it. Turn it. <em>Measure it.</em></h3>
+              <p class="muted">The hero crystal, in a stage of its own. It draws a frame only when something changes — watch the counter stay still when you do.</p>
+              <p class="lab-uses mono">withFallback · createStage · createOrbitInertia · createParticleField</p>
+            </header>
+            <div class="bench bench-space">
+              <div class="space-view" data-space-view>
+                <div class="space-host" data-space-host></div>
+                <dl class="space-readouts mono" aria-live="off">
+                  <div><dt>frames drawn</dt><dd data-sr="frames">0</dd></div>
+                  <div><dt>draw calls</dt><dd data-sr="calls">0</dd></div>
+                  <div><dt>geometries</dt><dd data-sr="geo">0</dd></div>
+                  <div><dt>pixel ratio</dt><dd data-sr="dpr">—</dd></div>
+                  <div><dt>renderer</dt><dd data-sr="mode">pending</dd></div>
+                </dl>
+                <p class="space-hint label">Drag or use arrow keys to rotate</p>
+              </div>
+              <form class="controls" data-space-form onsubmit="return false">
+                <div class="slider">
+                  <label for="sp-growth">Growth</label>
+                  <input id="sp-growth" name="growth" type="range" min="0" max="1" step="0.01" value="1" />
+                  <output class="mono" for="sp-growth" data-out="growth">1.00</output>
+                </div>
+                <div class="slider">
+                  <label for="sp-detail">Branching</label>
+                  <input id="sp-detail" name="detail" type="range" min="0" max="1" step="0.05" value="0.7" />
+                  <output class="mono" for="sp-detail" data-out="detail">0.70</output>
+                </div>
+                <div class="slider">
+                  <label for="sp-relief">Relief</label>
+                  <input id="sp-relief" name="relief" type="range" min="0" max="0.3" step="0.01" value="0.12" />
+                  <output class="mono" for="sp-relief" data-out="relief">0.12</output>
+                </div>
+                <div class="slider">
+                  <label for="sp-seed">Seed</label>
+                  <input id="sp-seed" name="seed" type="range" min="1" max="60" step="1" value="11" />
+                  <output class="mono" for="sp-seed" data-out="seed">11</output>
+                </div>
+                <label class="check"><input type="checkbox" name="snow" checked /> Snowfall particles</label>
+                <label class="check"><input type="checkbox" name="spin" /> Idle spin <span class="muted">(renders continuously)</span></label>
+                <div class="control-actions">
+                  <button class="btn btn-accent btn-sm" type="button" data-space-regrow>Regrow</button>
+                  <button class="btn btn-ghost btn-sm" type="button" data-space-remount>Unmount + remount</button>
+                </div>
+                <p class="label space-log" role="status" data-space-log></p>
+              </form>
+            </div>
+          </div>
+        </article>
+
+        <!-- ------------------------------------------------ D INTERFACE -->
+        <article class="lab lab-interface" id="lab-interface" aria-labelledby="lab-ui-title" data-lab="interface">
+          <div class="wrap lab-grid">
+            <header class="lab-head">
+              <p class="label"><span class="lab-letter">D</span> Interface lab</p>
+              <h3 class="h2" id="lab-ui-title">Product UI that stays calm.</h3>
+              <p class="muted">Functional motion: under 250 ms, no bounce, never blocking input. The full SaaS demo lives in <a href="./demos/dashboard.html">Toolkit Ops</a>.</p>
+              <p class="lab-uses mono">flip · animate · functional tokens</p>
+            </header>
+            <div class="ui-grid">
+              <section class="ui-card ui-queue" aria-labelledby="queue-title">
+                <div class="ui-card-head">
+                  <h4 class="ui-title" id="queue-title">Release queue</h4>
+                  <button class="btn btn-ghost btn-sm" type="button" data-sort>Sort by priority</button>
+                </div>
+                <ul class="queue" data-queue>
+                  <li data-p="3"><span class="chip">P3</span>Docs: platform profiles</li>
+                  <li data-p="1"><span class="chip chip-hot">P1</span>Pin: overflow ancestor warning</li>
+                  <li data-p="2"><span class="chip">P2</span>Scene: context-loss recovery</li>
+                  <li data-p="1"><span class="chip chip-hot">P1</span>Split text: grapheme safety</li>
+                  <li data-p="4"><span class="chip">P4</span>Tokens: dark theme set</li>
+                </ul>
+                <p class="visually-hidden" role="status" data-queue-status></p>
+              </section>
+
+              <section class="ui-card ui-chart" aria-labelledby="chart-title">
+                <div class="ui-card-head">
+                  <h4 class="ui-title" id="chart-title">Package weight</h4>
+                  <span class="label">gzip KB, unminified dist</span>
+                </div>
+                <div class="bars" role="toolbar" aria-label="Package weight in kilobytes. Use arrow keys to move between packages." data-bars></div>
+                <p class="bar-readout mono" aria-live="polite" data-bar-readout>Select a bar</p>
+              </section>
+
+              <section class="ui-card ui-compose" aria-labelledby="compose-title">
+                <div class="ui-card-head">
+                  <h4 class="ui-title" id="compose-title">Install composer</h4>
+                  <span class="label">real commands</span>
+                </div>
+                <form class="compose" data-compose novalidate>
+                  <div class="field">
+                    <label for="c-stack">Your stack</label>
+                    <select id="c-stack" name="stack" required>
+                      <option value="">Choose…</option>
+                      <option value="vanilla">Vanilla / Vite</option>
+                      <option value="react">React / Next.js</option>
+                      <option value="wc">Vue, Svelte, Astro, plain HTML</option>
+                    </select>
+                    <p class="field-error" data-error="stack"></p>
+                  </div>
+                  <fieldset class="field">
+                    <legend>What do you need?</legend>
+                    <label class="check"><input type="checkbox" name="need" value="motion" checked /> Motion &amp; scroll</label>
+                    <label class="check"><input type="checkbox" name="need" value="fx" /> Pointer &amp; effects</label>
+                    <label class="check"><input type="checkbox" name="need" value="scene" /> 3D (three.js)</label>
+                    <p class="field-error" data-error="need"></p>
+                  </fieldset>
+                  <div class="field">
+                    <label for="c-pm">Package manager</label>
+                    <select id="c-pm" name="pm">
+                      <option value="npm">npm</option>
+                      <option value="pnpm">pnpm</option>
+                      <option value="yarn">yarn</option>
+                      <option value="bun">bun</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-ink btn-sm" type="submit">Compose</button>
+                </form>
+                <div class="compose-out" data-compose-out hidden>
+                  <pre><code data-code="compose"></code></pre>
+                  <div class="compose-actions">
+                    <button class="btn btn-ghost btn-sm" type="button" data-copy="compose">Copy</button>
+                    <button class="btn btn-ghost btn-sm" type="button" data-compose-edit>Edit</button>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </article>
+
+        <!-- ------------------------------------------------ E EFFECTS -->
+        <article class="lab lab-effects theme-dark" id="lab-effects" aria-labelledby="lab-fx-title" data-lab="effects">
+          <div class="wrap lab-grid">
+            <header class="lab-head">
+              <p class="label"><span class="lab-letter">E</span> Effects lab</p>
+              <h3 class="h2" id="lab-fx-title">Texture <em>without assets.</em></h3>
+              <p class="muted">No images on this page. Everything you see here is generated in code and turns static when you ask for less motion.</p>
+              <p class="lab-uses mono">imageReveal · flowField · scramble · drawPath</p>
+            </header>
+            <div class="fx-grid">
+              <figure class="fx-reveal" data-fx-reveal>
+                <div class="fx-media" data-fx-media><canvas data-fx-field aria-hidden="true"></canvas></div>
+                <figcaption class="label">imageReveal + flowField — scrubbed by your scroll</figcaption>
+              </figure>
+              <div class="fx-side">
+                <button class="fx-scramble" type="button" data-fx-scramble>Signal / noise</button>
+                <p class="label">scramble — hover, focus or press</p>
+                <div class="fx-draw" data-fx-draw></div>
+                <p class="label">drawPath — the lattice, plotted when it enters view</p>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ------------------------------------------------ F PLAYGROUND -->
+        <article class="lab lab-playground" id="lab-playground" aria-labelledby="lab-pg-title">
+          <div class="wrap pg-band">
+            <div>
+              <p class="label"><span class="lab-letter">F</span> Playground</p>
+              <h3 class="h2" id="lab-pg-title">Ten patterns. <em>Tune, then take.</em></h3>
+              <p class="muted">Every control rebuilds the pattern and rewrites the snippet. Deep-link straight to one:</p>
+            </div>
+            <ul class="pg-links">
+              <li><a href="./demos/playground.html#pattern=easing">Easing lab</a></li>
+              <li><a href="./demos/playground.html#pattern=text-reveal">Text reveal</a></li>
+              <li><a href="./demos/playground.html#pattern=stagger">Stagger grid</a></li>
+              <li><a href="./demos/playground.html#pattern=spring">Spring follower</a></li>
+              <li><a href="./demos/playground.html#pattern=magnetic">Magnetic &amp; tilt</a></li>
+              <li><a href="./demos/playground.html#pattern=scramble">Scramble</a></li>
+              <li><a href="./demos/playground.html#pattern=flow-field">Flow field</a></li>
+              <li><a href="./demos/playground.html#pattern=path-draw">Path drawing</a></li>
+              <li><a href="./demos/playground.html#pattern=3d">3D stage</a></li>
+              <li><a href="./demos/playground.html#pattern=scroll-scrub">Scroll scrub</a></li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <!-- ============================================================ 04 SYSTEM -->
+      <section class="system" id="system" aria-labelledby="system-title">
+        <div class="wrap">
+          <div class="system-head">
+            <p class="label">04 — System</p>
+            <h2 class="h1" id="system-title">Adopt one piece. <em>Or the whole lattice.</em></h2>
+            <p class="lede">Dependencies never point upward. Select a package to see exactly what it brings with it.</p>
+          </div>
+          <div class="system-map" data-system>
+            <svg class="system-wires" data-system-wires aria-hidden="true"></svg>
+            <div class="layer" data-layer="agent">
+              <p class="layer-name label">Agent</p>
+              <button type="button" class="node node-skill" data-node="skill" aria-pressed="false">snowbros-creative <span class="node-kind">skill</span></button>
+            </div>
+            <div class="layer" data-layer="adapters">
+              <p class="layer-name label">Adapters</p>
+              <button type="button" class="node" data-node="react" aria-pressed="false">react</button>
+              <button type="button" class="node" data-node="elements" aria-pressed="false">elements</button>
+              <button type="button" class="node" data-node="adapters" aria-pressed="false">adapters</button>
+            </div>
+            <div class="layer" data-layer="capabilities">
+              <p class="layer-name label">Capabilities</p>
+              <button type="button" class="node" data-node="motion" aria-pressed="false">motion</button>
+              <button type="button" class="node" data-node="fx" aria-pressed="false">fx</button>
+              <button type="button" class="node" data-node="scene" aria-pressed="false">scene</button>
+            </div>
+            <div class="layer" data-layer="foundation">
+              <p class="layer-name label">Foundation</p>
+              <button type="button" class="node" data-node="core" aria-pressed="false">core</button>
+              <button type="button" class="node" data-node="tokens" aria-pressed="false">tokens</button>
+            </div>
+          </div>
+          <div class="system-detail" aria-live="polite" data-system-detail></div>
         </div>
       </section>
 
-      <!-- 06 — INSTALL -->
-      <section class="install theme-dark" id="install" aria-labelledby="install-title">
-        <div class="wrap grid-12">
-          <div class="install-head">
-            <span class="label">06 — Install</span>
-            <h2 class="h2" id="install-title">Give your agent<br /><em>taste and discipline.</em></h2>
-            <p class="lede">The skill teaches an AI agent the full loop — recon, direction, build, verify. The packages are the instruments it reaches for.</p>
+      <!-- ============================================================ 05 START -->
+      <section class="start theme-dark" id="start" aria-labelledby="start-title">
+        <div class="wrap">
+          <div class="start-head">
+            <p class="label">05 — Start</p>
+            <h2 class="h1" id="start-title">From curiosity <em>to commit.</em></h2>
           </div>
-          <div class="install-steps">
-            <div class="code-block">
-              <div class="code-head"><span class="label">1 · Skill (Claude Code)</span><button class="btn btn-ghost btn-sm" type="button" data-copy="skill">Copy</button></div>
-              <pre><code data-code="skill">git clone https://github.com/snowbros-labs/creative-engineering
+          <ol class="journey">
+            <li class="step">
+              <p class="label step-n">01 Discover</p>
+              <p class="step-title">You are here.</p>
+              <p class="muted">The lattice above, the labs, the playground — all built with the toolkit, in the open.</p>
+              <a class="text-link" href="https://github.com/snowbros-labs/creative-engineering/tree/main/website">See how this site is built ↗</a>
+            </li>
+            <li class="step">
+              <p class="label step-n">02 Understand</p>
+              <p class="step-title">Poke at real demos.</p>
+              <p class="muted">A live pattern playground and a working SaaS control room, with keyboard, reduced motion and axe checks in CI.</p>
+              <p><a class="text-link" href="./demos/playground.html">Playground</a> · <a class="text-link" href="./demos/dashboard.html">Toolkit Ops</a></p>
+            </li>
+            <li class="step">
+              <p class="label step-n">03 Install</p>
+              <p class="step-title">Give your agent the skill.</p>
+              <div class="code code-dark">
+                <div class="code-head"><span class="label">Claude Code</span><button class="btn btn-ghost btn-sm" type="button" data-copy="skill">Copy</button></div>
+                <pre><code data-code="skill">git clone https://github.com/snowbros-labs/creative-engineering
 cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pre>
-            </div>
-            <div class="code-block">
-              <div class="code-head"><span class="label">2 · Libraries (any bundler)</span><button class="btn btn-ghost btn-sm" type="button" data-copy="pkgs">Copy</button></div>
-              <pre><code data-code="pkgs">pnpm add @snowbros/motion @snowbros/fx</code></pre>
-            </div>
-            <div class="code-block">
-              <div class="code-head"><span class="label">3 · Use</span><button class="btn btn-ghost btn-sm" type="button" data-copy="use">Copy</button></div>
-              <pre><code data-code="use">import { pin, scrub, timeline } from '@snowbros/motion';
-
-const p = pin(section, { distance: '200vh' });
-const tl = timeline().to('.title', { y: ['100%', '0%'] });
-scrub(tl, p.progress, { smooth: 10 });</code></pre>
-            </div>
-            <p class="label install-note" role="status" data-copy-status></p>
-          </div>
+              </div>
+              <div class="code code-dark">
+                <div class="code-head"><span class="label">Libraries</span><button class="btn btn-ghost btn-sm" type="button" data-copy="pkgs">Copy</button></div>
+                <pre><code data-code="pkgs">npm install @snowbros/core @snowbros/motion</code></pre>
+              </div>
+              <p class="label" data-npm-status></p>
+            </li>
+            <li class="step">
+              <p class="label step-n">04 Integrate</p>
+              <p class="step-title">Start from the project you have.</p>
+              <p class="muted">The skill inspects your stack first and works with what is already there — GSAP, Motion, R3F, your design system. Ask it:</p>
+              <p class="prompt mono">/snowbros-creative audit the motion on this page and fix the worst three issues</p>
+            </li>
+            <li class="step">
+              <p class="label step-n">05 Contribute</p>
+              <p class="step-title">Make the lattice bigger.</p>
+              <p class="muted">Patterns, platform guides, adapters and fixes are welcome. Everything is dual-licensed MIT or Apache-2.0.</p>
+<p><a class="text-link" href="https://github.com/snowbros-labs/creative-engineering/blob/main/CONTRIBUTING.md">Contributing guide ↗</a> · <a class="text-link" href="https://github.com/snowbros-labs/creative-engineering/issues">Issues ↗</a></p>
+            </li>
+          </ol>
+          <p class="label copy-status" role="status" data-copy-status></p>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer theme-dark">
+    <footer class="site-footer">
       <div class="marquee" data-marquee>
-        <ul class="marquee-track" aria-label="Capabilities">
-          <li>Research</li><li aria-hidden="true">✳</li><li>Direction</li><li aria-hidden="true">✳</li><li>Motion</li><li aria-hidden="true">✳</li><li>3D</li><li aria-hidden="true">✳</li><li>SaaS</li><li aria-hidden="true">✳</li><li>Audit</li><li aria-hidden="true">✳</li>
+        <ul class="marquee-track" aria-label="Six dimensions">
+          <li>Skill</li><li aria-hidden="true">✳</li><li>Motion</li><li aria-hidden="true">✳</li><li>Interaction</li><li aria-hidden="true">✳</li><li>Space</li><li aria-hidden="true">✳</li><li>Effects</li><li aria-hidden="true">✳</li><li>Interface</li><li aria-hidden="true">✳</li>
         </ul>
       </div>
       <div class="wrap footer-grid">
         <p class="footer-mark" aria-hidden="true">SNOWBROS</p>
         <div class="footer-cols">
           <div>
-            <span class="label">Project</span>
+            <p class="label">Project</p>
             <ul>
-              <li><a href="https://github.com/snowbros-labs">github.com/snowbros-labs</a></li>
+              <li><a href="https://github.com/snowbros-labs/creative-engineering">GitHub repository</a></li>
+              <li><a href="https://www.npmjs.com/org/snowbros">npm — @snowbros</a></li>
               <li><a href="./demos/playground.html">Playground</a></li>
               <li><a href="./demos/dashboard.html">Toolkit Ops dashboard</a></li>
             </ul>
           </div>
           <div>
-            <span class="label">Notes</span>
+            <p class="label">Docs</p>
+            <ul>
+              <li><a href="https://github.com/snowbros-labs/creative-engineering#readme">README</a></li>
+              <li><a href="https://github.com/snowbros-labs/creative-engineering/blob/main/skills/README.md">Skill guide</a></li>
+              <li><a href="https://github.com/snowbros-labs/creative-engineering/blob/main/docs/architecture/ARCHITECTURE.md">Architecture</a></li>
+              <li><a href="https://github.com/snowbros-labs/creative-engineering/blob/main/SECURITY.md">Security</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="label">Notes</p>
             <ul>
               <li>MIT OR Apache-2.0</li>
-              <li>Fonts: Instrument Serif, Inter Tight, JetBrains Mono (OFL-1.1)</li>
-              <li>All visuals generated in code</li>
+              <li>Type: Instrument Serif, Inter Tight, JetBrains Mono (OFL-1.1)</li>
+              <li>No images — every visual is generated in code</li>
             </ul>
           </div>
         </div>
