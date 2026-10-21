@@ -96,6 +96,11 @@ export interface SpringValue {
   set(target: number): void;
   /** Jump instantly to a value (no animation), e.g. for reduced motion. */
   jump(value: number): void;
+  /**
+   * Add velocity (units/second) without moving the value — a flick, a pluck, a bump. Motion
+   * stays continuous even if the spring is already moving.
+   */
+  impulse(velocity: number): void;
   /** Advance by `dt` seconds. Returns the new value. */
   step(dt: number): number;
 }
@@ -133,6 +138,9 @@ export function createSpringValue(
       value = next;
       target = next;
       velocity = 0;
+    },
+    impulse(v) {
+      velocity += v;
     },
     step(dt) {
       const clamped = Math.min(dt, 1 / 15);

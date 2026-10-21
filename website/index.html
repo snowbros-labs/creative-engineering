@@ -35,10 +35,12 @@
     <header class="site-header">
       <div class="wrap header-row">
         <a class="brand" href="#top" aria-label="SNOWBROS Creative Engineering, back to top" data-brand>
-          <span>SNOWBROS</span><span class="brand-sub">Creative Engineering</span>
+          <span class="brand-word" data-brand-word>SNOWBROS</span><span class="brand-sub" data-brand-sub>Creative Engineering</span>
         </a>
+        <span class="header-readout mono" aria-hidden="true" data-readout>00 / Top</span>
         <nav aria-label="Primary">
-          <ul class="nav-links">
+          <ul class="nav-links" data-nav-list>
+            <li class="nav-pill" aria-hidden="true" data-nav-pill></li>
             <li><a href="#instrument" data-nav>Instrument</a></li>
             <li><a href="#labs" data-nav>Labs</a></li>
             <li><a href="#system" data-nav>System</a></li>
@@ -55,6 +57,7 @@
           <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
             <span class="visually-hidden">Open menu</span>
             <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6h14M2 12h14" stroke="currentColor" stroke-width="1.5" /></svg>
+            <svg class="clock-ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" pathLength="1" data-clock-ring /></svg>
           </button>
         </div>
       </div>
@@ -71,13 +74,14 @@
       </div>
       <div class="wrap menu-body">
         <ol class="menu-index">
-          <li class="mi-row"><a href="#instrument" data-arm="0"><span class="mi-n">01</span><span class="mi-t">Instrument</span><span class="mi-d">The lattice and six dimensions</span></a></li>
-          <li class="mi-row"><a href="#labs" data-arm="1"><span class="mi-n">02</span><span class="mi-t">Labs</span><span class="mi-d">Six working benches</span></a></li>
-          <li class="mi-row"><a href="#system" data-arm="3"><span class="mi-n">03</span><span class="mi-t">System</span><span class="mi-d">Packages and what they bring</span></a></li>
-          <li class="mi-row"><a href="#start" data-arm="5"><span class="mi-n">04</span><span class="mi-t">Start</span><span class="mi-d">From curiosity to commit</span></a></li>
+          <li class="mi-row"><a href="#instrument" data-caption="Hero, six dimensions, one diagram · WebGL on demand" data-arm="0"><span class="mi-n">01</span><span class="mi-t">Instrument</span><span class="mi-d">The lattice and six dimensions</span></a></li>
+          <li class="mi-row"><a href="#labs" data-caption="Motion · Interaction · Space · Interface · Effects · Playground" data-arm="1"><span class="mi-n">02</span><span class="mi-t">Labs</span><span class="mi-d">Six working benches</span></a></li>
+          <li class="mi-row"><a href="#system" data-caption="8 packages · zero runtime dependencies · three as optional peer" data-arm="3"><span class="mi-n">03</span><span class="mi-t">System</span><span class="mi-d">Packages and what they bring</span></a></li>
+          <li class="mi-row"><a href="#start" data-caption="Skill in one command · packages on npm at 0.1.0" data-arm="5"><span class="mi-n">04</span><span class="mi-t">Start</span><span class="mi-d">From curiosity to commit</span></a></li>
         </ol>
         <aside class="menu-side" aria-label="Quick start">
           <div class="menu-glyph" data-menu-glyph aria-hidden="true"></div>
+          <p class="menu-caption mono" data-menu-caption aria-hidden="true">Six dimensions, one lattice.</p>
           <div class="menu-quick">
             <p class="label">Give your agent the skill</p>
             <pre><code data-code="menu-skill">cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pre>
@@ -85,8 +89,6 @@
           </div>
           <ul class="menu-ext">
             <li class="me-row"><a href="https://github.com/snowbros-labs/creative-engineering">GitHub ↗</a></li>
-            <li class="me-row"><a href="./demos/playground.html">Playground</a></li>
-            <li class="me-row"><a href="./demos/dashboard.html">Toolkit Ops</a></li>
           </ul>
         </aside>
       </div>

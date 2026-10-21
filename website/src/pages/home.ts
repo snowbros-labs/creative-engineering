@@ -9,12 +9,14 @@ import {
   canVibrate,
   createMediaContext,
   createSignal,
+  createSpringValue,
   haptic,
   motionPreference,
   prefersReducedMotion,
   type Scope,
   segment,
   setHapticsEnabled,
+  ticker,
 } from '@snowbros/core';
 import {
   type AnnotationType,
@@ -24,13 +26,14 @@ import {
   marquee,
   pressable,
   proximity,
+  scramble,
 } from '@snowbros/fx';
 import { inView, scrollProgress, scrollVelocity, scrub } from '@snowbros/motion';
 import { buildLattice } from '../lattice/geometry.js';
 import { latticeSvg } from '../lattice/svg.js';
 import { initInstrument } from '../sections/instrument.js';
 import { initSystem } from '../sections/system.js';
-import { brandMark, initShell } from '../shell.js';
+import { initShell } from '../shell.js';
 import { initCopyButtons } from '../ui/copy.js';
 
 const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) =>
@@ -45,8 +48,69 @@ syncMotionAttr();
 
 const shell = initShell();
 shell.add(motionPreference.subscribe(syncMotionAttr));
+// Brand mark: a live mini-lattice. Its lit arm follows the section in view (set by the nav
+// tracker below), so the header speaks the same visual language as the hero and the menu.
 const brand = $('[data-brand]');
-if (brand) brand.insertAdjacentHTML('afterbegin', brandMark);
+const brandGlyph = latticeSvg(buildLattice({ seed: 11, detail: 0.35 }), { nodes: false });
+if (brand) {
+  const holder = document.createElement('span');
+  holder.className = 'brand-glyph';
+  holder.append(brandGlyph);
+  brand.prepend(holder);
+}
+const SECTION_ARM: Record<string, number> = {
+  '#instrument': 0,
+  '#labs': 1,
+  '#system': 3,
+  '#start': 5,
+};
+const SECTION_NAME: Record<string, string> = {
+  '#instrument': '01 / Instrument',
+  '#labs': '02 / Labs',
+  '#system': '03 / System',
+  '#start': '04 / Start',
+};
+const readout = $('[data-readout]');
+let readoutFx: { dispose(): void } | null = null;
+// Brand rotor: rest angle points the current section's arm up; scroll speed spins it, a spring
+// brings it home. One spring, ticked only while it moves.
+const rotor = createSpringValue(0, { stiffness: 90, damping: 14, mass: 1 });
+let rotorOff: (() => void) | null = null;
+const spinRotor = () => {
+  if (rotorOff) return;
+  rotorOff = ticker.add(({ delta }) => {
+    brandGlyph.style.rotate = `${rotor.step(delta).toFixed(2)}deg`;
+    if (rotor.settled) {
+      rotorOff?.();
+      rotorOff = null;
+    }
+  });
+};
+shell.add(() => rotorOff?.());
+const lightBrand = (hash: string | null) => {
+  const arm = hash ? SECTION_ARM[hash] : undefined;
+  brandGlyph.classList.toggle('has-focus', arm !== undefined);
+  for (const el of $$<SVGElement>('[data-arm]', brandGlyph))
+    el.classList.toggle('is-focus', arm !== undefined && Number(el.dataset.arm) === arm);
+  rotor.set(arm === undefined ? 0 : -60 * arm);
+  if (prefersReducedMotion()) {
+    rotor.jump(rotor.target);
+    brandGlyph.style.rotate = `${rotor.target}deg`;
+  } else spinRotor();
+  // Section readout decodes into its new name.
+  const name = hash ? SECTION_NAME[hash] : '00 / Top';
+  if (readout && name && readout.dataset.name !== name) {
+    readout.dataset.name = name;
+    readoutFx?.dispose();
+    readoutFx = scramble(readout, {
+      text: name,
+      trigger: 'load',
+      duration: 0.5,
+      chars: '0123456789/',
+    });
+  }
+};
+shell.add(() => readoutFx?.dispose());
 
 // ----------------------------------------------------------------- page clock + nav state
 // One passive progress source for the whole document; the hairline reads it directly.
@@ -54,6 +118,25 @@ const bar = $('[data-page-progress]');
 const page = scrollProgress(document.documentElement, { start: 'top top', end: 'bottom bottom' });
 shell.add(page);
 if (bar) shell.add(page.subscribe((v) => (bar.style.transform = `scaleX(${v})`)));
+// The same clock rings the menu button: a quiet, always-visible "where am I" on every page.
+const ring = $<SVGCircleElement>('[data-clock-ring]');
+if (ring) shell.add(page.subscribe((v) => (ring.style.strokeDashoffset = String(1 - v))));
+
+// Brand: wordmark letters thicken toward the pointer; the sub-label decodes on hover/focus.
+const brandWord = $('[data-brand-word]');
+if (brandWord) {
+  const letters = Array.from(brandWord.textContent ?? '').map((ch) => {
+    const span = document.createElement('span');
+    span.textContent = ch;
+    return span;
+  });
+  brandWord.replaceChildren(...letters);
+  shell.add(proximity(letters, { radius: 140, rate: 12 }));
+}
+const brandSub = $('[data-brand-sub]');
+if (brandSub) shell.add(scramble(brandSub, { trigger: 'hover', duration: 0.6, chars: '01/_—' }));
+// Nav links lean a little toward a fine pointer (magnetic no-ops on touch / reduced motion).
+for (const link of $$('[data-nav]')) shell.add(magnetic(link, { strength: 0.18, radius: 24 }));
 
 const header = $('.site-header');
 if (header) {
@@ -67,8 +150,52 @@ if (header) {
   );
 }
 
-// Current-section marker in the nav (aria-current would mislabel in-page anchors).
+// Current-section marker in the nav (aria-current would mislabel in-page anchors). A pill glides
+// between links on two springs (position + width), so the change of section is felt, not jumped.
 const navLinks = $$<HTMLAnchorElement>('[data-nav]');
+const pill = $('[data-nav-pill]');
+const pillX = createSpringValue(0, { stiffness: 380, damping: 32, mass: 1 });
+const pillW = createSpringValue(0, { stiffness: 380, damping: 32, mass: 1 });
+let pillOff: (() => void) | null = null;
+const movePill = (link: HTMLAnchorElement | null) => {
+  if (!pill) return;
+  pill.dataset.on = String(!!link);
+  if (!link) return;
+  const x = link.offsetLeft;
+  const w = link.offsetWidth;
+  const first = pillW.value === 0;
+  if (first || prefersReducedMotion()) {
+    pillX.jump(x);
+    pillW.jump(w);
+  } else {
+    pillX.set(x);
+    pillW.set(w);
+  }
+  const paint = () => {
+    pill.style.transform = `translateX(${pillX.value.toFixed(2)}px)`;
+    pill.style.width = `${pillW.value.toFixed(2)}px`;
+  };
+  paint();
+  if (!pillOff)
+    pillOff = ticker.add(({ delta }) => {
+      pillX.step(delta);
+      pillW.step(delta);
+      paint();
+      if (pillX.settled && pillW.settled) {
+        pillOff?.();
+        pillOff = null;
+      }
+    });
+};
+shell.add(() => pillOff?.());
+shell.listen(window, 'resize', () => {
+  const active = navLinks.find((l) => l.dataset.active === 'true') ?? null;
+  if (active) {
+    pillX.jump(active.offsetLeft);
+    pillW.jump(active.offsetWidth);
+    movePill(active);
+  }
+});
 for (const link of navLinks) {
   const target = $(link.hash);
   if (!target) continue;
@@ -77,8 +204,14 @@ for (const link of navLinks) {
       target,
       () => {
         for (const l of navLinks) l.dataset.active = String(l === link);
+        movePill(link);
+        lightBrand(link.hash);
         return () => {
           link.dataset.active = 'false';
+          if (!navLinks.some((l) => l.dataset.active === 'true')) {
+            movePill(null);
+            lightBrand(null);
+          }
         };
       },
       // A thin band at mid-viewport: works for 6-viewport pinned sections and short ones alike.
@@ -173,12 +306,56 @@ if (menu && menuToggle) {
     glyph.style.rotate = arm === null ? '0deg' : `${-(90 - 60 * arm)}deg`;
   };
   const items = $$<HTMLAnchorElement>('.menu-index a', menu);
-  for (const a of items) {
-    const arm = Number(a.dataset.arm);
-    shell.listen(a, 'pointerenter', () => point(arm));
-    shell.listen(a, 'focus', () => point(arm));
-    shell.listen(a, 'pointerleave', () => point(null));
-  }
+  const caption = $('[data-menu-caption]', menu);
+  const defaultCaption = caption?.textContent ?? '';
+  // The engineer's pen underlines the entry you're on; leaving rewinds the stroke.
+  const pens = items.map((a, i) =>
+    annotate($('.mi-t', a)!, {
+      type: 'underline',
+      trigger: 'manual',
+      color: 'var(--accent)',
+      strokeWidth: 3,
+      roughness: 0.6,
+      seed: 31 + i * 7,
+      duration: 0.45,
+      double: false,
+    }),
+  );
+  for (const pen of pens) shell.add(pen);
+  const focusItem = (i: number | null) => {
+    point(i === null ? null : Number(items[i]!.dataset.arm));
+    if (caption)
+      caption.textContent = i === null ? defaultCaption : (items[i]!.dataset.caption ?? '');
+    pens.forEach((pen, j) => {
+      if (j === i) void pen.play();
+      else pen.seek(0);
+    });
+  };
+  items.forEach((a, i) => {
+    shell.listen(a, 'pointerenter', () => focusItem(i));
+    shell.listen(a, 'focus', () => focusItem(i));
+    shell.listen(a, 'pointerleave', () => {
+      if (document.activeElement !== a) focusItem(null);
+    });
+  });
+  // Keyboard: ↑/↓ walk the index, 1–4 jump straight to an entry.
+  shell.listen(menu, 'keydown', (e: KeyboardEvent) => {
+    if (menu.dataset.open !== 'true') return;
+    const at = items.indexOf(document.activeElement as HTMLAnchorElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const step = e.key === 'ArrowDown' ? 1 : -1;
+      items[(at + step + items.length) % items.length]?.focus();
+      haptic('tick');
+    } else if (/^[1-4]$/.test(e.key) && !(e.target as Element).closest('input, textarea')) {
+      items[Number(e.key) - 1]?.click();
+    }
+  });
+  // "You are here": mark the section currently in view each time the menu opens.
+  shell.listen(menuToggle, 'click', () => {
+    const current = navLinks.find((l) => l.dataset.active === 'true')?.hash;
+    for (const a of items) a.toggleAttribute('data-current', a.hash === current);
+  });
   shell.add(proximity($$('.mi-t', menu), { radius: 260 }));
   const menuClock = $('[data-menu-clock]', menu);
   if (menuClock) shell.add(page.subscribe((v) => (menuClock.textContent = v.toFixed(3))));
@@ -340,7 +517,7 @@ if (orbit) {
         ro.observe(orbit);
         scope.add(() => {
           ro.disconnect();
-          delete orbit.dataset.orbit;
+          orbit.dataset.orbit = 'off';
           if (guide) guide.innerHTML = '';
           for (const c of chips) c.style.transform = '';
         });
@@ -381,6 +558,19 @@ if (mark) {
   });
   mark.replaceChildren(...letters);
   shell.add(proximity(letters, { radius: 320, rate: 8 }));
+}
+
+// Scroll speed kicks the brand rotor (impulse), then its spring settles back on the section arm.
+{
+  const v = scrollVelocity();
+  shell.add(v);
+  shell.add(
+    v.subscribe((speed) => {
+      if (prefersReducedMotion() || Math.abs(speed) < 200) return;
+      rotor.impulse(Math.max(-900, Math.min(900, speed * 0.25)));
+      spinRotor();
+    }),
+  );
 }
 
 // ----------------------------------------------------------------- footer marquee

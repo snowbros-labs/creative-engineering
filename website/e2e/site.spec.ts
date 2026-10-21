@@ -197,7 +197,10 @@ test.describe('flagship', () => {
     await expect(page.locator('[data-orbit-guide] ellipse')).toHaveCount(1);
     // Chips remain real links in document order.
     await expect(page.locator('.lab-index a').first()).toHaveAttribute('href', '#lab-motion');
-    await expect(page.locator('#labs-title [data-redline] svg path')).toHaveCount(2);
+    // Two pen passes per line; the italic may wrap onto two lines in orbit layout.
+    expect(
+      await page.locator('#labs-title [data-redline] svg path').count(),
+    ).toBeGreaterThanOrEqual(2);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await expect(page.locator('[data-orbit]')).not.toHaveAttribute('data-orbit', 'on');
   });

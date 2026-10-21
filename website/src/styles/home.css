@@ -2163,3 +2163,163 @@ html[data-motion="reduced"] .menu-panel,
 html[data-motion="reduced"] .menu-panel[data-open="true"] {
   transition: visibility 0s;
 }
+
+/* Menu upgrades: captions, "you are here", rules that draw in after the reveal. */
+.menu-caption {
+  min-height: 2.6em;
+  max-width: 34ch;
+  justify-self: center;
+  text-align: center;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--fg-muted);
+}
+.menu-index a[data-current] .mi-n::after {
+  content: " ●";
+  color: var(--accent);
+}
+.menu-index a[data-current] .mi-d::before {
+  content: "You are here · ";
+  color: var(--accent);
+}
+.mi-row {
+  position: relative;
+  border-bottom-color: transparent;
+}
+.mi-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.menu-panel[data-open="true"] .mi-row::after {
+  transform: scaleX(1);
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(2)::after {
+  transition-delay: 0.08s;
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(3)::after {
+  transition-delay: 0.16s;
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(4)::after {
+  transition-delay: 0.24s;
+}
+.mi-t {
+  position: relative;
+  justify-self: start;
+}
+/* Header: a springy pill glides to the current section; the brand lattice lights its arm. */
+.nav-links {
+  position: relative;
+}
+.nav-pill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  border-radius: var(--sb-radius-pill);
+  background: color-mix(in oklab, var(--fg) 8%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s linear;
+}
+.nav-pill[data-on="true"] {
+  opacity: 1;
+}
+.nav-links:has(.nav-pill[data-on="true"]) a[data-active="true"] {
+  background: transparent;
+}
+.nav-links a {
+  position: relative;
+}
+.brand-glyph {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.brand-glyph .lattice-svg {
+  width: 100%;
+  height: 100%;
+}
+.brand-glyph .lattice-line.l0 {
+  stroke-width: 1.4px;
+}
+.brand-glyph .lattice-line.l1,
+.brand-glyph .lattice-line.lcore {
+  stroke-width: 1px;
+}
+.brand-glyph .lattice-svg.has-focus .lattice-line:not(.is-focus) {
+  opacity: 0.45;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mi-row::after {
+    transition: none;
+  }
+}
+html[data-motion="reduced"] .mi-row::after {
+  transition: none;
+}
+
+/* Header, more alive: weight follows the pointer, the sub-label decodes, the clock rings the menu. */
+.brand-word {
+  display: inline-flex;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+.brand-word span {
+  font-variation-settings: "wght" calc(520 + 280 * var(--sb-proximity, 0));
+}
+.menu-toggle {
+  position: relative;
+}
+.clock-ring {
+  position: absolute;
+  inset: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  rotate: -90deg;
+  pointer-events: none;
+  overflow: visible;
+}
+.clock-ring circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 1;
+}
+.header-readout {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 10px);
+  translate: -50% 0;
+  padding: 4px 10px;
+  border-radius: var(--sb-radius-pill);
+  background: var(--charcoal);
+  color: var(--cream);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s linear;
+  pointer-events: none;
+}
+.site-header[data-scrolled="true"] .header-readout {
+  opacity: 1;
+}
+.site-header .header-row {
+  position: relative;
+}
+.brand-glyph .lattice-svg {
+  will-change: rotate;
+}

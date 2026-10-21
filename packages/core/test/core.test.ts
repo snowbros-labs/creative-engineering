@@ -89,6 +89,18 @@ describe('easing', () => {
 });
 
 describe('springs', () => {
+  it('impulse adds velocity continuously and settles back to the target', () => {
+    const sp = createSpringValue(0, { stiffness: 400, damping: 6, mass: 1 });
+    sp.impulse(2);
+    expect(sp.value).toBe(0);
+    const first = sp.step(1 / 60);
+    expect(first).toBeGreaterThan(0);
+    expect(first).toBeLessThan(0.05);
+    for (let i = 0; i < 600; i++) sp.step(1 / 60);
+    expect(sp.settled).toBe(true);
+    expect(sp.value).toBe(0);
+  });
+
   it('starts at 0 and settles at 1', () => {
     expect(springPosition({}, 0)).toBeCloseTo(0);
     expect(springPosition({}, 5)).toBeCloseTo(1, 4);

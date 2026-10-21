@@ -294,17 +294,13 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
   // touch-screen way to play). An underdamped spring per arm drives the displacement uniform;
   // frames render only while a string still moves. Optional haptic tick on supporting phones.
   const strings = Array.from({ length: 6 }, () =>
-    createSpringValue(0, { stiffness: 520, damping: 5, mass: 1 }, 0.0002),
+    createSpringValue(0, { stiffness: 520, damping: 6, mass: 1 }, 0.0002),
   );
-  const lastSide = new Array<number>(6).fill(0);
   const ray = new Raycaster();
   const ndc = new Vector2();
   const plane = new Plane();
   const hit = new Vector3();
   const normal = new Vector3();
-  let lastX = 0;
-  let lastY = 0;
-  let lastT = 0;
 
   /** Project a client point onto the crystal plane (local coords), or null. */
   const toLocal = (clientX: number, clientY: number): Vector3 | null => {
@@ -322,9 +318,13 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
     const ang = Math.atan2(p.y, p.x) - Math.PI / 2;
     return ((Math.round(ang / (Math.PI / 3)) % 6) + 6) % 6;
   };
-  const pluck = (arm: number, amp: number) => {
-    strings[arm]!.jump(amp);
-    strings[arm]!.set(0);
+  const lastPluck = new Array<number>(6).fill(0);
+  /** Add velocity to a string: continuous even if it is already ringing (no snapping). */
+  const pluck = (arm: number, velocity: number) => {
+    const now = performance.now();
+    if (now - lastPluck[arm]! < 70) return; // one crossing, one pluck
+    lastPluck[arm] = now;
+    strings[arm]!.impulse(velocity);
     haptic('tick');
     stage.invalidate();
   };
@@ -344,7 +344,7 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
       if (!p) return;
       const rad = Math.hypot(p.x, p.y);
       if (rad < 0.15 || rad > 1.12) return;
-      pluck(armAt(p), e.pointerType === 'touch' ? 0.07 : 0.055);
+      pluck(armAt(p), e.pointerType === 'touch' ? 1.6 : 1.3);
     },
     { passive: true },
   );
@@ -352,31 +352,43 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
   const fine =
     typeof matchMedia === 'function' && matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (fine) {
+    // Strum: test the segment between consecutive pointer samples against every arm, so fast
+    // swipes register and one stroke can cross several strings. Pluck strength follows the
+    // pointer's speed across the crystal.
+    let prev: { x: number; y: number; t: number } | null = null;
     scope.listen(
       window,
       'pointermove',
       (e: PointerEvent) => {
-        const now = performance.now();
-        const speed = Math.hypot(e.clientX - lastX, e.clientY - lastY) / Math.max(1, now - lastT);
-        lastX = e.clientX;
-        lastY = e.clientY;
-        lastT = now;
-        if (shared.uGrowth.value < 0.95) return;
-        const p = toLocal(e.clientX, e.clientY);
-        if (!p) return;
-        const rad = Math.hypot(p.x, p.y);
-        if (rad < 0.22 || rad > 1.05) {
-          lastSide.fill(0);
+        if (shared.uGrowth.value < 0.95) {
+          prev = null;
           return;
         }
-        const arm = armAt(p);
-        const a = (arm * Math.PI) / 3 + Math.PI / 2;
-        const side = Math.cos(a) * p.y - Math.sin(a) * p.x;
-        const sign = Math.sign(side);
-        if (Math.abs(side) < 0.14 && lastSide[arm] && sign && sign !== lastSide[arm]) {
-          pluck(arm, clamp(speed * 0.02, 0.018, 0.075) * -sign);
+        const p = toLocal(e.clientX, e.clientY);
+        if (!p) {
+          prev = null;
+          return;
         }
-        for (let i = 0; i < 6; i++) lastSide[i] = i === arm ? sign : 0;
+        const now = performance.now();
+        const cur = { x: p.x, y: p.y, t: now };
+        if (prev) {
+          const dt = Math.max(0.008, (now - prev.t) / 1000);
+          const speed = Math.hypot(cur.x - prev.x, cur.y - prev.y) / dt;
+          for (let arm = 0; arm < 6; arm++) {
+            const a = (arm * Math.PI) / 3 + Math.PI / 2;
+            const dx = Math.cos(a);
+            const dy = Math.sin(a);
+            const s0 = dx * prev.y - dy * prev.x;
+            const s1 = dx * cur.y - dy * cur.x;
+            if (s0 === 0 || s1 === 0 || Math.sign(s0) === Math.sign(s1)) continue;
+            const t = s0 / (s0 - s1);
+            const along =
+              (prev.x + (cur.x - prev.x) * t) * dx + (prev.y + (cur.y - prev.y) * t) * dy;
+            if (along < 0.2 || along > 1.05) continue;
+            pluck(arm, clamp(speed * 0.25, 0.45, 1.8) * Math.sign(s0));
+          }
+        }
+        prev = cur;
       },
       { passive: true },
     );
