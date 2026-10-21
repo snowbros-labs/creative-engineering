@@ -1,0 +1,53 @@
+{
+  "name": "@snowbros/tokens",
+  "version": "0.1.0",
+  "description": "Motion, typography, spacing and color tokens (W3C DTCG format) with a functional vs expressive motion scale, exported as CSS custom properties and TypeScript.",
+  "license": "(MIT OR Apache-2.0)",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./tokens.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "tokens.json",
+    "build.mjs",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
+  "scripts": {
+    "build": "node build.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check:package": "publint"
+  },
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "motion-tokens",
+    "css-variables",
+    "snowbros"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snowbros-labs/creative-engineering.git",
+    "directory": "packages/tokens"
+  },
+  "homepage": "https://github.com/snowbros-labs/creative-engineering/tree/main/packages/tokens#readme",
+  "bugs": "https://github.com/snowbros-labs/creative-engineering/issues",
+  "publishConfig": {
+    "access": "public"
+  }
+}

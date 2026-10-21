@@ -1,0 +1,54 @@
+{
+  "name": "@snowbros/motion",
+  "version": "0.1.0",
+  "description": "Timelines, tweens, scroll choreography, sticky pinning, accessible text splitting, FLIP and view transitions — renderer-agnostic and reduced-motion aware.",
+  "license": "(MIT OR Apache-2.0)",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check:package": "publint"
+  },
+  "keywords": [
+    "animation",
+    "timeline",
+    "scroll",
+    "scrollytelling",
+    "pin",
+    "split-text",
+    "flip",
+    "view-transitions",
+    "snowbros"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snowbros-labs/creative-engineering.git",
+    "directory": "packages/motion"
+  },
+  "homepage": "https://github.com/snowbros-labs/creative-engineering/tree/main/packages/motion#readme",
+  "bugs": "https://github.com/snowbros-labs/creative-engineering/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@snowbros/core": "workspace:^"
+  }
+}

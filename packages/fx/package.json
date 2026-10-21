@@ -1,0 +1,54 @@
+{
+  "name": "@snowbros/fx",
+  "version": "0.1.0",
+  "description": "Creative effects: magnetic and pointer-reactive UI, cursors, image reveals, text scramble, SVG path drawing, marquees and procedural canvas fields.",
+  "license": "(MIT OR Apache-2.0)",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "check:package": "publint"
+  },
+  "keywords": [
+    "effects",
+    "cursor",
+    "magnetic",
+    "marquee",
+    "svg",
+    "canvas",
+    "noise",
+    "snowbros"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snowbros-labs/creative-engineering.git",
+    "directory": "packages/fx"
+  },
+  "homepage": "https://github.com/snowbros-labs/creative-engineering/tree/main/packages/fx#readme",
+  "bugs": "https://github.com/snowbros-labs/creative-engineering/issues",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@snowbros/core": "workspace:^",
+    "@snowbros/motion": "workspace:^"
+  }
+}

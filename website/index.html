@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SNOWBROS Creative Engineering</title>
+    <meta
+      name="description"
+      content="An open-source AI skill and modular toolkit for scroll choreography, interactive 3D and premium product interfaces — accessible, measured, framework-agnostic."
+    />
+    <meta name="theme-color" content="#f3f2ee" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="/src/pages/home.ts"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="#top" aria-label="SNOWBROS Creative Engineering — top of page" data-brand>SNOWBROS</a>
+        <nav aria-label="Primary">
+          <ul class="nav-links">
+            <li><a href="#principles">Principles</a></li>
+            <li><a href="#story">Method</a></li>
+            <li><a href="#packages">Toolkit</a></li>
+            <li><a href="/playground.html">Playground</a></li>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+          </ul>
+        </nav>
+        <div class="header-actions">
+          <button class="btn btn-ghost btn-sm motion-toggle" type="button" data-motion-toggle aria-pressed="false">
+            <span data-motion-label>Motion: full</span>
+          </button>
+          <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
+            <span class="visually-hidden">Open menu</span>
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6h14M2 12h14" stroke="currentColor" stroke-width="1.5" /></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="menu" class="menu-panel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="wrap menu-head">
+        <span class="label" style="color: var(--sb-color-mist)">Menu</span>
+        <button class="icon-btn" type="button" data-menu-close style="border-color: rgba(255,255,255,.25)">
+          <span class="visually-hidden">Close menu</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13" stroke="currentColor" stroke-width="1.5" /></svg>
+        </button>
+      </div>
+      <ol>
+        <li><a href="#principles">Principles</a></li>
+        <li><a href="#story">Method</a></li>
+        <li><a href="#packages">Toolkit</a></li>
+        <li><a href="/playground.html">Playground</a></li>
+        <li><a href="/dashboard.html">Dashboard</a></li>
+      </ol>
+      <div class="menu-foot">
+        <span class="label" style="color: var(--sb-color-mist)">MIT OR Apache-2.0</span>
+        <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false" style="--fg: var(--sb-color-snow)">
+          <span data-motion-label>Motion: full</span>
+        </button>
+      </div>
+    </div>
+
+    <main id="main">
+      <!-- 01 — HERO -->
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <canvas class="hero-field" aria-hidden="true"></canvas>
+        <div class="wrap hero-inner">
+          <div class="hero-meta">
+            <span class="label">Creative engineering toolkit</span>
+            <span class="label">v0.1 — open source</span>
+            <span class="label hero-coords" aria-hidden="true">N 00°00′ · one clock</span>
+          </div>
+          <h1 class="display hero-title" id="hero-title">Motion with <em>intent</em>, engineered to&nbsp;last.</h1>
+          <div class="hero-foot">
+            <p class="lede">
+              An AI skill and a modular toolkit for scroll choreography, interactive 3D and premium product
+              interfaces — built to respect every device, every framework and every user's preferences.
+            </p>
+            <div class="hero-ctas">
+              <a class="btn btn-accent" href="#install" data-magnetic data-cursor="go">Get the skill</a>
+              <a class="btn btn-ghost" href="/playground.html" data-magnetic>Open the playground</a>
+            </div>
+          </div>
+          <a class="scroll-cue label" href="#principles"><span aria-hidden="true">↓</span> Scroll</a>
+        </div>
+      </section>
+
+      <!-- 02 — MANIFESTO -->
+      <section class="manifesto" id="principles" aria-labelledby="principles-title">
+        <div class="wrap grid-12">
+          <div class="manifesto-side">
+            <span class="label">02 — Principles</span>
+            <h2 class="visually-hidden" id="principles-title">Principles</h2>
+          </div>
+          <p class="manifesto-text" data-scroll-words>
+            Most motion on the web is decoration. We build motion that explains — what changed, where it went,
+            what to do next. One clock drives every frame. Native scroll stays native. Reduced motion is a
+            feature, not an afterthought. And nothing ships until it has been measured.
+          </p>
+        </div>
+        <div class="wrap principles">
+          <dl class="principles-list">
+            <div><dt class="label">Causality</dt><dd>Every movement shows what caused it and where things went.</dd></div>
+            <div><dt class="label">Frequency</dt><dd>The more often an action happens, the less it should move.</dd></div>
+            <div><dt class="label">Interruptible</dt><dd>Nobody waits for an animation. Scroll, click and keys always win.</dd></div>
+            <div><dt class="label">Measured</dt><dd>Budgets before visuals. Frame times, not adjectives.</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- 03 — PINNED STORY -->
+      <section class="story theme-dark" id="story" aria-labelledby="story-title">
+        <div class="story-stage">
+          <div class="wrap story-grid">
+            <div class="story-copy">
+              <span class="label">03 — Method</span>
+              <h2 class="h2" id="story-title">From reconnaissance<br />to release.</h2>
+              <ol class="chapters">
+                <li class="chapter" data-chapter="0">
+                  <span class="chapter-index label">01 / Recon</span>
+                  <p class="h3">Read the project before touching it.</p>
+                  <p class="muted">Detect the stack, the design system and the constraints. Prefer what the project already uses.</p>
+                </li>
+                <li class="chapter" data-chapter="1">
+                  <span class="chapter-index label">02 / Direction</span>
+                  <p class="h3">Three real directions, then commit.</p>
+                  <p class="muted">Genuinely different concepts with trade-offs — not three shades of the same dark gradient.</p>
+                </li>
+                <li class="chapter" data-chapter="2">
+                  <span class="chapter-index label">03 / Engineering</span>
+                  <p class="h3">One clock. One scroll model. Measured.</p>
+                  <p class="muted">Sticky pinning, cached layout, a single frame loop, GPU resources disposed — verified in a real browser.</p>
+                </li>
+              </ol>
+              <div class="story-progress" aria-hidden="true"><span></span></div>
+            </div>
+            <div class="story-visual" aria-hidden="true">
+              <div class="story-canvas"></div>
+              <span class="label story-readout">progress <span data-readout>0.000</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 04 — PACKAGES (horizontal on desktop) -->
+      <section class="packages" id="packages" aria-labelledby="packages-title">
+        <div class="packages-stage">
+          <div class="wrap packages-head">
+            <span class="label">04 — Toolkit</span>
+            <h2 class="h2" id="packages-title">Eight packages.<br /><em>Adopt one.</em></h2>
+          </div>
+          <ul class="rail" data-rail>
+            <li class="pkg"><span class="label">01</span><h3 class="pkg-name">core</h3><p>One shared frame loop, easings, analytic springs, lifecycle scopes, capability and reduced-motion detection. Zero dependencies.</p><code>@snowbros/core</code></li>
+            <li class="pkg"><span class="label">02</span><h3 class="pkg-name">motion</h3><p>Timelines, scroll progress, sticky pinning, scrubbing, accessible text splitting, FLIP and view transitions.</p><code>@snowbros/motion</code></li>
+            <li class="pkg"><span class="label">03</span><h3 class="pkg-name">fx</h3><p>Magnetic and tilt interactions, cursors, image reveals, scramble, path drawing, marquees, flow fields.</p><code>@snowbros/fx</code></li>
+            <li class="pkg"><span class="label">04</span><h3 class="pkg-name">scene</h3><p>Three.js stages with adaptive quality, scroll camera rigs, inertia, procedural materials and graceful fallbacks.</p><code>@snowbros/scene</code></li>
+            <li class="pkg"><span class="label">05</span><h3 class="pkg-name">react</h3><p>Hooks and components with StrictMode-safe cleanup and no per-frame re-renders.</p><code>@snowbros/react</code></li>
+            <li class="pkg"><span class="label">06</span><h3 class="pkg-name">elements</h3><p>Light-DOM Web Components for Vue, Svelte, Astro or plain HTML. Progress exposed as a CSS variable.</p><code>@snowbros/elements</code></li>
+            <li class="pkg"><span class="label">07</span><h3 class="pkg-name">tokens</h3><p>Functional and expressive motion scales, sourced from published systems, as DTCG JSON, CSS and TS.</p><code>@snowbros/tokens</code></li>
+            <li class="pkg"><span class="label">08</span><h3 class="pkg-name">adapters</h3><p>Share one loop with Lenis, GSAP or Motion and scrub their timelines — without bundling them.</p><code>@snowbros/adapters</code></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 05 — FUNCTIONAL VS EXPRESSIVE -->
+      <section class="modes" id="motion" aria-labelledby="modes-title">
+        <div class="wrap">
+          <div class="modes-head">
+            <span class="label">05 — Two vocabularies</span>
+            <h2 class="h2" id="modes-title">Functional for tasks.<br />Expressive for stories.</h2>
+          </div>
+          <div class="modes-grid">
+            <article class="mode-card" aria-labelledby="functional-title">
+              <header>
+                <h3 class="h3" id="functional-title">Functional</h3>
+                <p class="label">240 ms · cubic-bezier(0.2, 0, 0, 1) · FLIP</p>
+              </header>
+              <div class="mini-app">
+                <div class="mini-toolbar">
+                  <span class="label" id="queue-label">Release queue</span>
+                  <button class="btn btn-ghost btn-sm" type="button" data-sort aria-describedby="queue-label">Sort by priority</button>
+                </div>
+                <ul class="mini-list" data-mini-list aria-live="polite">
+                  <li data-p="3"><span class="chip"><span class="dot"></span>P3</span>Docs: platform profiles</li>
+                  <li data-p="1"><span class="chip chip-hot"><span class="dot"></span>P1</span>Pin: overflow ancestor warning</li>
+                  <li data-p="2"><span class="chip"><span class="dot"></span>P2</span>Scene: context-loss recovery</li>
+                  <li data-p="1"><span class="chip chip-hot"><span class="dot"></span>P1</span>Split text: grapheme safety</li>
+                  <li data-p="4"><span class="chip"><span class="dot"></span>P4</span>Tokens: dark theme set</li>
+                </ul>
+              </div>
+              <p class="muted">Short, quiet, interruptible. It explains where each row went — then gets out of the way.</p>
+            </article>
+            <article class="mode-card" aria-labelledby="expressive-title">
+              <header>
+                <h3 class="h3" id="expressive-title">Expressive</h3>
+                <p class="label">scroll-scrubbed · clip-path · counter-scale</p>
+              </header>
+              <figure class="reveal-figure" data-image-reveal>
+                <div class="reveal-media"><canvas class="drift-canvas" aria-hidden="true"></canvas></div>
+                <figcaption class="label">Procedural drift, rendered live — no image assets</figcaption>
+              </figure>
+              <p class="muted">Slower, decisive curves tied to the reader's own scroll. Reserved for moments that deserve them.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 06 — INSTALL -->
+      <section class="install theme-dark" id="install" aria-labelledby="install-title">
+        <div class="wrap grid-12">
+          <div class="install-head">
+            <span class="label">06 — Install</span>
+            <h2 class="h2" id="install-title">Give your agent<br /><em>taste and discipline.</em></h2>
+            <p class="lede">The skill teaches an AI agent the full loop — recon, direction, build, verify. The packages are the instruments it reaches for.</p>
+          </div>
+          <div class="install-steps">
+            <div class="code-block">
+              <div class="code-head"><span class="label">1 · Skill (Claude Code)</span><button class="btn btn-ghost btn-sm" type="button" data-copy="skill">Copy</button></div>
+              <pre><code data-code="skill">git clone https://github.com/snowbros-labs/creative-engineering
+cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><span class="label">2 · Libraries (any bundler)</span><button class="btn btn-ghost btn-sm" type="button" data-copy="pkgs">Copy</button></div>
+              <pre><code data-code="pkgs">pnpm add @snowbros/motion @snowbros/fx</code></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-head"><span class="label">3 · Use</span><button class="btn btn-ghost btn-sm" type="button" data-copy="use">Copy</button></div>
+              <pre><code data-code="use">import { pin, scrub, timeline } from '@snowbros/motion';
+
+const p = pin(section, { distance: '200vh' });
+const tl = timeline().to('.title', { y: ['100%', '0%'] });
+scrub(tl, p.progress, { smooth: 10 });</code></pre>
+            </div>
+            <p class="label install-note" role="status" data-copy-status></p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer theme-dark">
+      <div class="marquee" data-marquee aria-label="Capabilities">
+        <ul class="marquee-track">
+          <li>Research</li><li aria-hidden="true">✳</li><li>Direction</li><li aria-hidden="true">✳</li><li>Motion</li><li aria-hidden="true">✳</li><li>3D</li><li aria-hidden="true">✳</li><li>SaaS</li><li aria-hidden="true">✳</li><li>Audit</li><li aria-hidden="true">✳</li>
+        </ul>
+      </div>
+      <div class="wrap footer-grid">
+        <p class="footer-mark" aria-hidden="true">SNOWBROS</p>
+        <div class="footer-cols">
+          <div>
+            <span class="label">Project</span>
+            <ul>
+              <li><a href="https://github.com/snowbros-labs">github.com/snowbros-labs</a></li>
+              <li><a href="/playground.html">Playground</a></li>
+              <li><a href="/dashboard.html">Toolkit Ops dashboard</a></li>
+            </ul>
+          </div>
+          <div>
+            <span class="label">Notes</span>
+            <ul>
+              <li>MIT OR Apache-2.0</li>
+              <li>Fonts: Instrument Serif, Inter Tight, JetBrains Mono (OFL-1.1)</li>
+              <li>All visuals generated in code</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

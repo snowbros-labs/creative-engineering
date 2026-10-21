@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toolkit Ops — SNOWBROS</title>
+    <meta
+      name="description"
+      content="A working control room for the SNOWBROS Creative Engineering toolkit: packages, live frame timing, registry status and settings. Demo page."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap"
+    />
+    <link rel="stylesheet" href="./src/styles/base.css" />
+    <link rel="stylesheet" href="./src/styles/dashboard.css" />
+  </head>
+  <body class="ops">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header ops-topbar">
+      <div class="ops-topbar-inner">
+        <a class="brand" href="./index.html">
+          <span data-brand-mark></span>
+          <span>SNOWBROS</span>
+          <span class="ops-product">Toolkit Ops</span>
+        </a>
+        <div class="ops-topbar-actions">
+          <button class="ops-search" type="button" data-palette-open aria-haspopup="dialog" aria-keyshortcuts="Control+K Meta+K">
+            <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
+            <span class="ops-search-label">Search actions</span>
+            <kbd class="ops-kbd" data-kbd>Ctrl K</kbd>
+          </button>
+          <button class="btn btn-ghost btn-sm ops-hide-sm" type="button" data-motion-toggle aria-pressed="false">
+            <span data-motion-label>Motion: full</span>
+          </button>
+          <a class="btn btn-ghost btn-sm ops-hide-sm" href="./index.html">Back to site</a>
+          <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
+            <span class="visually-hidden">Open navigation</span>
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="menu" class="menu-panel" role="dialog" aria-modal="true" aria-label="Navigation">
+      <div class="ops-menu-head">
+        <span class="label">Toolkit Ops</span>
+        <button class="icon-btn" type="button" data-menu-close>
+          <span class="visually-hidden">Close navigation</span>
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></svg>
+        </button>
+      </div>
+      <ol>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#settings">Settings</a></li>
+      </ol>
+      <div class="menu-foot">
+        <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false" style="--btn-fg: var(--sb-color-snow)">
+          <span data-motion-label>Motion: full</span>
+        </button>
+        <a class="label" href="./index.html" style="color: var(--sb-color-snow)">Back to site</a>
+      </div>
+    </div>
+
+    <div class="ops-layout">
+      <nav class="ops-sidebar" aria-label="Dashboard sections">
+        <p class="label ops-sidebar-title">Workspace</p>
+        <ul class="ops-nav">
+          <li><a href="#overview" data-section-link="overview"><span class="ops-nav-index">01</span>Overview</a></li>
+          <li><a href="#packages" data-section-link="packages"><span class="ops-nav-index">02</span>Packages</a></li>
+          <li><a href="#performance" data-section-link="performance"><span class="ops-nav-index">03</span>Performance</a></li>
+          <li><a href="#settings" data-section-link="settings"><span class="ops-nav-index">04</span>Settings</a></li>
+        </ul>
+        <div class="ops-sidebar-foot">
+          <p class="label">Build</p>
+          <p class="mono muted">0.1.0 · local workspace</p>
+        </div>
+      </nav>
+
+      <main id="main" class="ops-main" tabindex="-1">
+        <!-- ============================================================ OVERVIEW -->
+        <section id="overview" class="ops-section" aria-labelledby="overview-title" data-section="overview">
+          <div class="ops-section-head">
+            <div>
+              <p class="label">01 — Overview</p>
+              <h1 id="overview-title" class="ops-title">Toolkit Ops</h1>
+              <p class="ops-sub">
+                A working control room for the SNOWBROS toolkit. Package data reflects this repository; frame timing is
+                measured live in your browser. <span class="ops-demo-tag">Demo page</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="ops-stats" role="list">
+            <div class="ops-stat panel" role="listitem">
+              <p class="label">Packages</p>
+              <p class="ops-stat-value" data-stat="packages">8</p>
+              <p class="ops-stat-note">core → adapters</p>
+            </div>
+            <div class="ops-stat panel" role="listitem">
+              <p class="label">Unit tests</p>
+              <p class="ops-stat-value" data-stat="tests">84</p>
+              <p class="ops-stat-note">Vitest, last local run</p>
+            </div>
+            <div class="ops-stat panel" role="listitem">
+              <p class="label">Frame p95</p>
+              <p class="ops-stat-value"><span data-stat="p95">—</span><span class="ops-unit">ms</span></p>
+              <p class="ops-stat-note"><span class="ops-live" aria-hidden="true"></span>Live, this tab</p>
+            </div>
+            <div class="ops-stat panel" role="listitem">
+              <p class="label">Runtime deps</p>
+              <p class="ops-stat-value">0</p>
+              <p class="ops-stat-note">three is an optional peer</p>
+            </div>
+          </div>
+
+          <aside class="ops-onboarding panel" aria-labelledby="onboarding-title" data-onboarding>
+            <div class="ops-onboarding-head">
+              <h2 id="onboarding-title" class="ops-h2">Three things to try</h2>
+              <button class="icon-btn ops-icon-sm" type="button" data-onboarding-dismiss>
+                <span class="visually-hidden">Dismiss tips</span>
+                <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="m5 5 10 10M15 5 5 15"/></svg>
+              </button>
+            </div>
+            <ol class="ops-checklist">
+              <li data-task="palette"><span class="ops-check" aria-hidden="true"></span><span>Open the command palette with <kbd class="ops-kbd" data-kbd>Ctrl K</kbd></span><span class="visually-hidden" data-task-state>not done</span></li>
+              <li data-task="sort"><span class="ops-check" aria-hidden="true"></span><span>Sort the packages table by a column</span><span class="visually-hidden" data-task-state>not done</span></li>
+              <li data-task="registry"><span class="ops-check" aria-hidden="true"></span><span>Run the npm registry check</span><span class="visually-hidden" data-task-state>not done</span></li>
+            </ol>
+          </aside>
+        </section>
+
+        <!-- ============================================================ PACKAGES -->
+        <section id="packages" class="ops-section" aria-labelledby="packages-title" data-section="packages">
+          <div class="ops-section-head">
+            <div>
+              <p class="label">02 — Packages</p>
+              <h2 id="packages-title" class="ops-h2">Packages</h2>
+            </div>
+          </div>
+
+          <div class="ops-toolbar">
+            <div class="ops-field ops-filter">
+              <label for="pkg-filter" class="visually-hidden">Filter packages</label>
+              <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
+              <input id="pkg-filter" type="search" placeholder="Filter by name or description" autocomplete="off" />
+            </div>
+            <div class="ops-segmented" role="radiogroup" aria-label="Status">
+              <button type="button" role="radio" aria-checked="true" data-status="all">All</button>
+              <button type="button" role="radio" aria-checked="false" data-status="stable">Stable</button>
+              <button type="button" role="radio" aria-checked="false" data-status="beta">Beta</button>
+              <button type="button" role="radio" aria-checked="false" data-status="experimental">Experimental</button>
+            </div>
+            <p class="ops-count mono" aria-live="polite" data-result-count>8 packages</p>
+          </div>
+
+          <div class="ops-table-wrap panel">
+            <table class="ops-table">
+              <caption class="visually-hidden">SNOWBROS packages. Column headers are sortable.</caption>
+              <thead>
+                <tr>
+                  <th scope="col" aria-sort="none" data-sort-key="name"><button type="button">Package<span class="ops-sort-icon" aria-hidden="true"></span></button></th>
+                  <th scope="col" class="ops-col-desc">Description</th>
+                  <th scope="col" aria-sort="none" data-sort-key="version" class="ops-col-version"><button type="button">Version<span class="ops-sort-icon" aria-hidden="true"></span></button></th>
+                  <th scope="col" aria-sort="none" data-sort-key="status"><button type="button">Status<span class="ops-sort-icon" aria-hidden="true"></span></button></th>
+                  <th scope="col" aria-sort="none" data-sort-key="tests" class="ops-num"><button type="button">Tests<span class="ops-sort-icon" aria-hidden="true"></span></button></th>
+                  <th scope="col" class="ops-col-license">License</th>
+                </tr>
+              </thead>
+              <tbody data-pkg-body></tbody>
+            </table>
+            <div class="ops-empty" data-empty hidden>
+              <svg viewBox="0 0 120 80" width="120" height="80" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+                <rect x="14" y="14" width="92" height="52" rx="4" />
+                <path d="M14 28h92M30 42h36M30 52h22" opacity=".55" />
+                <circle cx="86" cy="50" r="9" />
+                <path d="m92.5 56.5 8 8" />
+              </svg>
+              <p class="ops-empty-title">No packages match</p>
+              <p class="muted">Try a different name, or clear the status filter.</p>
+              <button class="btn btn-ghost btn-sm" type="button" data-reset-filters>Reset filters</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ PERFORMANCE -->
+        <section id="performance" class="ops-section" aria-labelledby="performance-title" data-section="performance">
+          <div class="ops-section-head">
+            <div>
+              <p class="label">03 — Performance</p>
+              <h2 id="performance-title" class="ops-h2">Performance</h2>
+            </div>
+          </div>
+
+          <div class="ops-perf-grid">
+            <div class="panel ops-chart-panel" data-spotlight>
+              <div class="ops-panel-head">
+                <div>
+                  <h3 class="ops-h3">Frame time</h3>
+                  <p class="muted ops-small">Measured from the shared ticker in this tab. Budget line at 16.7 ms (60 Hz).</p>
+                </div>
+                <button class="btn btn-ghost btn-sm" type="button" data-sampling-toggle aria-pressed="false">Pause sampling</button>
+              </div>
+              <figure class="ops-chart">
+                <svg data-chart viewBox="0 0 600 180" preserveAspectRatio="none" role="img" aria-labelledby="chart-summary">
+                  <g class="ops-chart-grid" aria-hidden="true">
+                    <line x1="0" x2="600" y1="45" y2="45" />
+                    <line x1="0" x2="600" y1="90" y2="90" />
+                    <line x1="0" x2="600" y1="135" y2="135" />
+                  </g>
+                  <line class="ops-chart-budget" data-budget-line x1="0" x2="600" y1="0" y2="0" />
+                  <path class="ops-chart-area" data-chart-area d="" />
+                  <path class="ops-chart-line" data-chart-line d="" />
+                </svg>
+                <div class="ops-chart-axis mono" aria-hidden="true"><span data-axis-max>33 ms</span><span>0 ms</span></div>
+                <figcaption id="chart-summary" class="visually-hidden" aria-live="off" data-chart-summary>Collecting frame samples.</figcaption>
+              </figure>
+              <dl class="ops-readouts">
+                <div><dt class="label">p50</dt><dd class="mono"><span data-readout="p50">—</span> ms</dd></div>
+                <div><dt class="label">p95</dt><dd class="mono"><span data-readout="p95">—</span> ms</dd></div>
+                <div><dt class="label">Over budget</dt><dd class="mono"><span data-readout="dropped">0</span> frames</dd></div>
+                <div><dt class="label">State</dt><dd class="mono" data-readout="state">sampling</dd></div>
+              </dl>
+            </div>
+
+            <div class="panel ops-caps" data-spotlight>
+              <h3 class="ops-h3">This device</h3>
+              <p class="muted ops-small">From <code class="mono">capabilities()</code> and <code class="mono">deviceTier()</code> in @snowbros/core.</p>
+              <dl class="ops-dl" data-caps></dl>
+            </div>
+
+            <div class="panel ops-registry" data-spotlight aria-labelledby="registry-title">
+              <div class="ops-panel-head">
+                <div>
+                  <h3 id="registry-title" class="ops-h3">npm registry</h3>
+                  <p class="muted ops-small">
+                    The toolkit packages are not published yet. This checks <span class="mono">@snowbros/atlas</span>, an existing
+                    SNOWBROS package, to confirm the scope is reachable.
+                  </p>
+                </div>
+                <button class="btn btn-accent btn-sm" type="button" data-registry-check>Check npm registry</button>
+              </div>
+              <div class="ops-registry-body" data-registry-state="idle" aria-live="polite" aria-busy="false">
+                <p class="muted ops-small" data-registry-idle>Not checked yet.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================ SETTINGS -->
+        <section id="settings" class="ops-section" aria-labelledby="settings-title" data-section="settings">
+          <div class="ops-section-head">
+            <div>
+              <p class="label">04 — Settings</p>
+              <h2 id="settings-title" class="ops-h2">Settings</h2>
+            </div>
+          </div>
+
+          <form class="panel ops-form" novalidate data-settings>
+            <div class="ops-form-row">
+              <div class="ops-form-label">
+                <label for="set-budget">Frame budget</label>
+                <p id="set-budget-hint" class="muted ops-small">Milliseconds per frame, 4–50. Draws the budget line.</p>
+              </div>
+              <div class="ops-form-control">
+                <div class="ops-input-unit">
+                  <input id="set-budget" name="budget" type="number" inputmode="decimal" min="4" max="50" step="0.1" value="16.7" aria-describedby="set-budget-hint set-budget-error" required />
+                  <span class="mono muted" aria-hidden="true">ms</span>
+                </div>
+                <p id="set-budget-error" class="ops-error" data-error-for="budget"></p>
+              </div>
+            </div>
+            <div class="ops-form-row">
+              <div class="ops-form-label">
+                <label for="set-window">Sample window</label>
+                <p id="set-window-hint" class="muted ops-small">How many frames the chart keeps.</p>
+              </div>
+              <div class="ops-form-control">
+                <select id="set-window" name="window" aria-describedby="set-window-hint">
+                  <option value="120">120 frames</option>
+                  <option value="240" selected>240 frames</option>
+                  <option value="480">480 frames</option>
+                </select>
+              </div>
+            </div>
+            <div class="ops-form-row">
+              <div class="ops-form-label">
+                <label for="set-email">Notification email <span class="muted">(optional)</span></label>
+                <p id="set-email-hint" class="muted ops-small">Stored in this browser only. Nothing is sent.</p>
+              </div>
+              <div class="ops-form-control">
+                <input id="set-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" aria-describedby="set-email-hint set-email-error" />
+                <p id="set-email-error" class="ops-error" data-error-for="email"></p>
+              </div>
+            </div>
+            <div class="ops-form-row">
+              <div class="ops-form-label">
+                <span id="set-motion-label">Reduce motion</span>
+                <p id="set-motion-hint" class="muted ops-small">Overrides animation site-wide. Applies immediately.</p>
+              </div>
+              <div class="ops-form-control">
+                <button type="button" class="ops-switch" role="switch" aria-checked="false" aria-labelledby="set-motion-label" aria-describedby="set-motion-hint" data-motion-switch>
+                  <span class="ops-switch-thumb" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+            <div class="ops-form-actions">
+              <p class="muted ops-small" data-form-status></p>
+              <button class="btn btn-accent" type="submit">Save settings</button>
+            </div>
+          </form>
+        </section>
+
+        <footer class="ops-footer">
+          <p class="mono muted">SNOWBROS Creative Engineering · MIT OR Apache-2.0 · Demo page with local data</p>
+        </footer>
+      </main>
+    </div>
+
+    <!-- ============================================================ COMMAND PALETTE -->
+    <div class="ops-palette-backdrop" data-palette hidden>
+      <div class="ops-palette" role="dialog" aria-modal="true" aria-labelledby="palette-title" data-palette-dialog>
+        <h2 id="palette-title" class="visually-hidden">Command palette</h2>
+        <div class="ops-palette-input">
+          <svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
+          <input
+            type="text"
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="palette-list"
+            aria-autocomplete="list"
+            aria-label="Search actions"
+            placeholder="Type a command…"
+            autocomplete="off"
+            spellcheck="false"
+            data-palette-input
+          />
+          <kbd class="ops-kbd">Esc</kbd>
+        </div>
+        <ul id="palette-list" class="ops-palette-list" role="listbox" aria-label="Actions" data-palette-list></ul>
+        <p class="ops-palette-empty muted" data-palette-empty hidden>No matching actions.</p>
+        <p class="visually-hidden" aria-live="polite" data-palette-count></p>
+      </div>
+    </div>
+
+    <div class="ops-toasts" data-toasts aria-live="polite" aria-atomic="false"></div>
+
+    <script type="module" src="./src/pages/dashboard.ts"></script>
+  </body>
+</html>

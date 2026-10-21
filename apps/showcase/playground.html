@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Playground — SNOWBROS Creative Engineering</title>
+    <meta
+      name="description"
+      content="Explore and configure SNOWBROS motion, effects and 3D patterns live, then copy working code."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0c0e' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M12 2v20M3.34 7l17.32 10M3.34 17 20.66 7'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+    <script type="module" src="/src/pages/playground.ts"></script>
+  </head>
+  <body class="pg-body">
+    <a class="skip-link" href="#pg-main">Skip to playground</a>
+
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="./index.html" data-brand>SNOWBROS</a>
+        <nav aria-label="Primary">
+          <ul class="nav-links">
+            <li><a href="./index.html">Overview</a></li>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./playground.html" aria-current="page">Playground</a></li>
+          </ul>
+        </nav>
+        <div class="pg-header-actions">
+          <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false">
+            <span data-motion-label>Motion: full</span>
+          </button>
+          <button
+            class="icon-btn menu-toggle"
+            type="button"
+            data-menu-toggle
+            aria-controls="menu"
+            aria-expanded="false"
+          >
+            <span class="visually-hidden">Open menu</span>
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6h14M2 12h14" /></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="menu-panel" id="menu" data-open="false" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="wrap pg-menu-head">
+        <span class="label">Menu</span>
+        <button class="icon-btn" type="button" data-menu-close style="color: inherit; border-color: rgba(255,255,255,.25)">
+          <span class="visually-hidden">Close menu</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m4 4 10 10M14 4 4 14" /></svg>
+        </button>
+      </div>
+      <ol>
+        <li><a href="./index.html">Overview</a></li>
+        <li><a href="./dashboard.html">Dashboard</a></li>
+        <li><a href="./playground.html" aria-current="page">Playground</a></li>
+      </ol>
+      <div class="menu-foot">
+        <span class="label">SNOWBROS Creative Engineering</span>
+        <span class="label">MIT OR Apache-2.0</span>
+      </div>
+    </div>
+
+    <main id="pg-main" class="pg">
+      <div class="pg-intro">
+        <p class="label">Playground / 10 patterns</p>
+        <h1 class="pg-title">Tune it, <em>then take it.</em></h1>
+        <p class="pg-sub muted">
+          Every pattern below runs on the published SNOWBROS packages. Change a value, the pattern is
+          disposed and rebuilt. The snippet always matches what you see.
+        </p>
+      </div>
+
+      <div class="pg-layout">
+        <nav class="pg-nav" aria-label="Patterns">
+          <p class="label pg-col-label" id="pg-tabs-label">Patterns</p>
+          <div class="pg-tabs" role="tablist" aria-orientation="vertical" aria-labelledby="pg-tabs-label" id="pg-tabs"></div>
+        </nav>
+
+        <section class="pg-stage-col" aria-label="Live stage">
+          <div class="pg-stage-head">
+            <div>
+              <p class="label" id="pg-pattern-index">01 / 10</p>
+              <h2 class="pg-pattern-title" id="pg-pattern-title">Easing lab</h2>
+            </div>
+            <p class="pg-pattern-summary muted" id="pg-pattern-summary"></p>
+          </div>
+          <div class="pg-stage" id="pg-stage" role="tabpanel" aria-labelledby="pg-pattern-title" tabindex="-1">
+            <div class="pg-banner" id="pg-banner" hidden>
+              <span class="label">Reduced motion</span>
+              <span id="pg-banner-text"></span>
+            </div>
+            <div class="pg-stage-body" id="pg-stage-body"></div>
+          </div>
+          <div class="pg-stage-foot">
+            <span class="label" id="pg-lifecycle">Lifecycle: —</span>
+            <button class="btn btn-ghost btn-sm" type="button" id="pg-replay">Replay</button>
+          </div>
+        </section>
+
+        <aside class="pg-panel" aria-label="Controls and code">
+          <form class="pg-controls" id="pg-controls" aria-labelledby="pg-controls-label" onsubmit="return false">
+            <p class="label pg-col-label" id="pg-controls-label">Controls</p>
+            <div id="pg-control-list"></div>
+          </form>
+          <div class="pg-code">
+            <div class="pg-code-head">
+              <p class="label" id="pg-code-label">Code</p>
+              <button class="btn btn-sm" type="button" id="pg-copy">Copy</button>
+            </div>
+            <pre aria-labelledby="pg-code-label" tabindex="0"><code id="pg-code"></code></pre>
+            <p class="visually-hidden" role="status" id="pg-status"></p>
+            <p class="label pg-copy-note" aria-hidden="true" id="pg-copy-note"></p>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </body>
+</html>

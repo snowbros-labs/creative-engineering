@@ -1,0 +1,16 @@
+name: Feature or pattern request
+description: Propose a capability, pattern or platform profile
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to build, and what blocks you today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: API sketch, references (links), reduced-motion behaviour, performance considerations.
