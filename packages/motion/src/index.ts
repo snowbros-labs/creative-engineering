@@ -1,5 +1,5 @@
-export { flip, type FlipOptions, viewTransition } from './layout.js';
-export { inView, type InViewOptions } from './observe.js';
+export { type FlipOptions, flip, viewTransition } from './layout.js';
+export { type InViewOptions, inView } from './observe.js';
 export {
   type RevealHandle,
   type RevealOptions,
@@ -22,7 +22,13 @@ export {
   scrub,
 } from './scroll.js';
 export { type SplitOptions, type SplitResult, splitText } from './split.js';
-export { accessor, clearTransformCache, composeTransform, resolveTargets, type TargetInput } from './targets.js';
+export {
+  accessor,
+  clearTransformCache,
+  composeTransform,
+  resolveTargets,
+  type TargetInput,
+} from './targets.js';
 export {
   animate,
   type Position,

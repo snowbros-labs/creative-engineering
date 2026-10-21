@@ -22,7 +22,7 @@
 
     <header class="site-header ops-topbar">
       <div class="ops-topbar-inner">
-        <a class="brand" href="./index.html">
+        <a class="brand" href="../">
           <span data-brand-mark></span>
           <span>SNOWBROS</span>
           <span class="ops-product">Toolkit Ops</span>
@@ -36,7 +36,7 @@
           <button class="btn btn-ghost btn-sm ops-hide-sm" type="button" data-motion-toggle aria-pressed="false">
             <span data-motion-label>Motion: full</span>
           </button>
-          <a class="btn btn-ghost btn-sm ops-hide-sm" href="./index.html">Back to site</a>
+          <a class="btn btn-ghost btn-sm ops-hide-sm" href="../">Back to site</a>
           <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
             <span class="visually-hidden">Open navigation</span>
             <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 7h14M3 13h14"/></svg>
@@ -63,7 +63,7 @@
         <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false" style="--btn-fg: var(--sb-color-snow)">
           <span data-motion-label>Motion: full</span>
         </button>
-        <a class="label" href="./index.html" style="color: var(--sb-color-snow)">Back to site</a>
+        <a class="label" href="../" style="color: var(--sb-color-snow)">Back to site</a>
       </div>
     </div>
 
@@ -96,28 +96,28 @@
             </div>
           </div>
 
-          <div class="ops-stats" role="list">
-            <div class="ops-stat panel" role="listitem">
+          <ul class="ops-stats">
+            <li class="ops-stat panel">
               <p class="label">Packages</p>
               <p class="ops-stat-value" data-stat="packages">8</p>
               <p class="ops-stat-note">core → adapters</p>
-            </div>
-            <div class="ops-stat panel" role="listitem">
+            </li>
+            <li class="ops-stat panel">
               <p class="label">Unit tests</p>
-              <p class="ops-stat-value" data-stat="tests">84</p>
+              <p class="ops-stat-value" data-stat="tests">94</p>
               <p class="ops-stat-note">Vitest, last local run</p>
-            </div>
-            <div class="ops-stat panel" role="listitem">
+            </li>
+            <li class="ops-stat panel">
               <p class="label">Frame p95</p>
               <p class="ops-stat-value"><span data-stat="p95">—</span><span class="ops-unit">ms</span></p>
               <p class="ops-stat-note"><span class="ops-live" aria-hidden="true"></span>Live, this tab</p>
-            </div>
-            <div class="ops-stat panel" role="listitem">
+            </li>
+            <li class="ops-stat panel">
               <p class="label">Runtime deps</p>
               <p class="ops-stat-value">0</p>
               <p class="ops-stat-note">three is an optional peer</p>
-            </div>
-          </div>
+            </li>
+          </ul>
 
           <aside class="ops-onboarding panel" aria-labelledby="onboarding-title" data-onboarding>
             <div class="ops-onboarding-head">
@@ -150,12 +150,13 @@
               <svg viewBox="0 0 16 16" aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
               <input id="pkg-filter" type="search" placeholder="Filter by name or description" autocomplete="off" />
             </div>
-            <div class="ops-segmented" role="radiogroup" aria-label="Status">
-              <button type="button" role="radio" aria-checked="true" data-status="all">All</button>
-              <button type="button" role="radio" aria-checked="false" data-status="stable">Stable</button>
-              <button type="button" role="radio" aria-checked="false" data-status="beta">Beta</button>
-              <button type="button" role="radio" aria-checked="false" data-status="experimental">Experimental</button>
-            </div>
+            <fieldset class="ops-segmented">
+              <legend class="visually-hidden">Status</legend>
+              <label><input type="radio" name="status" value="all" checked /><span class="ops-seg">All</span></label>
+              <label><input type="radio" name="status" value="stable" /><span class="ops-seg">Stable</span></label>
+              <label><input type="radio" name="status" value="beta" /><span class="ops-seg">Beta</span></label>
+              <label><input type="radio" name="status" value="experimental" /><span class="ops-seg">Experimental</span></label>
+            </fieldset>
             <p class="ops-count mono" aria-live="polite" data-result-count>8 packages</p>
           </div>
 
@@ -207,7 +208,8 @@
                 <button class="btn btn-ghost btn-sm" type="button" data-sampling-toggle aria-pressed="false">Pause sampling</button>
               </div>
               <figure class="ops-chart">
-                <svg data-chart viewBox="0 0 600 180" preserveAspectRatio="none" role="img" aria-labelledby="chart-summary">
+                <svg data-chart viewBox="0 0 600 180" preserveAspectRatio="none" role="img" aria-labelledby="chart-title" aria-describedby="chart-summary">
+                  <title id="chart-title">Frame time, last samples</title>
                   <g class="ops-chart-grid" aria-hidden="true">
                     <line x1="0" x2="600" y1="45" y2="45" />
                     <line x1="0" x2="600" y1="90" y2="90" />
@@ -234,7 +236,7 @@
               <dl class="ops-dl" data-caps></dl>
             </div>
 
-            <div class="panel ops-registry" data-spotlight aria-labelledby="registry-title">
+            <section class="panel ops-registry" data-spotlight aria-labelledby="registry-title">
               <div class="ops-panel-head">
                 <div>
                   <h3 id="registry-title" class="ops-h3">npm registry</h3>
@@ -248,7 +250,7 @@
               <div class="ops-registry-body" data-registry-state="idle" aria-live="polite" aria-busy="false">
                 <p class="muted ops-small" data-registry-idle>Not checked yet.</p>
               </div>
-            </div>
+            </section>
           </div>
         </section>
 
@@ -342,7 +344,7 @@
           />
           <kbd class="ops-kbd">Esc</kbd>
         </div>
-        <ul id="palette-list" class="ops-palette-list" role="listbox" aria-label="Actions" data-palette-list></ul>
+        <div id="palette-list" class="ops-palette-list" role="listbox" aria-label="Actions" data-palette-list></div>
         <p class="ops-palette-empty muted" data-palette-empty hidden>No matching actions.</p>
         <p class="visually-hidden" aria-live="polite" data-palette-count></p>
       </div>

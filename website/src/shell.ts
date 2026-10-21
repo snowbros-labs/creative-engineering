@@ -2,12 +2,7 @@
  * Shared page shell: header hide-on-scroll, accessible mobile menu, motion toggle.
  * Every page calls `initShell()` once.
  */
-import {
-  createScope,
-  motionPreference,
-  type Scope,
-  setMotionPreference,
-} from '@snowbros/core';
+import { createScope, motionPreference, type Scope, setMotionPreference } from '@snowbros/core';
 import { animate } from '@snowbros/motion';
 
 const MOTION_KEY = 'sb-motion';
@@ -66,7 +61,9 @@ function initMenu(scope: Scope) {
   const links = Array.from(panel.querySelectorAll<HTMLAnchorElement>('a'));
 
   const focusables = () =>
-    Array.from(panel.querySelectorAll<HTMLElement>('a, button')).filter((el) => !el.hasAttribute('disabled'));
+    Array.from(panel.querySelectorAll<HTMLElement>('a, button')).filter(
+      (el) => !el.hasAttribute('disabled'),
+    );
 
   const setOpen = (open: boolean) => {
     panel.dataset.open = String(open);
@@ -74,7 +71,11 @@ function initMenu(scope: Scope) {
     panel.toggleAttribute('inert', !open);
     document.documentElement.style.overflow = open ? 'hidden' : '';
     if (open) {
-      animate(links, { y: ['105%', '0%'] }, { duration: 0.7, stagger: 0.05, delay: 0.12, ease: 'editorial', reducedMotion: 'skip' });
+      animate(
+        links,
+        { y: ['105%', '0%'] },
+        { duration: 0.7, stagger: 0.05, delay: 0.12, ease: 'editorial', reducedMotion: 'skip' },
+      );
       (links[0] ?? close)?.focus({ preventScroll: true });
     } else {
       toggle.focus({ preventScroll: true });

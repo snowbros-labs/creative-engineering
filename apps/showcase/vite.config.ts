@@ -10,9 +10,16 @@ const packagesDir = fileURLToPath(new URL('../../packages/', import.meta.url));
 const alias = readdirSync(packagesDir).flatMap((name) => [
   { find: new RegExp(`^@snowbros/${name}$`), replacement: `${packagesDir}${name}/src/index.ts` },
 ]);
-alias.push({ find: /^@snowbros\/tokens\/tokens\.css$/, replacement: `${packagesDir}tokens/dist/tokens.css` });
+alias.push({
+  find: /^@snowbros\/tokens\/tokens\.css$/,
+  replacement: `${packagesDir}tokens/dist/tokens.css`,
+});
 
-export default defineConfig({
+// Deployed under the flagship site at /demos/. Relative base in builds keeps it portable
+// (GitHub Pages project paths); dev serves at /demos/ so the website dev server can proxy it.
+export default defineConfig(({ command, isPreview }) => ({
+  base: command === 'build' || isPreview ? './' : '/demos/',
+  server: { port: 5180, strictPort: true },
   resolve: { alias },
   build: {
     target: 'es2022',
@@ -23,4 +30,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

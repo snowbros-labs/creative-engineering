@@ -17,7 +17,11 @@ export interface InViewOptions {
  */
 export function inView(
   targets: TargetInput,
-  onEnter: (el: Element, entry: IntersectionObserverEntry) => void | ((entry: IntersectionObserverEntry) => void),
+  onEnter: (
+    el: Element,
+    entry: IntersectionObserverEntry,
+    // biome-ignore lint/suspicious/noConfusingVoidType: callback may return nothing or an exit handler
+  ) => void | ((entry: IntersectionObserverEntry) => void),
   options: InViewOptions = {},
 ): PatternHandle {
   const scope = createScope();

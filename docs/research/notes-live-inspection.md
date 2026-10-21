@@ -18,6 +18,7 @@
 **What failed:** nothing was blocked. The CSP blocked one Meta Pixel endpoint, which is a console error only.
 
 ### VERIFIED
+
 - **Framework: Next.js App Router with React Server Components streaming.**
   - Inline `self.__next_f.push(...)`, `/_next/static/chunks/main-app-*.js`, `app/page-d46e8f28d46d5e5f.js`, `app/layout-*.js` and route-group chunks (`app/(app-shell)/...`).
   - `window.next` is present and there is no `__NEXT_DATA__`, which means it is not the Pages Router.
@@ -69,7 +70,7 @@
   - Config flags `preloaderEnabledDesktop:!0, preloaderEnabledMobile:!1` (desktop only).
   - Shows a list of greetings ("namaskar" in many Indic scripts) and has an SVG path builder (`"M0 0 L"...`), probably a wipe or reveal shape.
 - **Nav shift persistence:** an inline script reads sessionStorage `cvnt.heroNavShift` before hydration to set `--hero-nav-shift` on `<html>`, which avoids a layout jump.
-- **Fonts:** Inter (variable 100–900), DM Serif Text (italic display words such as *more.* and *proof*), Cal Sans, and "TietopOi". Two preloaded `.woff2` files (344 KB and 37 KB) and two `.ttf` files.
+- **Fonts:** Inter (variable 100–900), DM Serif Text (italic display words such as _more._ and _proof_), Cal Sans, and "TietopOi". Two preloaded `.woff2` files (344 KB and 37 KB) and two `.ttf` files.
 - **Media:** about 22 `.webp` product and gallery images, under `/media/products/...`. No video elements and no image sequences. The page chunk contains a video-extension whitelist (`.mp4 .webm .mov .m4v .ogv .ogg .m3u8`) for product media, but no video loaded on the home page.
 - **prefers-reduced-motion:**
   - The global CSS reset `7912422ad3221708.css` sets `@media (prefers-reduced-motion:reduce){*,:after,:before{animation-duration:.01ms!important;transition-duration:.01ms!important;...}}`.
@@ -82,10 +83,11 @@
   - The CSP lists Supabase, Razorpay and PostHog. `badge.glb` and `lanyard3.png` are referenced in a shared chunk (a lanyard or badge feature, probably on another route) and were not loaded on the home page.
 
 ### OBSERVED
+
 - **First visit, desktop:** a white full-screen preloader cycles greetings in different scripts (`cvnt-desktop-preloader-a.png`, `-b.png`). It clears within about 2–3 s to the hero (`-c.png`).
 - **Repeat visits in the same session skip it.** On mobile at 390px no preloader appeared, which matches the config flag.
 - **Hero:** a cut-out model photo in front of a huge gradient "001" numeral, with the faint particle field behind (`cvnt-desktop-00-load.png`, `cvnt-mobile-00-top.png`).
-- **Section-02:** the headline "all that you deserve. and some *more.*" stays pinned while a 3D textured pouch (newspaper or map print) scrolls up through and over the text, rotating (`-01-y1000`, `-02-y1800`, `-03-y2600`, `cvnt-mobile-02-pouch.png`). The pouch canvas itself scrolls with the document; only the text is sticky.
+- **Section-02:** the headline "all that you deserve. and some _more._" stays pinned while a 3D textured pouch (newspaper or map print) scrolls up through and over the text, rotating (`-01-y1000`, `-02-y1800`, `-03-y2600`, `cvnt-mobile-02-pouch.png`). The pouch canvas itself scrolls with the document; only the text is sticky.
 - **Section-02b:** "the proof writes itself." is pinned while UGC photo tiles scale up from alternating bottom corners and pass over it in a staggered grid (`-05-y4700`, `-06-y6200`, `-07-y7600`).
 - **Product strip:** cut-out cats wearing the jewellery, with name, colour and price (`-08-y8500`).
 - **Footer:** a fixed footer is revealed from behind the content (fixed `bottom-0 z-0` layer plus a `100svh` pointer-events-none spacer `#site-footer`), with an orange gradient and a big "c✱nt" wordmark (`-09-bottom`).
@@ -93,17 +95,20 @@
 - **Mobile:** both three.js canvases are still created at 390px, and the pouch still renders.
 
 ### INFERRED
+
 - **The preloader likely exits with an SVG path or clip wipe.** Reason: the path builder sits next to the preloader constants. I did not capture the exit transition frame by frame.
 - **The pouch's vertical travel is driven by the document scroll, not a scroll-to-3D-camera mapping.** Reason: the canvas `top` changes 1:1 with scrollY (+356 to -331 across 800 px), and the 79605 chunk has no scroll listener, only pointer, wheel and time. The rotation seen while scrolling is the idle auto-spin and damped motion.
 - **GSAP on the home page is a shared-chunk side effect**, not the home choreography. Reason: same import batch as three, and there is no gsap reference in the home page chunk.
 - **The device-tier heuristics exist to protect mid- and low-end Android, a big share of Indian mobile traffic.** Reason: thresholds such as `hardwareConcurrency<=6` and `deviceMemory<=4` and the 36 fps cap.
 
 ### UNKNOWN
+
 - Exact poly count and texture formats inside `packaging.glb` (not downloaded or parsed).
 - Whether the mask-reveal section (`HomeMaskRevealSection`, `aria-hidden`) uses CSS `mask-image` or a canvas. It was empty or decorative when I sampled it.
 - Exact preloader timing and easing.
 
 ### Transferable techniques
+
 1. **Sticky-in-tall-section pinning** (`height: 360–420vh` with `sticky top-0 h-[100svh]` inside) instead of a pinning library. It works with native scroll and is robust on mobile.
 2. **One rAF-throttled passive scroll listener** that maps `getBoundingClientRect` to a 0–1 progress, then a piecewise easing curve, then writes `transform` directly. No React state per frame.
 3. **Corner-anchored `scale()` reveals** (alternating `transform-origin: bottom left` and `bottom right`) for an editorial photo-wall feel.
@@ -119,6 +124,7 @@
 11. **Global reduced-motion CSS reset** plus per-component overrides.
 
 ### Do not copy
+
 - The brand: "c✱nt" wordmark, "001" hero numeral treatment, copy lines ("not for everyone, clearly.", "the proof writes itself."), photography and models, product imagery, cat cut-outs, the newspaper/map pouch texture and the `packaging.glb` asset.
 - The exact easing breakpoint constants and the specific hero composition (cut-out portrait over a giant numeral) as a recognizable layout.
 - The greeting-cycle preloader content and sequence as-is. Re-imagine it for our own identity.
@@ -132,6 +138,7 @@
 **What failed:** asset sizes for cross-origin files read as 0 KB (no Timing-Allow-Origin header), so sizes are unknown.
 
 ### VERIFIED
+
 - **Platform: Webflow.** `<html data-wf-domain="landonorris.com" data-wf-site=... class="w-mod-js lenis">`, `window.Webflow`, jQuery 3.5.1 from the Webflow CDN, and assets on `cdn.prod.website-files.com`.
 - **Custom app bundle hosted by the studio:** `https://lando.itsoffbrand.io/dev-js/lando-by-OFF+BRAND.05.js` (about 1.3 MB unminified-size text). The asset base `assets.itsoffbrand.io/lando/` points to the agency OFF+BRAND.
 - **Libraries:**
@@ -152,6 +159,7 @@
 - **Source map:** `lando-by-OFF+BRAND.05.js.map` returns 404.
 
 ### OBSERVED
+
 - **Hero:** a portrait of Lando with a 3D helmet (wireframe and visor) partially overlaid. A cursor-driven reveal of the helmet over the face, with topographic contour lines in the background (`lando-desktop-00-top.png`).
 - **Mobile:** the same hero with a "TAP TO LOCK" control, a touch adaptation of the hover reveal (`lando-mobile-00-top.png`).
 - **Scroll:** marquee rows of big type ("…DID IT AT…", "…BRITISH G…") with a neon-yellow signature (Rive) drawing over a photo. The theme switches to dark olive (`lando-desktop-01-y1200.png`).
@@ -159,13 +167,16 @@
 - No ScrollTrigger `.pin-spacer` elements at the sampled positions. 4 `position: sticky` elements were present.
 
 ### INFERRED
+
 - **One full-screen three.js canvas is the persistent WebGL layer across sections** (helmet, disco ball, track lines), synced to Lenis and GSAP. Reason: there is a single viewport-sized `.gl` canvas, and models load at startup.
 - **The MSDF fonts mean some headline text renders in WebGL**, probably for the distortion and reveal effects.
 
 ### UNKNOWN
+
 - Asset byte sizes. Whether `tracks-06-test.glb` is used visibly. The exact post-processing passes.
 
 ### Transferable techniques
+
 - Webflow as the CMS and layout shell, with an externally hosted custom JS bundle for WebGL, Lenis and GSAP (a clean split between designers and developers).
 - One persistent full-screen WebGL canvas behind DOM content, plus HDRI lighting and DRACO-compressed GLBs.
 - Rive for vector micro-animations (signature draw, buttons, page transition), which are cheaper than video or Lottie for interactive state.
@@ -173,6 +184,7 @@
 - MSDF text in WebGL for type that has to live inside the 3D scene.
 
 ### Do not copy
+
 - Lando's likeness, helmet designs, signature, McLaren and sponsor marks, the LN4 logo, the Brier and Mona Sans pairing as a whole look, the topographic-line art direction, and OFF+BRAND's bundle code and assets.
 
 ---
@@ -186,6 +198,7 @@
 - `document.querySelectorAll('canvas')` returned 0 even while the 3D title rendered. Cause UNKNOWN.
 
 ### VERIFIED
+
 - **Build:** Vite-style hashed assets (`/assets/App3D-DwM1eiaC.js`, about 1.9 MB) and Svelte 5 (`window.__svelte` with `PUBLIC_VERSION="5"`).
 - **3D:** three.js r180 (`window.__THREE__ === "180"`), WebGL2 context creation path, `BatchedMesh` and `InstancedMesh` heavy, `EffectComposer`.
   - KTX2Loader with `assets/libs/basis/basis_transcoder.js`; 10 `.ktx2` textures.
@@ -197,23 +210,28 @@
 - **Source map:** a request for `App3D-*.js.map` returned `200 text/html`, which is the SPA fallback page, not a real map. So no public source map, as far as this check shows.
 
 ### OBSERVED
+
 - **Title screen:** a toon-shaded tiny planet (houses, trees, water, cables) behind chunky 3D "MESSENGER" letters and a yellow "BEGIN" button on a teal background with floating particles (`abeto-desktop-00-load.png`).
 - **Mobile loader:** a hand-drawn envelope "LOADING" screen.
 
 ### INFERRED
+
 - **Rendering may use OffscreenCanvas in a worker**, or a canvas the page does not expose in the light DOM. Reason: zero canvases in the DOM, plus the OffscreenCanvas detection and the worker set. Not confirmed.
 - **It is a small multiplayer web game**, not a scroll site. Reason: character physics events (`character_physics_land`), dialogue audio and the wss server.
 
 ### UNKNOWN
+
 - Gameplay, controls and camera system. Whether mobile eventually loads.
 
 ### Transferable techniques
+
 - Raw `.drc` geometry plus KTX2/Basis textures, decoded in dedicated workers.
 - `BatchedMesh` and `InstancedMesh` for many props.
 - Svelte 5 as a thin UI layer over an imperative three.js app.
 - A designed loader and title screen that also unlock audio on the first user gesture.
 
 ### Do not copy
+
 - Abeto's art style, the planet and title lettering, character designs, audio, and their multiplayer endpoint.
 
 ---
@@ -224,6 +242,7 @@
 **What failed:** nothing.
 
 ### VERIFIED
+
 - **Next.js Pages Router:** `<script id="__NEXT_DATA__">` with buildId `XVulu8M4Opvscv3w5JvSn`, `/_next/static/chunks/pages/_app-*.js`, `pages/index-*.js`.
 - **No three.js on the marketing homepage:** `window.__THREE__` undefined and no `<canvas>`.
 - **The `@theatre/core`, `@theatre/studio` and `@react-three` strings in chunk `352-*.js` (about 3.7 MB) are bundled docs content (MDX)**, e.g. "Upgrade by running `npm install @theatre/core@latest @theatre/studio@latest @theatre/r3f@latest`". They are not the runtime library.
@@ -231,24 +250,28 @@
 - A console 404 for `/fonts/virgil.woff2`, which is preloaded but missing.
 
 ### OBSERVED
+
 - A dark landing page, "Powerful motion design in the browser", with a large video player showing a Theatre.js 3D title demo (`theatrejs-desktop-00-top.png`).
 
 ### INFERRED
+
 - The site shows Theatre.js through recorded video rather than live WebGL on the landing page. Reason: no canvas and Mux HLS only.
 
 ### Transferable techniques
+
 - For a toolkit's marketing page, show heavy 3D demos as adaptive-bitrate video (HLS via Mux) and keep live WebGL for the docs and examples.
 
 ### Do not copy
+
 - Theatre.js branding, demo footage and docs content.
 
 ---
 
 ## Cross-site summary
 
-| Site | Framework | 3D | Scroll | Motion libs | Assets of note |
-|---|---|---|---|---|---|
-| cvnt.in | Next.js App Router + Tailwind | vanilla three r171 (2 canvases) | native + CSS sticky + custom rAF | GSAP 3.14.2 (other routes) | 1 GLB, procedural env, webp |
-| landonorris.com | Webflow + external bundle | three r174, full-screen | Lenis 1.1.20 + GSAP ScrollTrigger | GSAP 3.13, Rive, Taxi.js | 3 GLB (DRACO), 2 HDR, MSDF fonts, 8 .riv |
-| messenger.abeto.co | Vite + Svelte 5 | three r180, Batched/Instanced, workers | n/a (game) | — | 15 .drc, 10 .ktx2, 53 .ogg, wss |
-| theatrejs.com | Next.js Pages Router | none on landing | native | — | Mux HLS video |
+| Site               | Framework                     | 3D                                     | Scroll                            | Motion libs                | Assets of note                           |
+| ------------------ | ----------------------------- | -------------------------------------- | --------------------------------- | -------------------------- | ---------------------------------------- |
+| cvnt.in            | Next.js App Router + Tailwind | vanilla three r171 (2 canvases)        | native + CSS sticky + custom rAF  | GSAP 3.14.2 (other routes) | 1 GLB, procedural env, webp              |
+| landonorris.com    | Webflow + external bundle     | three r174, full-screen                | Lenis 1.1.20 + GSAP ScrollTrigger | GSAP 3.13, Rive, Taxi.js   | 3 GLB (DRACO), 2 HDR, MSDF fonts, 8 .riv |
+| messenger.abeto.co | Vite + Svelte 5               | three r180, Batched/Instanced, workers | n/a (game)                        | —                          | 15 .drc, 10 .ktx2, 53 .ogg, wss          |
+| theatrejs.com      | Next.js Pages Router          | none on landing                        | native                            | —                          | Mux HLS video                            |

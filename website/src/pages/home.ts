@@ -38,13 +38,21 @@ if (brand) brand.insertAdjacentHTML('afterbegin', brandMark);
 // ----------------------------------------------------------------- 01 hero
 // Title: masked line rise on load. Reduced motion → short fade (reveal default policy `fade`).
 const heroTitle = $('.hero-title');
-if (heroTitle) shell.add(revealText(heroTitle, { by: 'lines', preset: 'rise', trigger: 'load', delay: 0.15 }));
+if (heroTitle)
+  shell.add(revealText(heroTitle, { by: 'lines', preset: 'rise', trigger: 'load', delay: 0.15 }));
 
 // Snow-drift flow field. Reduced motion → one static frame (fx policy).
 const heroField = $<HTMLCanvasElement>('.hero-field');
 if (heroField) {
   shell.add(
-    flowField(heroField, { color: 'rgba(11, 12, 14, 0.07)', density: 0.6, speed: 0.5, lineWidth: 1, fade: 0.035, seed: 7 }),
+    flowField(heroField, {
+      color: 'rgba(11, 12, 14, 0.07)',
+      density: 0.6,
+      speed: 0.5,
+      lineWidth: 1,
+      fade: 0.035,
+      seed: 7,
+    }),
   );
 }
 
@@ -164,9 +172,10 @@ if (sortBtn && list) {
     await flip(
       items,
       () => {
-        items
-          .sort((a, b) => (Number(a.dataset.p) - Number(b.dataset.p)) * (ascending ? 1 : -1))
-          .forEach((li) => list.appendChild(li));
+        const sorted = items.sort(
+          (a, b) => (Number(a.dataset.p) - Number(b.dataset.p)) * (ascending ? 1 : -1),
+        );
+        for (const li of sorted) list.appendChild(li);
       },
       { duration: 0.24, ease: 'cubic-bezier(0.2, 0, 0, 1)' },
     );
@@ -180,7 +189,15 @@ const figure = $('[data-image-reveal]');
 const media = $('.reveal-media');
 const drift = $<HTMLCanvasElement>('.drift-canvas');
 if (drift) {
-  shell.add(flowField(drift, { color: 'rgba(243, 242, 238, 0.12)', density: 1, speed: 0.8, fade: 0.05, seed: 21 }));
+  shell.add(
+    flowField(drift, {
+      color: 'rgba(243, 242, 238, 0.12)',
+      density: 1,
+      speed: 0.8,
+      fade: 0.05,
+      seed: 21,
+    }),
+  );
 }
 if (figure && media) {
   const reveal = imageReveal(media, { from: 'bottom', scale: 1.25 });
@@ -217,7 +234,10 @@ for (const btn of $$<HTMLButtonElement>('[data-copy]')) {
         sel?.addRange(range);
       }
     }
-    if (status) status.textContent = ok ? 'Copied to clipboard.' : 'Copy blocked — text selected, press Ctrl/⌘ + C.';
+    if (status)
+      status.textContent = ok
+        ? 'Copied to clipboard.'
+        : 'Copy blocked — text selected, press Ctrl/⌘ + C.';
     btn.textContent = ok ? 'Copied' : 'Select';
     window.setTimeout(() => {
       btn.textContent = 'Copy';

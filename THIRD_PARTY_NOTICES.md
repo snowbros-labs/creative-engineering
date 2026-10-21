@@ -5,13 +5,13 @@ No third-party source code is vendored into the published packages.
 
 ## Runtime peer dependencies (installed by you, not bundled)
 
-| Package | License | Used by |
-|---|---|---|
-| three | MIT | `@snowbros/scene` (peer), website, showcase |
-| react / react-dom | MIT | `@snowbros/react` (peer) |
-| lenis | MIT | optional, via `@snowbros/adapters` |
-| motion | MIT | optional, via `@snowbros/adapters` |
-| gsap | GSAP Standard "no charge" license, not OSI-approved — https://gsap.com/standard-license | optional, via `@snowbros/adapters` structural types only; never imported or bundled |
+| Package           | License                                                                                 | Used by                                                                             |
+| ----------------- | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| three             | MIT                                                                                     | `@snowbros/scene` (peer), website, showcase                                         |
+| react / react-dom | MIT                                                                                     | `@snowbros/react` (peer)                                                            |
+| lenis             | MIT                                                                                     | optional, via `@snowbros/adapters`                                                  |
+| motion            | MIT                                                                                     | optional, via `@snowbros/adapters`                                                  |
+| gsap              | GSAP Standard "no charge" license, not OSI-approved — https://gsap.com/standard-license | optional, via `@snowbros/adapters` structural types only; never imported or bundled |
 
 `@snowbros/scene` dynamically imports loaders from `three/examples/jsm` (MIT, part of three) only when
 the matching option is used.

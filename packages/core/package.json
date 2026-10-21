@@ -15,13 +15,27 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["dist", "src", "README.md", "LICENSE-MIT", "LICENSE-APACHE"],
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE-MIT",
+    "LICENSE-APACHE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "check:package": "publint"
   },
-  "keywords": ["animation", "motion", "easing", "spring", "ticker", "reduced-motion", "snowbros"],
+  "keywords": [
+    "animation",
+    "motion",
+    "easing",
+    "spring",
+    "ticker",
+    "reduced-motion",
+    "snowbros"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/snowbros-labs/creative-engineering.git",
@@ -29,5 +43,7 @@
   },
   "homepage": "https://github.com/snowbros-labs/creative-engineering/tree/main/packages/core#readme",
   "bugs": "https://github.com/snowbros-labs/creative-engineering/issues",
-  "publishConfig": { "access": "public" }
+  "publishConfig": {
+    "access": "public"
+  }
 }

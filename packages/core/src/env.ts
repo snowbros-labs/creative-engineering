@@ -9,9 +9,10 @@ export const isBrowser = typeof window !== 'undefined' && typeof document !== 'u
  */
 export type MotionPreference = 'full' | 'reduced';
 
-const mediaReduced = isBrowser && typeof matchMedia === 'function'
-  ? matchMedia('(prefers-reduced-motion: reduce)')
-  : null;
+const mediaReduced =
+  isBrowser && typeof matchMedia === 'function'
+    ? matchMedia('(prefers-reduced-motion: reduce)')
+    : null;
 
 let override: MotionPreference | null = null;
 const preference = createSignal<MotionPreference>(mediaReduced?.matches ? 'reduced' : 'full');
@@ -93,8 +94,7 @@ export function capabilities(): Capabilities {
     webgl2,
     webgl: webgl2 || probeWebGL(1),
     webgpu: !!nav.gpu,
-    scrollTimeline:
-      typeof CSS !== 'undefined' && !!CSS.supports?.('animation-timeline: scroll()'),
+    scrollTimeline: typeof CSS !== 'undefined' && !!CSS.supports?.('animation-timeline: scroll()'),
     viewTransitions: 'startViewTransition' in document,
     coarsePointer: mq('(pointer: coarse)'),
     hover: mq('(hover: hover)'),

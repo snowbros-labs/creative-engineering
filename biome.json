@@ -18,15 +18,34 @@
     "lineWidth": 100
   },
   "javascript": {
-    "formatter": { "quoteStyle": "single", "semicolons": "always", "trailingCommas": "all" }
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
       "preset": "recommended",
-      "style": { "noNonNullAssertion": "off", "noParameterAssign": "off" },
-      "complexity": { "noForEach": "off" },
-      "suspicious": { "noExplicitAny": "warn" }
+      "style": {
+        "noNonNullAssertion": "off",
+        "noParameterAssign": "off"
+      },
+      "complexity": {
+        "noForEach": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn"
+      }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["docs/research/**/*.md"],
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ]
 }

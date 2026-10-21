@@ -22,10 +22,10 @@
 
     <header class="site-header">
       <div class="wrap">
-        <a class="brand" href="./index.html" data-brand>SNOWBROS</a>
+        <a class="brand" href="../" data-brand>SNOWBROS</a>
         <nav aria-label="Primary">
           <ul class="nav-links">
-            <li><a href="./index.html">Overview</a></li>
+            <li><a href="../">Site</a></li>
             <li><a href="./dashboard.html">Dashboard</a></li>
             <li><a href="./playground.html" aria-current="page">Playground</a></li>
           </ul>
@@ -57,7 +57,7 @@
         </button>
       </div>
       <ol>
-        <li><a href="./index.html">Overview</a></li>
+        <li><a href="../">Site</a></li>
         <li><a href="./dashboard.html">Dashboard</a></li>
         <li><a href="./playground.html" aria-current="page">Playground</a></li>
       </ol>
@@ -114,7 +114,10 @@
               <p class="label" id="pg-code-label">Code</p>
               <button class="btn btn-sm" type="button" id="pg-copy">Copy</button>
             </div>
-            <pre aria-labelledby="pg-code-label" tabindex="0"><code id="pg-code"></code></pre>
+            <!-- biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region must be keyboard-reachable (WCAG 2.1.1, axe scrollable-region-focusable) -->
+            <section class="pg-code-scroll" aria-labelledby="pg-code-label" tabindex="0">
+              <pre><code id="pg-code"></code></pre>
+            </section>
             <p class="visually-hidden" role="status" id="pg-status"></p>
             <p class="label pg-copy-note" aria-hidden="true" id="pg-copy-note"></p>
           </div>

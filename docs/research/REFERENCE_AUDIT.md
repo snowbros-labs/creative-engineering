@@ -3,16 +3,15 @@
 Consolidated research behind SNOWBROS Creative Engineering. Inspected **2026-10-21**.
 Detailed evidence lives in two companion files; this document is the index and the decisions they drove.
 
-| File | Contents |
-|---|---|
+| File                                                   | Contents                                                                                                                                                                                                                     |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`notes-live-inspection.md`](notes-live-inspection.md) | Live browser inspection (Playwright, Chromium) of cvnt.in, landonorris.com, messenger.abeto.co, theatrejs.com — bundles, globals, network assets, scroll behaviour, 1440 px and 390 px screenshots in [`screens/`](screens/) |
-| [`notes-references.md`](notes-references.md) | 20 references across 8 categories, 14 principles, cited motion-token values |
-| [`TECHNOLOGY_EVALUATION.md`](TECHNOLOGY_EVALUATION.md) | Library/tool comparison with `npm view` data, licenses and recommendations |
+| [`notes-references.md`](notes-references.md)           | 20 references across 8 categories, 14 principles, cited motion-token values                                                                                                                                                  |
+| [`TECHNOLOGY_EVALUATION.md`](TECHNOLOGY_EVALUATION.md) | Library/tool comparison with `npm view` data, licenses and recommendations                                                                                                                                                   |
 
 ## Evidence labels
 
 Every claim in the companion files carries one of:
-
 - **OBSERVED** — behaviour seen in a real browser session.
 - **VERIFIED** — code or network evidence (bundle string, global, request URL), cited.
 - **INFERRED** — reasoned conclusion, with the reasoning stated.
@@ -24,26 +23,26 @@ are labelled "memory-only" and were not used to justify decisions.
 
 ## Primary reference: cvnt.in (VERIFIED unless noted)
 
-| Aspect | Finding |
-|---|---|
-| Framework | Next.js App Router, Tailwind + CSS Modules, `next/font` |
-| 3D | Hand-rolled three.js r171 (`__THREE__ = "171"`, canvases tagged `data-engine="three.js r171"`), no R3F; lazy-loaded ≈3.9 s after first paint |
-| Hero | `Points` cloud (950 particles); low tier lowers DPR and caps at 36 fps; respects `prefers-reduced-motion`; pauses in hidden tabs |
-| Product | One `packaging.glb` (≈515 KB), procedural studio environment (no HDR), drag-to-spin with damped inertia + idle auto-spin, offscreen pause, context-loss recovery |
-| Device tiers | From `deviceMemory`, `hardwareConcurrency`, viewport width → antialias, power preference, DPR cap, texture set |
-| Scroll | Native scroll (no Lenis/Locomotive); pinning via CSS `position: sticky` in 360–420vh sections; one passive listener → rAF → 0..1 progress → eased → `transform` |
-| Motion libs | GSAP 3.14.2 loaded; ScrollTrigger confirmed only on other routes (INFERRED: shared chunk) |
-| A11y | Global reduced-motion reset + ~30 component rules |
-| Source maps | Not public (404) |
+| Aspect       | Finding                                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework    | Next.js App Router, Tailwind + CSS Modules, `next/font`                                                                                                          |
+| 3D           | Hand-rolled three.js r171 (`__THREE__ = "171"`, canvases tagged `data-engine="three.js r171"`), no R3F; lazy-loaded ≈3.9 s after first paint                     |
+| Hero         | `Points` cloud (950 particles); low tier lowers DPR and caps at 36 fps; respects `prefers-reduced-motion`; pauses in hidden tabs                                 |
+| Product      | One `packaging.glb` (≈515 KB), procedural studio environment (no HDR), drag-to-spin with damped inertia + idle auto-spin, offscreen pause, context-loss recovery |
+| Device tiers | From `deviceMemory`, `hardwareConcurrency`, viewport width → antialias, power preference, DPR cap, texture set                                                   |
+| Scroll       | Native scroll (no Lenis/Locomotive); pinning via CSS `position: sticky` in 360–420vh sections; one passive listener → rAF → 0..1 progress → eased → `transform`  |
+| Motion libs  | GSAP 3.14.2 loaded; ScrollTrigger confirmed only on other routes (INFERRED: shared chunk)                                                                        |
+| A11y         | Global reduced-motion reset + ~30 component rules                                                                                                                |
+| Source maps  | Not public (404)                                                                                                                                                 |
 
 ## Cross-site summary
 
-| Site | Framework | 3D | Scroll | Motion | Notable assets |
-|---|---|---|---|---|---|
-| cvnt.in | Next.js + Tailwind | vanilla three r171 | native + sticky + custom rAF | GSAP 3.14.2 | 1 GLB, procedural env |
-| landonorris.com | Webflow + agency bundle | three r174 | Lenis 1.1.20 + ScrollTrigger | GSAP 3.13, Rive, Taxi.js | 3 GLB (Draco), 2 HDR, MSDF text, 8 `.riv` |
-| messenger.abeto.co | Vite + Svelte 5 | three r180, workers | n/a (game) | — | Draco, KTX2, audio, WebSocket |
-| theatrejs.com | Next.js Pages | none on landing | native | — | Mux HLS video |
+| Site               | Framework               | 3D                  | Scroll                       | Motion                   | Notable assets                            |
+| ------------------ | ----------------------- | ------------------- | ---------------------------- | ------------------------ | ----------------------------------------- |
+| cvnt.in            | Next.js + Tailwind      | vanilla three r171  | native + sticky + custom rAF | GSAP 3.14.2              | 1 GLB, procedural env                     |
+| landonorris.com    | Webflow + agency bundle | three r174          | Lenis 1.1.20 + ScrollTrigger | GSAP 3.13, Rive, Taxi.js | 3 GLB (Draco), 2 HDR, MSDF text, 8 `.riv` |
+| messenger.abeto.co | Vite + Svelte 5         | three r180, workers | n/a (game)                   | —                        | Draco, KTX2, audio, WebSocket             |
+| theatrejs.com      | Next.js Pages           | none on landing     | native                       | —                        | Mux HLS video                             |
 
 ## Broader references (by category)
 
@@ -61,24 +60,24 @@ Per-reference IA, techniques, stack evidence, what not to copy and SaaS transfer
 ## Principles distilled (supporting references in the notes)
 
 1. Motion encodes causality. 2. Frequency sets the motion budget. 3. Interruptible beats choreographed.
-4. One clock per page. 5. State is the contract between logic and motion. 6. Spatial continuity across
-routes, with focus following. 7. Density with hierarchy. 8. Generate themes from few perceptual inputs.
-9. Progressive enhancement. 10. Reduced motion is a product feature. 11. Budget performance before
-visuals. 12. Content separate from code, checked in CI. 13. Docs are an application.
-14. Separate showcase from workspace (expressive vs productive).
+2. One clock per page. 5. State is the contract between logic and motion. 6. Spatial continuity across
+   routes, with focus following. 7. Density with hierarchy. 8. Generate themes from few perceptual inputs.
+3. Progressive enhancement. 10. Reduced motion is a product feature. 11. Budget performance before
+   visuals. 12. Content separate from code, checked in CI. 13. Docs are an application.
+4. Separate showcase from workspace (expressive vs productive).
 
 ## Decisions these findings drove
 
-| Finding | Decision in the toolkit |
-|---|---|
-| Award-level sites run on native scroll + sticky + one listener (cvnt.in) | `@snowbros/motion` `pin()` uses CSS sticky; `scrollProgress` shares one passive listener per container and measures only on resize |
-| One clock per page (Bruno Simon, Igloo) | `@snowbros/core` `ticker`: single rAF with priorities; adapters let Lenis/GSAP drive it instead of adding loops |
-| Device tiers, DPR caps, fps caps, offscreen pause, context-loss recovery (cvnt.in) | `@snowbros/scene` `createStage`, `createQualityGovernor`, `deviceTier()` |
-| Procedural environment instead of HDR (cvnt.in) | `createStudioEnvironment` (RoomEnvironment + PMREM) |
-| Productive vs expressive motion (Carbon, Material 3) | `@snowbros/tokens` `motion.functional` / `motion.expressive`; skill hard rule 3 |
-| Reduced motion as a feature (WCAG 2.3.3, The Pudding toggle) | Per-pattern `ReducedMotionPolicy`, `setMotionPreference()` for in-app toggles, `reduced-motion` media keyword |
-| `data-state` as the logic/motion contract (Radix, Rive) | Web Components publish `--sb-progress` and events; styling stays in CSS |
-| GSAP license is not OSI; Theatre Studio is AGPL | Never imported/bundled; structural-type adapters only |
+| Finding                                                                            | Decision in the toolkit                                                                                                            |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Award-level sites run on native scroll + sticky + one listener (cvnt.in)           | `@snowbros/motion` `pin()` uses CSS sticky; `scrollProgress` shares one passive listener per container and measures only on resize |
+| One clock per page (Bruno Simon, Igloo)                                            | `@snowbros/core` `ticker`: single rAF with priorities; adapters let Lenis/GSAP drive it instead of adding loops                    |
+| Device tiers, DPR caps, fps caps, offscreen pause, context-loss recovery (cvnt.in) | `@snowbros/scene` `createStage`, `createQualityGovernor`, `deviceTier()`                                                           |
+| Procedural environment instead of HDR (cvnt.in)                                    | `createStudioEnvironment` (RoomEnvironment + PMREM)                                                                                |
+| Productive vs expressive motion (Carbon, Material 3)                               | `@snowbros/tokens` `motion.functional` / `motion.expressive`; skill hard rule 3                                                    |
+| Reduced motion as a feature (WCAG 2.3.3, The Pudding toggle)                       | Per-pattern `ReducedMotionPolicy`, `setMotionPreference()` for in-app toggles, `reduced-motion` media keyword                      |
+| `data-state` as the logic/motion contract (Radix, Rive)                            | Web Components publish `--sb-progress` and events; styling stays in CSS                                                            |
+| GSAP license is not OSI; Theatre Studio is AGPL                                    | Never imported/bundled; structural-type adapters only                                                                              |
 
 ## Uncertainties
 

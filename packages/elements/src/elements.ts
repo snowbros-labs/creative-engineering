@@ -133,7 +133,9 @@ export class SbMagnetic extends SnowbrosElement {
   protected setup(scope: Scope): void {
     if (!this.style.display || this.style.display === 'block') this.style.display = 'inline-block';
     const target = (this.firstElementChild as HTMLElement | null) ?? this;
-    scope.add(magnetic(target, { strength: this.num('strength', 0.35), radius: this.num('radius', 60) }));
+    scope.add(
+      magnetic(target, { strength: this.num('strength', 0.35), radius: this.num('radius', 60) }),
+    );
   }
 }
 

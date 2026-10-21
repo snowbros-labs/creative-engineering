@@ -1,9 +1,4 @@
-import {
-  type RevealOptions,
-  type RevealPreset,
-  reveal,
-  revealText,
-} from '@snowbros/motion';
+import { type RevealOptions, type RevealPreset, reveal, revealText } from '@snowbros/motion';
 import {
   type ComponentPropsWithoutRef,
   createElement,
@@ -13,7 +8,10 @@ import {
 } from 'react';
 import { useSnowbros } from './hooks.js';
 
-type PolymorphicProps<E extends ElementType, P> = P & { as?: E } & Omit<ComponentPropsWithoutRef<E>, keyof P | 'as'>;
+type PolymorphicProps<E extends ElementType, P> = P & { as?: E } & Omit<
+    ComponentPropsWithoutRef<E>,
+    keyof P | 'as'
+  >;
 
 export type RevealTextProps<E extends ElementType = 'h2'> = PolymorphicProps<
   E,

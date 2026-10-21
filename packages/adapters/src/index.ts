@@ -35,12 +35,16 @@ export interface SmoothScrollOptions<L extends LenisLike> {
  * Lenis keeps the native scroll position, so `scrollProgress`, `pin` and anchors keep working.
  * Torn down automatically when the user switches to reduced motion.
  */
-export function smoothScroll<L extends LenisLike>(options: SmoothScrollOptions<L>): PatternHandle & { readonly instance: L | null } {
+export function smoothScroll<L extends LenisLike>(
+  options: SmoothScrollOptions<L>,
+): PatternHandle & { readonly instance: L | null } {
   const scope = createScope();
   let instance: L | null = null;
   let off: (() => void) | null = null;
   const touch =
-    typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches && (options.skipOnTouch ?? true);
+    typeof matchMedia === 'function' &&
+    matchMedia('(pointer: coarse)').matches &&
+    (options.skipOnTouch ?? true);
   const sync = () => {
     const allowed = motionPreference.get() === 'full' && !touch;
     if (allowed && !instance) {

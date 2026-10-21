@@ -213,7 +213,7 @@
 .ops-demo-tag {
   display: inline-block;
   margin-left: 6px;
-  padding: 1px 8px;
+  padding: 3px 10px;
   border: 1px solid var(--line-strong);
   border-radius: var(--sb-radius-pill);
   font: 500 0.6875rem / 1.6 var(--font-mono);
@@ -257,6 +257,9 @@
 
 /* ------------------------------------------------------------------ stats */
 .ops-stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
@@ -397,30 +400,46 @@
 }
 .ops-segmented {
   display: inline-flex;
+  margin: 0;
+  min-inline-size: 0;
   padding: 2px;
   border: 1px solid var(--line-strong);
   border-radius: var(--sb-radius-md);
   background: var(--panel-bg);
 }
-.ops-segmented button {
+.ops-segmented label {
+  position: relative;
+  display: inline-flex;
+}
+.ops-segmented input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.ops-seg {
+  display: inline-flex;
+  align-items: center;
   min-height: 30px;
   padding: 0 12px;
-  border: 0;
   border-radius: 6px;
-  background: transparent;
   color: var(--fg-muted);
   font-size: 0.8125rem;
-  cursor: pointer;
   transition:
     background-color var(--sb-motion-duration-quick) var(--ease-ui),
     color var(--sb-motion-duration-quick) var(--ease-ui);
 }
-.ops-segmented button:hover {
+.ops-segmented input:hover + .ops-seg {
   color: var(--fg);
 }
-.ops-segmented button[aria-checked="true"] {
+.ops-segmented input:checked + .ops-seg {
   background: color-mix(in oklab, var(--fg) 10%, transparent);
   color: var(--fg);
+}
+.ops-segmented input:focus-visible + .ops-seg {
+  outline: 2px solid var(--focus, currentColor);
+  outline-offset: 1px;
 }
 .ops-count {
   margin-left: auto;
@@ -872,6 +891,8 @@ th[aria-sort="descending"] .ops-sort-icon {
   margin-top: 48px;
   padding-top: 20px;
   border-top: 1px solid var(--line);
+}
+.ops-footer p {
   font-size: 0.75rem;
 }
 
@@ -923,7 +944,7 @@ th[aria-sort="descending"] .ops-sort-icon {
   max-height: min(360px, 50svh);
   overflow-y: auto;
 }
-.ops-palette-list li {
+.ops-palette-list [role="option"] {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -934,7 +955,7 @@ th[aria-sort="descending"] .ops-sort-icon {
   cursor: pointer;
   color: var(--fg-muted);
 }
-.ops-palette-list li[aria-selected="true"] {
+.ops-palette-list [role="option"][aria-selected="true"] {
   background: color-mix(in oklab, var(--fg) 9%, transparent);
   color: var(--fg);
 }
@@ -973,7 +994,7 @@ th[aria-sort="descending"] .ops-sort-icon {
 .ops-toast p {
   flex: 1;
 }
-.ops .ops-toast button {
+.ops-toast-dismiss {
   border: 0;
   background: transparent;
   color: inherit;

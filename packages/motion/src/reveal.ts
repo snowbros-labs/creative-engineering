@@ -1,5 +1,10 @@
-import { createScope, type Ease, type PatternHandle, type ReducedMotionPolicy } from '@snowbros/core';
-import { inView, type InViewOptions } from './observe.js';
+import {
+  createScope,
+  type Ease,
+  type PatternHandle,
+  type ReducedMotionPolicy,
+} from '@snowbros/core';
+import { type InViewOptions, inView } from './observe.js';
 import { type SplitResult, splitText } from './split.js';
 import { resolveTargets, type TargetInput } from './targets.js';
 import { animate, type Props, type Timeline } from './timeline.js';
@@ -96,8 +101,12 @@ export function revealText(
   const presetName = options.preset ?? (by === 'lines' ? 'rise' : 'fade-up');
   const props = typeof presetName === 'string' ? revealPresets[presetName] : presetName;
   const mask = presetName === 'rise';
-  const split = splitText(el, { by: by === 'lines' ? ['lines', 'words'] : by === 'words' ? ['words'] : ['words', 'chars'], mask });
-  let units: HTMLElement[] = by === 'lines' ? split.lines : by === 'words' ? split.words : split.chars;
+  const split = splitText(el, {
+    by: by === 'lines' ? ['lines', 'words'] : by === 'words' ? ['words'] : ['words', 'chars'],
+    mask,
+  });
+  let units: HTMLElement[] =
+    by === 'lines' ? split.lines : by === 'words' ? split.words : split.chars;
   if (units.length === 0) units = split.words; // nested markup prevented line wrapping
   const handle = start(
     units,

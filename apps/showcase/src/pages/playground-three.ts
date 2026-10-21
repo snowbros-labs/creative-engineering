@@ -21,7 +21,11 @@ export interface CrystalOptions {
   onDisposed(summary: string): void;
 }
 
-export async function renderCrystal(el: HTMLElement, scope: Scope, options: CrystalOptions): Promise<void> {
+export async function renderCrystal(
+  el: HTMLElement,
+  scope: Scope,
+  options: CrystalOptions,
+): Promise<void> {
   const stage = createStage({
     container: el,
     camera: { position: [0, 0, 7], fov: 35 },
@@ -42,7 +46,11 @@ export async function renderCrystal(el: HTMLElement, scope: Scope, options: Crys
   stage.track(env);
   stage.scene.environment = env.texture;
 
-  const bg = createGradientMaterial({ colors: ['#0b0c0e', '#1d1f23', '#3a3d44'], noiseScale: 1.4, speed: 0.15 });
+  const bg = createGradientMaterial({
+    colors: ['#0b0c0e', '#1d1f23', '#3a3d44'],
+    noiseScale: 1.4,
+    speed: 0.15,
+  });
   const plane = stage.add(new Mesh(new PlaneGeometry(16, 10), bg));
   plane.position.z = -4;
 
@@ -63,7 +71,15 @@ export async function renderCrystal(el: HTMLElement, scope: Scope, options: Crys
 
   const particles =
     options.count > 0
-      ? stage.add(createParticleField({ count: options.count, radius: 5, size: 2.2, color: '#d9dee5', opacity: 0.7 }))
+      ? stage.add(
+          createParticleField({
+            count: options.count,
+            radius: 5,
+            size: 2.2,
+            color: '#d9dee5',
+            opacity: 0.7,
+          }),
+        )
       : null;
 
   scope.add(createOrbitInertia(crystal, stage.canvas, { autoSpin: options.autoSpin ? 0.25 : 0 }));

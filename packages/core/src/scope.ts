@@ -1,4 +1,5 @@
 export type Cleanup = () => void;
+// biome-ignore lint/suspicious/noConfusingVoidType: lets `scope.add(fn())` accept side-effect-only calls
 export type Disposable = Cleanup | { dispose(): void } | { kill(): void } | null | undefined | void;
 
 /**

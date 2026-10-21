@@ -18,15 +18,39 @@ export const bezier = (b: Bezier): `cubic-bezier(${string})` =>
  */
 export const motion = {
   functional: {
-    feedback: { duration: tokens.motion.duration.quick, ease: bezier(tokens.motion.easing['functional-standard']) },
-    enter: { duration: tokens.motion.duration.moderate, ease: bezier(tokens.motion.easing['functional-enter']) },
-    exit: { duration: tokens.motion.duration.base, ease: bezier(tokens.motion.easing['functional-exit']) },
-    layout: { duration: tokens.motion.duration.moderate, ease: bezier(tokens.motion.easing.emphasized) },
+    feedback: {
+      duration: tokens.motion.duration.quick,
+      ease: bezier(tokens.motion.easing['functional-standard']),
+    },
+    enter: {
+      duration: tokens.motion.duration.moderate,
+      ease: bezier(tokens.motion.easing['functional-enter']),
+    },
+    exit: {
+      duration: tokens.motion.duration.base,
+      ease: bezier(tokens.motion.easing['functional-exit']),
+    },
+    layout: {
+      duration: tokens.motion.duration.moderate,
+      ease: bezier(tokens.motion.easing.emphasized),
+    },
   },
   expressive: {
-    enter: { duration: tokens.motion.duration.deliberate, ease: bezier(tokens.motion.easing['expressive-enter']) },
-    exit: { duration: tokens.motion.duration.slow, ease: bezier(tokens.motion.easing['expressive-exit']) },
-    reveal: { duration: tokens.motion.duration.deliberate, ease: bezier(tokens.motion.easing.editorial) },
-    camera: { duration: tokens.motion.duration.cinematic, ease: bezier(tokens.motion.easing.cinematic) },
+    enter: {
+      duration: tokens.motion.duration.deliberate,
+      ease: bezier(tokens.motion.easing['expressive-enter']),
+    },
+    exit: {
+      duration: tokens.motion.duration.slow,
+      ease: bezier(tokens.motion.easing['expressive-exit']),
+    },
+    reveal: {
+      duration: tokens.motion.duration.deliberate,
+      ease: bezier(tokens.motion.easing.editorial),
+    },
+    camera: {
+      duration: tokens.motion.duration.cinematic,
+      ease: bezier(tokens.motion.easing.cinematic),
+    },
   },
 } as const;

@@ -1,6 +1,6 @@
 /** Clamp `value` into the inclusive range [min, max]. */
 export function clamp(value: number, min = 0, max = 1): number {
-  return value < min ? min : value > max ? max : value;
+  return Math.min(Math.max(value, min), max);
 }
 
 /** Linear interpolation between `a` and `b`. `t` is not clamped. */

@@ -13,6 +13,10 @@ export default defineConfig({
   resolve: { alias },
   test: {
     environment: 'happy-dom',
-    include: ['packages/*/test/**/*.test.ts', 'packages/*/test/**/*.test.tsx', 'tools/test/**/*.test.mjs'],
+    include: [
+      'packages/*/test/**/*.test.ts',
+      'packages/*/test/**/*.test.tsx',
+      'tools/test/**/*.test.mjs',
+    ],
   },
 });

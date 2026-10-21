@@ -69,10 +69,10 @@ test.describe('Toolkit Ops dashboard', () => {
 
   test('status segmented control filters and supports arrow keys', async ({ page }) => {
     await open(page);
-    await page.getByRole('radio', { name: 'Stable' }).click();
+    await page.getByRole('radio', { name: 'Stable' }).check();
     expect(await rowNames(page)).toEqual(['tokens']);
     await page.keyboard.press('ArrowRight');
-    await expect(page.getByRole('radio', { name: 'Beta' })).toHaveAttribute('aria-checked', 'true');
+    await expect(page.getByRole('radio', { name: 'Beta' })).toBeChecked();
     await expect(page.getByRole('radio', { name: 'Beta' })).toBeFocused();
   });
 

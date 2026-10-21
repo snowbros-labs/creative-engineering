@@ -1,8 +1,8 @@
 import {
   type Ease,
   type EaseFn,
-  type PlaybackState,
   type Playable,
+  type PlaybackState,
   prefersReducedMotion,
   type ReducedMotionPolicy,
   resolveEase,
@@ -10,14 +10,17 @@ import {
   ticker,
 } from '@snowbros/core';
 import { accessor, isTransformKey, resolveTargets, type TargetInput } from './targets.js';
-import { interpolate, type Interpolator, parseUnit } from './values.js';
+import { type Interpolator, interpolate, parseUnit } from './values.js';
 
 /** A value, a `[from, to]` pair, or a per-target function returning either. */
 export type PropValue =
   | string
   | number
   | readonly [string | number, string | number]
-  | ((index: number, target: object) => string | number | readonly [string | number, string | number]);
+  | ((
+      index: number,
+      target: object,
+    ) => string | number | readonly [string | number, string | number]);
 
 export type Props = Record<string, PropValue>;
 
@@ -98,7 +101,9 @@ class Tween implements Child {
     for (const [key, raw] of Object.entries(props)) {
       const resolved = typeof raw === 'function' ? raw(index, target) : raw;
       const acc = accessor(target, key);
-      const pair = Array.isArray(resolved) ? (resolved as readonly [string | number, string | number]) : null;
+      const pair = Array.isArray(resolved)
+        ? (resolved as readonly [string | number, string | number])
+        : null;
       if (pair) hasExplicitFrom = true;
       this.tracks.push(
         new PropTrack(
@@ -123,7 +128,8 @@ class Tween implements Child {
     }
     if (time > 0 && this.last <= 0) for (const t of this.tracks) t.ensure();
     this.last = time;
-    const p = this.duration === 0 ? (time > 0 ? 1 : 0) : Math.min(1, Math.max(0, time / this.duration));
+    const p =
+      this.duration === 0 ? (time > 0 ? 1 : 0) : Math.min(1, Math.max(0, time / this.duration));
     const e = this.ease(p);
     for (const t of this.tracks) t.render(e);
   }
@@ -229,7 +235,8 @@ export class Timeline implements Playable, Child {
   private resolvePosition(position: Position | undefined): number {
     const prev = this.slots[this.slots.length - 1];
     const end = this.iterationDuration;
-    if (position === undefined || position === '>') return prev ? prev.start + prev.child.duration : 0;
+    if (position === undefined || position === '>')
+      return prev ? prev.start + prev.child.duration : 0;
     if (typeof position === 'number') return Math.max(0, position);
     const m = /^([<>]|[A-Za-z_][\w-]*)?\s*(?:([+-])=\s*(-?[\d.]+))?$/.exec(position.trim());
     if (!m) throw new Error(`[snowbros] invalid timeline position "${position}"`);
@@ -257,7 +264,10 @@ export class Timeline implements Playable, Child {
 
   /** Mark a named position. */
   label(name: string, position?: Position): this {
-    this.labels.set(name, position === undefined ? this.iterationDuration : this.resolvePosition(position));
+    this.labels.set(
+      name,
+      position === undefined ? this.iterationDuration : this.resolvePosition(position),
+    );
     return this;
   }
 
@@ -430,7 +440,14 @@ function createTweenGroup(targets: TargetInput, props: Props, options: TweenOpti
   list.forEach((target, i) => {
     const offset =
       delay + (typeof stagger === 'function' ? stagger(i, list.length) : (stagger ?? 0) * i);
-    const tween = new Tween(target, i, effectiveProps, duration, ease, options.immediateRender ?? true);
+    const tween = new Tween(
+      target,
+      i,
+      effectiveProps,
+      duration,
+      ease,
+      options.immediateRender ?? true,
+    );
     group.add(wrap(tween), offset);
   });
   return group;
@@ -482,8 +499,22 @@ export function stagger(each: number, options: StaggerOptions = {}) {
     let max: number;
     if (options.grid) {
       const [cols, rows] = options.grid;
-      const ox = from === 'center' ? (cols - 1) / 2 : from === 'end' ? cols - 1 : typeof from === 'number' ? from % cols : 0;
-      const oy = from === 'center' ? (rows - 1) / 2 : from === 'end' ? rows - 1 : typeof from === 'number' ? Math.floor(from / cols) : 0;
+      const ox =
+        from === 'center'
+          ? (cols - 1) / 2
+          : from === 'end'
+            ? cols - 1
+            : typeof from === 'number'
+              ? from % cols
+              : 0;
+      const oy =
+        from === 'center'
+          ? (rows - 1) / 2
+          : from === 'end'
+            ? rows - 1
+            : typeof from === 'number'
+              ? Math.floor(from / cols)
+              : 0;
       const x = index % cols;
       const y = Math.floor(index / cols);
       distance = Math.hypot(x - ox, y - oy);
@@ -502,7 +533,14 @@ export function stagger(each: number, options: StaggerOptions = {}) {
       distance = order[index] ?? index;
       max = total - 1;
     } else {
-      const origin = from === 'center' ? (total - 1) / 2 : from === 'end' ? total - 1 : from === 'start' ? 0 : from;
+      const origin =
+        from === 'center'
+          ? (total - 1) / 2
+          : from === 'end'
+            ? total - 1
+            : from === 'start'
+              ? 0
+              : from;
       distance = Math.abs(index - origin);
       max = Math.max(origin, total - 1 - origin);
     }

@@ -6,6 +6,7 @@ publishing starts.
 ## [Unreleased] — 0.1.0
 
 ### Added
+
 - `@snowbros/core`: shared priority ticker (single rAF), easings + cubic-bezier solver, analytic and
   interactive springs, lifecycle scopes, signals, capability/device-tier detection, media contexts with
   `reduced-motion` / `full-motion` keywords, interaction contract types.

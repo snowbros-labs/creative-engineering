@@ -1,6 +1,7 @@
 import { isBrowser, motionPreference } from './env.js';
 import { type Cleanup, createScope, type Scope } from './scope.js';
 
+// biome-ignore lint/suspicious/noConfusingVoidType: setup may return nothing or a cleanup
 export type MediaSetup = (scope: Scope) => void | Cleanup;
 
 /**

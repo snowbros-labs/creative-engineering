@@ -22,16 +22,16 @@ pnpm add @snowbros/elements
 </style>
 ```
 
-| Element | Attributes |
-|---|---|
-| `<sb-reveal>` | `preset`, `stagger`, `duration`, `delay`, `children` (reveal children instead of itself) |
-| `<sb-reveal-text>` | `by` (`lines`/`words`/`chars`), `preset`, `stagger`, `delay`, `trigger` |
-| `<sb-pin>` | `distance`, `top` — publishes `--sb-progress` + `sb-progress` events |
-| `<sb-scroll>` | `start`, `end` — publishes `--sb-progress` |
-| `<sb-magnetic>` | `strength`, `radius` |
-| `<sb-tilt>` | `max`, `glare` |
-| `<sb-marquee>` | `speed`, `direction`, `pause-on-hover` |
-| `<sb-spotlight>` | `radius` — sets `--sb-x` / `--sb-y` |
+| Element            | Attributes                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `<sb-reveal>`      | `preset`, `stagger`, `duration`, `delay`, `children` (reveal children instead of itself) |
+| `<sb-reveal-text>` | `by` (`lines`/`words`/`chars`), `preset`, `stagger`, `delay`, `trigger`                  |
+| `<sb-pin>`         | `distance`, `top` — publishes `--sb-progress` + `sb-progress` events                     |
+| `<sb-scroll>`      | `start`, `end` — publishes `--sb-progress`                                               |
+| `<sb-magnetic>`    | `strength`, `radius`                                                                     |
+| `<sb-tilt>`        | `max`, `glare`                                                                           |
+| `<sb-marquee>`     | `speed`, `direction`, `pause-on-hover`                                                   |
+| `<sb-spotlight>`   | `radius` — sets `--sb-x` / `--sb-y`                                                      |
 
 **Vue:** tell the compiler they are custom elements (`compilerOptions.isCustomElement: (t) => t.startsWith('sb-')`).
 **Svelte / Astro / HTML:** works as-is.

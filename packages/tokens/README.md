@@ -8,8 +8,10 @@ pnpm add @snowbros/tokens
 ```
 
 ```css
-@import '@snowbros/tokens/tokens.css';
-.menu { transition: opacity var(--sb-motion-duration-moderate) var(--sb-motion-easing-functional-enter); }
+@import "@snowbros/tokens/tokens.css";
+.menu {
+  transition: opacity var(--sb-motion-duration-moderate) var(--sb-motion-easing-functional-enter);
+}
 ```
 
 ```ts
@@ -20,10 +22,10 @@ animate(panel, { y: [8, 0], opacity: [0, 1] }, motion.functional.enter); // { du
 
 ## Two motion vocabularies
 
-| | Use for | Durations | Curves |
-|---|---|---|---|
-| `motion.functional` | product UI: feedback, menus, dialogs, tables | 70–240 ms | Carbon productive, Material 3 emphasized |
-| `motion.expressive` | storytelling: heroes, reveals, scroll scenes, camera | 400–1000 ms | Carbon expressive, editorial, cinematic |
+|                     | Use for                                              | Durations   | Curves                                   |
+| ------------------- | ---------------------------------------------------- | ----------- | ---------------------------------------- |
+| `motion.functional` | product UI: feedback, menus, dialogs, tables         | 70–240 ms   | Carbon productive, Material 3 emphasized |
+| `motion.expressive` | storytelling: heroes, reveals, scroll scenes, camera | 400–1000 ms | Carbon expressive, editorial, cinematic  |
 
 Rule: the more often a user triggers something, the more functional its motion must be.
 Under `prefers-reduced-motion: reduce`, the CSS caps slow/deliberate/cinematic durations at 150 ms.

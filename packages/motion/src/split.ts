@@ -32,7 +32,11 @@ const SR_ONLY =
 /** Grapheme-aware character split so emoji and combined characters stay intact. */
 function graphemes(text: string): string[] {
   const Seg = (Intl as typeof Intl & { Segmenter?: typeof Intl.Segmenter }).Segmenter;
-  if (Seg) return Array.from(new Seg(undefined, { granularity: 'grapheme' }).segment(text), (s) => s.segment);
+  if (Seg)
+    return Array.from(
+      new Seg(undefined, { granularity: 'grapheme' }).segment(text),
+      (s) => s.segment,
+    );
   return Array.from(text);
 }
 
@@ -42,7 +46,10 @@ export function splitText(el: HTMLElement, options: SplitOptions = {}): SplitRes
   const original = el.innerHTML;
   const hasInteractive = !!el.querySelector(INTERACTIVE);
   if (hasInteractive && by.has('chars')) {
-    console.warn('[snowbros] splitText: element contains interactive content; splitting by words only.', el);
+    console.warn(
+      '[snowbros] splitText: element contains interactive content; splitting by words only.',
+      el,
+    );
     by.delete('chars');
   }
   const words: HTMLElement[] = [];

@@ -33,7 +33,9 @@ describe('interpolate', () => {
     expect(interpolate(0, 10)(0.5)).toBe(5);
     expect(interpolate('0px', '100px')(0.25)).toBe('25px');
     expect(interpolate('#000', '#ffffff')(0.5)).toBe('rgba(128, 128, 128, 1)');
-    expect(interpolate('inset(100% 0% 0% 0%)', 'inset(0% 0% 0% 0%)')(0.5)).toBe('inset(50% 0% 0% 0%)');
+    expect(interpolate('inset(100% 0% 0% 0%)', 'inset(0% 0% 0% 0%)')(0.5)).toBe(
+      'inset(50% 0% 0% 0%)',
+    );
     expect(interpolate('block', 'none')(0.5)).toBe('block');
     expect(interpolate('block', 'none')(1)).toBe('none');
   });
@@ -92,7 +94,11 @@ describe('animate', () => {
 
   it('supports repeat with yoyo', () => {
     const v = { a: 0 };
-    const tl = animate(v, { a: [0, 1] }, { duration: 1, ease: 'linear', repeat: 1, yoyo: true, autoplay: false });
+    const tl = animate(
+      v,
+      { a: [0, 1] },
+      { duration: 1, ease: 'linear', repeat: 1, yoyo: true, autoplay: false },
+    );
     tl.seek(0.25);
     expect(v.a).toBeCloseTo(0.5);
     tl.seek(0.75);
@@ -178,7 +184,17 @@ describe('splitText', () => {
     document.body.appendChild(h);
     const split = splitText(h, { by: ['words', 'chars'] });
     expect(split.words).toHaveLength(3);
-    expect(split.chars.map((c) => c.textContent)).toEqual(['S', 'n', 'o', 'w', 'b', 'r', 'o', 's', '👋🏽']);
+    expect(split.chars.map((c) => c.textContent)).toEqual([
+      'S',
+      'n',
+      'o',
+      'w',
+      'b',
+      'r',
+      'o',
+      's',
+      '👋🏽',
+    ]);
     const hidden = h.querySelector('[aria-hidden="true"]');
     expect(hidden).not.toBeNull();
     expect(h.textContent).toContain('Snow bros');

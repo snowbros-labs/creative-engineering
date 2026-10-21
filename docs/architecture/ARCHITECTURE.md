@@ -1,10 +1,9 @@
 # Architecture
 
 SNOWBROS Creative Engineering has two halves that ship from one repository:
-
 - **The skill** (`skills/snowbros-creative`) — instructions + scripts that make an AI agent work like a
-  creative director, principal engineer and release engineer. It decides *what* to build and *with
-  which tools*, preferring whatever the target project already uses.
+  creative director, principal engineer and release engineer. It decides _what_ to build and _with
+  which tools_, preferring whatever the target project already uses.
 - **The toolkit** (`packages/*`) — the instruments the skill reaches for when a web project has no
   better-suited engine. Each package is independently adoptable.
 
@@ -36,12 +35,14 @@ SNOWBROS Creative Engineering has two halves that ship from one repository:
 ## Core concepts
 
 ### One clock
+
 `core/ticker` is the only `requestAnimationFrame` loop. Callbacks run in priority bands —
 `input (-100)` → `update (0)` → `render (100)` — so scroll is read before animations advance and
 WebGL renders last, all from the same frame time. The loop sleeps when nothing is subscribed and when the
 tab is hidden. `useExternalClock()` lets Lenis or GSAP drive it, keeping one loop when those exist.
 
 ### The interaction contract
+
 `core/contract.ts` names the shared vocabulary: `ProgressSource` (0..1 producers: scroll, time, drag,
 data), `Seekable` (anything renderable at a progress), `Playable`, `TimingOptions`, `ExpressionOptions`,
 `ReducedMotionPolicy` and `PatternHandle` (idempotent `dispose`). Renderers implement it natively — a
@@ -49,6 +50,7 @@ DOM timeline, a Three.js camera rig, an SVG path and a GSAP timeline (via `fromG
 `Seekable`, so `scrub(seekable, progressSource)` composes any of them with any progress producer.
 
 ### Lifecycle scopes
+
 `createScope()` collects everything an effect creates (listeners via `AbortSignal`, observers,
 timelines, GPU resources, child scopes) and disposes it in reverse order, once, isolating failures.
 Late registrations after disposal are disposed immediately (a model that finishes loading after unmount
@@ -56,6 +58,7 @@ does not leak). Framework adapters map scopes onto their lifecycles: `useSnowbro
 StrictMode-safe), `connectedCallback`/`disconnectedCallback` (custom elements).
 
 ### Scroll model
+
 Native scroll, never hijacked. `scrollProgress` measures element offsets (transform-independent
 `offsetTop` chain) on creation, window resize, container `ResizeObserver` and font loading; per scroll
 event it only marks the container dirty and schedules one `input`-priority flush. `pin` is CSS sticky
@@ -64,6 +67,7 @@ section exposes `pin.progress`, and several timelines, a camera rig and DOM writ
 splitting it with `segment(progress, start, end)` — no competing scroll controllers.
 
 ### Motion engine
+
 `motion/timeline` is a seekable, time- or progress-driven engine for DOM elements and plain objects.
 Transform components (`x`, `y`, `scale`, `rotate`…) are cached per element and composed in a fixed
 order, so independent tweens can own different components. Values interpolate numerically across units,
@@ -73,12 +77,14 @@ both directions. Simple product transitions should prefer CSS or WAAPI (`flip`, 
 WAAPI and the View Transitions API).
 
 ### Reduced motion
+
 `motionPreference` merges the OS setting with an optional in-app override (`setMotionPreference`).
 Every pattern declares a policy (`skip`, `fade`, `minimal`, `keep`). `createMediaContext` accepts
 `reduced-motion` / `full-motion` keywords next to media queries, so a pinned scroll scene can be swapped
 for a stacked layout — and back — when the preference changes at runtime.
 
 ### 3D
+
 `scene/createStage` owns renderer, scene and camera; renders from the shared ticker at `render`
 priority; caps DPR by device tier; caps fps on the low tier; pauses offscreen and in hidden tabs;
 recovers from context loss; and frees every tracked geometry, material and texture on dispose.
@@ -87,16 +93,16 @@ near the viewport, automatic fallback when rendering throws.
 
 ## Package boundaries
 
-| Package | Depends on | Peers | Side effects |
-|---|---|---|---|
-| core | — | — | none (env reads `matchMedia` lazily at import) |
-| motion | core | — | none |
-| fx | core, motion | — | none |
-| scene | core | three ≥ 0.159 | none |
-| react | core, motion, fx | react ≥ 18.2 | none |
-| elements | core, motion, fx | — | `./define` entry registers elements |
-| tokens | — | — | CSS file |
-| adapters | core | lenis, gsap, motion (all optional) | none |
+| Package  | Depends on       | Peers                              | Side effects                                   |
+| -------- | ---------------- | ---------------------------------- | ---------------------------------------------- |
+| core     | —                | —                                  | none (env reads `matchMedia` lazily at import) |
+| motion   | core             | —                                  | none                                           |
+| fx       | core, motion     | —                                  | none                                           |
+| scene    | core             | three ≥ 0.159                      | none                                           |
+| react    | core, motion, fx | react ≥ 18.2                       | none                                           |
+| elements | core, motion, fx | —                                  | `./define` entry registers elements            |
+| tokens   | —                | —                                  | CSS file                                       |
+| adapters | core             | lenis, gsap, motion (all optional) | none                                           |
 
 All packages are ESM-only, `sideEffects: false` (except noted), built with `tsc` (TypeScript 7) to
 `dist/` with declarations and source maps. Tests run against sources via Vitest aliases.

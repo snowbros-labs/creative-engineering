@@ -25,9 +25,9 @@ import gsap from 'gsap';
 import { fromGsap, shareGsapTicker } from '@snowbros/adapters';
 import { pin, scrub } from '@snowbros/motion';
 
-shareGsapTicker(gsap.ticker);                      // one loop for both systems
+shareGsapTicker(gsap.ticker); // one loop for both systems
 const tl = gsap.timeline({ paused: true }).to('.title', { yPercent: -100 });
-scrub(fromGsap(tl), pin(section).progress);        // sticky pin drives a GSAP timeline
+scrub(fromGsap(tl), pin(section).progress); // sticky pin drives a GSAP timeline
 ```
 
 GSAP is distributed under its own "Standard no-charge" license (not OSI-approved,

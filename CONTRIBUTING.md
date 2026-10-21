@@ -3,12 +3,12 @@
 Thanks for helping build SNOWBROS Creative Engineering. This repository holds three things that evolve
 together:
 
-| Path | What | Language |
-|---|---|---|
-| `packages/*` | `@snowbros/*` libraries (core, motion, fx, scene, react, elements, tokens, adapters) | TypeScript |
-| `skills/snowbros-creative` | The AI skill (SKILL.md + references + scripts) | Markdown, Node |
-| `website/` | Project website | TS / HTML / CSS |
-| `apps/showcase`, `examples/*` | Playground + dashboard demos, integration examples | TS / HTML / CSS |
+| Path                          | What                                                                                 | Language        |
+| ----------------------------- | ------------------------------------------------------------------------------------ | --------------- |
+| `packages/*`                  | `@snowbros/*` libraries (core, motion, fx, scene, react, elements, tokens, adapters) | TypeScript      |
+| `skills/snowbros-creative`    | The AI skill (SKILL.md + references + scripts)                                       | Markdown, Node  |
+| `website/`                    | Project website                                                                      | TS / HTML / CSS |
+| `apps/showcase`, `examples/*` | Playground + dashboard demos, integration examples                                   | TS / HTML / CSS |
 
 ## Setup
 

@@ -7,10 +7,10 @@ import {
   type Scope,
 } from '@snowbros/core';
 import {
-  flip,
   type FlipOptions,
-  inView,
+  flip,
   type InViewOptions,
+  inView,
   type Pin,
   type PinOptions,
   pin,
@@ -34,7 +34,8 @@ import {
 } from 'react';
 
 /** useLayoutEffect on the client, useEffect on the server (no SSR warning). */
-export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
+export const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 /**
  * Run imperative motion setup with guaranteed cleanup. Everything registered on the scope is
@@ -46,7 +47,11 @@ export const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayo
  * }, []);
  * ```
  */
-export function useSnowbros(setup: (scope: Scope) => void | Cleanup, deps: DependencyList = []): void {
+export function useSnowbros(
+  // biome-ignore lint/suspicious/noConfusingVoidType: setup may return nothing or a cleanup
+  setup: (scope: Scope) => void | Cleanup,
+  deps: DependencyList = [],
+): void {
   const setupRef = useRef(setup);
   setupRef.current = setup;
   useIsomorphicLayoutEffect(() => {
@@ -54,7 +59,6 @@ export function useSnowbros(setup: (scope: Scope) => void | Cleanup, deps: Depen
     const result = setupRef.current(scope);
     if (typeof result === 'function') scope.add(result);
     return () => scope.dispose();
-    // biome-ignore lint/correctness/useExhaustiveDependencies: caller controls deps
   }, deps);
 }
 
@@ -90,13 +94,15 @@ export function useScrollProgress(
       holder.connect(null);
       p.dispose();
     };
-    // biome-ignore lint/correctness/useExhaustiveDependencies: options serialised into key
   }, [ref, key, holder]);
   return holder;
 }
 
 /** Pin a section with CSS sticky. Returns a stable progress source (0 → 1 while pinned). */
-export function usePin(ref: RefObject<HTMLElement | null>, options: PinOptions = {}): ProgressSource {
+export function usePin(
+  ref: RefObject<HTMLElement | null>,
+  options: PinOptions = {},
+): ProgressSource {
   const holder = useMemo(() => createForwardingSource(), []);
   const key = JSON.stringify({ d: options.distance, t: options.top });
   useIsomorphicLayoutEffect(() => {
@@ -107,7 +113,6 @@ export function usePin(ref: RefObject<HTMLElement | null>, options: PinOptions =
       holder.connect(null);
       p.dispose();
     };
-    // biome-ignore lint/correctness/useExhaustiveDependencies: options serialised into key
   }, [ref, key, holder]);
   return holder;
 }
@@ -135,7 +140,6 @@ export function useTimeline(
       tl.kill();
       tlRef.current = null;
     };
-    // biome-ignore lint/correctness/useExhaustiveDependencies: caller controls deps
   }, [...deps, source]);
   return tlRef;
 }
@@ -144,6 +148,7 @@ export function useTimeline(
 export function useInView(ref: RefObject<Element | null>, options: InViewOptions = {}): boolean {
   const [visible, setVisible] = useState(false);
   const key = JSON.stringify(options);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: options serialised into key
   useEffect(() => {
     if (!ref.current) return;
     const handle = inView(
@@ -155,7 +160,6 @@ export function useInView(ref: RefObject<Element | null>, options: InViewOptions
       options,
     );
     return () => handle.dispose();
-    // biome-ignore lint/correctness/useExhaustiveDependencies: options serialised into key
   }, [ref, key]);
   return visible;
 }

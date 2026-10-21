@@ -16,7 +16,10 @@ export interface ReadonlySignal<T> {
   subscribe(listener: Listener<T>): () => void;
 }
 
-export function createSignal<T>(initial: T, equals: (a: T, b: T) => boolean = Object.is): Signal<T> {
+export function createSignal<T>(
+  initial: T,
+  equals: (a: T, b: T) => boolean = Object.is,
+): Signal<T> {
   let value = initial;
   const listeners = new Set<Listener<T>>();
   return {

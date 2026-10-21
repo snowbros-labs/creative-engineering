@@ -51,7 +51,7 @@ function toast(message: string, ms = 5000) {
   const el = document.createElement('div');
   el.className = 'ops-toast';
   el.setAttribute('role', 'status');
-  el.innerHTML = '<p></p><button type="button">Dismiss</button>';
+  el.innerHTML = '<p></p><button class="ops-toast-dismiss" type="button">Dismiss</button>';
   el.querySelector('p')!.textContent = message;
   region.appendChild(el);
   animate(
@@ -303,31 +303,14 @@ function initTable(s: Scope) {
     apply();
   });
 
-  const radios = $$<HTMLButtonElement>('.ops-segmented [role="radio"]');
-  const selectStatus = (btn: HTMLButtonElement, focus = false) => {
-    for (const r of radios) {
-      r.setAttribute('aria-checked', String(r === btn));
-      r.tabIndex = r === btn ? 0 : -1;
-    }
-    if (focus) btn.focus();
-    tableState.status = btn.dataset.status as typeof tableState.status;
+  // Native radios: arrow-key roving, focus and checked state come from the browser.
+  const radios = $$<HTMLInputElement>('.ops-segmented input[type="radio"]');
+  const selectStatus = (radio: HTMLInputElement) => {
+    radio.checked = true;
+    tableState.status = radio.value as typeof tableState.status;
     apply();
   };
-  radios.forEach((r, i) => {
-    r.tabIndex = i === 0 ? 0 : -1;
-    s.listen(r, 'click', () => selectStatus(r));
-    s.listen(r, 'keydown', (e) => {
-      const step =
-        e.key === 'ArrowRight' || e.key === 'ArrowDown'
-          ? 1
-          : e.key === 'ArrowLeft' || e.key === 'ArrowUp'
-            ? -1
-            : 0;
-      if (!step) return;
-      e.preventDefault();
-      selectStatus(radios[(i + step + radios.length) % radios.length]!, true);
-    });
-  });
+  for (const r of radios) s.listen(r, 'change', () => r.checked && selectStatus(r));
 
   const reset = $<HTMLButtonElement>('[data-reset-filters]');
   if (reset)
@@ -753,7 +736,7 @@ function initPalette(s: Scope, actions: Action[]) {
     active = Math.min(active, Math.max(filtered.length - 1, 0));
     list.replaceChildren();
     filtered.forEach((a, i) => {
-      const li = document.createElement('li');
+      const li = document.createElement('div');
       li.id = `pal-${a.id}`;
       li.setAttribute('role', 'option');
       li.setAttribute('aria-selected', String(i === active));

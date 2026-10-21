@@ -173,7 +173,10 @@ export interface ScrollProgress extends ProgressSource, PatternHandle {
  * p.subscribe((v) => (bar.style.transform = `scaleX(${v})`));
  * ```
  */
-export function scrollProgress(target: HTMLElement, options: ScrollProgressOptions = {}): ScrollProgress {
+export function scrollProgress(
+  target: HTMLElement,
+  options: ScrollProgressOptions = {},
+): ScrollProgress {
   const axis = options.axis ?? 'y';
   const container: Container = options.container ?? (isBrowser ? window : (null as never));
   const signal = createSignal(0);
@@ -236,7 +239,11 @@ export interface ScrubOptions {
  * Drive anything seekable (a Timeline, a camera rig, a shader uniform wrapper) from a
  * progress source. Pauses timelines so time and scroll never fight over the playhead.
  */
-export function scrub(target: Seekable & { pause?: () => unknown }, source: ProgressSource, options: ScrubOptions = {}): PatternHandle {
+export function scrub(
+  target: Seekable & { pause?: () => unknown },
+  source: ProgressSource,
+  options: ScrubOptions = {},
+): PatternHandle {
   target.pause?.();
   const scope = createScope();
   const map = options.map ?? ((p: number) => p);
@@ -273,7 +280,9 @@ export function scrub(target: Seekable & { pause?: () => unknown }, source: Prog
  * Scroll velocity in pixels/second, smoothed. Useful for skew, motion blur or marquee speed.
  * The ticker only runs while scrolling and while the value decays back to 0.
  */
-export function scrollVelocity(options: { container?: HTMLElement; decay?: number } = {}): ReadonlySignal<number> & PatternHandle {
+export function scrollVelocity(
+  options: { container?: HTMLElement; decay?: number } = {},
+): ReadonlySignal<number> & PatternHandle {
   const signal = createSignal(0);
   if (!isBrowser) return { ...signal, dispose() {} };
   const container: Container = options.container ?? window;
@@ -294,12 +303,17 @@ export function scrollVelocity(options: { container?: HTMLElement; decay?: numbe
       stop = null;
     }
   };
-  scope.listen(container as EventTarget, 'scroll', () => {
-    if (!stop) {
-      last = readScroll(container, 'y');
-      stop = ticker.add(loop, Priority.input);
-    }
-  }, { passive: true });
+  scope.listen(
+    container as EventTarget,
+    'scroll',
+    () => {
+      if (!stop) {
+        last = readScroll(container, 'y');
+        stop = ticker.add(loop, Priority.input);
+      }
+    },
+    { passive: true },
+  );
   scope.add(() => stop?.());
   return { get: signal.get, subscribe: signal.subscribe, dispose: () => scope.dispose() };
 }
@@ -400,17 +414,20 @@ export interface HorizontalOptions extends Omit<PinOptions, 'distance'> {
  * so the scroll speed feels 1:1. Keyboard/AT users still reach every item: the track stays in
  * normal DOM order and focus scrolls the page to it.
  */
-export function horizontalScroll(section: HTMLElement, track: HTMLElement, options: HorizontalOptions = {}): Pin {
-  const overflow = () => Math.max(0, track.scrollWidth - (section.clientWidth || window.innerWidth));
+export function horizontalScroll(
+  section: HTMLElement,
+  track: HTMLElement,
+  options: HorizontalOptions = {},
+): Pin {
+  const overflow = () =>
+    Math.max(0, track.scrollWidth - (section.clientWidth || window.innerWidth));
   const p = pin(section, { ...options, distance: overflow() });
   let distance = overflow();
   const scope = createScope();
   const apply = (v: number) => {
     track.style.transform = `translate3d(${-v * distance}px, 0, 0)`;
   };
-  scope.add(
-    scrub({ duration: 0, seek: apply }, p.progress, { smooth: options.smooth ?? false }),
-  );
+  scope.add(scrub({ duration: 0, seek: apply }, p.progress, { smooth: options.smooth ?? false }));
   const resize = () => {
     distance = overflow();
     section.style.height = `calc(100svh - ${cssLength(options.top ?? 0)} + ${distance}px)`;

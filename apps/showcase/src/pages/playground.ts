@@ -59,9 +59,30 @@ type Control =
       when?: (v: Values) => boolean;
       live?: boolean;
     }
-  | { key: string; label: string; type: 'checkbox'; value: boolean; when?: (v: Values) => boolean; live?: boolean }
-  | { key: string; label: string; type: 'text'; value: string; when?: (v: Values) => boolean; live?: boolean }
-  | { key: string; label: string; type: 'color'; value: string; when?: (v: Values) => boolean; live?: boolean };
+  | {
+      key: string;
+      label: string;
+      type: 'checkbox';
+      value: boolean;
+      when?: (v: Values) => boolean;
+      live?: boolean;
+    }
+  | {
+      key: string;
+      label: string;
+      type: 'text';
+      value: string;
+      when?: (v: Values) => boolean;
+      live?: boolean;
+    }
+  | {
+      key: string;
+      label: string;
+      type: 'color';
+      value: string;
+      when?: (v: Values) => boolean;
+      live?: boolean;
+    };
 
 interface Mounted extends PatternHandle {
   /** Apply a `live` control change without rebuilding. */
@@ -95,7 +116,11 @@ const html = (markup: string): HTMLElement => {
 /** A tiny ProgressSource for driving seekables from a slider. */
 function sliderSource(initial: number) {
   const sig = createSignal(initial);
-  return { get: sig.get, subscribe: (l: (p: number) => void) => sig.subscribe((v) => l(v)), set: sig.set };
+  return {
+    get: sig.get,
+    subscribe: (l: (p: number) => void) => sig.subscribe((v) => l(v)),
+    set: sig.set,
+  };
 }
 
 // ---------------------------------------------------------------- patterns
@@ -127,14 +152,87 @@ const easing: Pattern = {
       options: EASE_NAMES.map((k) => [k, k]),
       when: (v) => v.mode === 'named',
     },
-    { key: 'x1', label: 'x1', type: 'range', min: 0, max: 1, step: 0.01, value: 0.2, when: (v) => v.mode === 'bezier' },
-    { key: 'y1', label: 'y1', type: 'range', min: -0.5, max: 1.5, step: 0.01, value: 0, when: (v) => v.mode === 'bezier' },
-    { key: 'x2', label: 'x2', type: 'range', min: 0, max: 1, step: 0.01, value: 0, when: (v) => v.mode === 'bezier' },
-    { key: 'y2', label: 'y2', type: 'range', min: -0.5, max: 1.5, step: 0.01, value: 1, when: (v) => v.mode === 'bezier' },
-    { key: 'stiffness', label: 'Stiffness', type: 'range', min: 20, max: 600, step: 5, value: 260, when: (v) => v.mode === 'spring' },
-    { key: 'damping', label: 'Damping', type: 'range', min: 2, max: 60, step: 1, value: 14, when: (v) => v.mode === 'spring' },
-    { key: 'mass', label: 'Mass', type: 'range', min: 0.2, max: 4, step: 0.1, value: 1, when: (v) => v.mode === 'spring' },
-    { key: 'duration', label: 'Duration', type: 'range', min: 0.1, max: 3, step: 0.05, value: 1, unit: 's', when: (v) => v.mode !== 'spring' },
+    {
+      key: 'x1',
+      label: 'x1',
+      type: 'range',
+      min: 0,
+      max: 1,
+      step: 0.01,
+      value: 0.2,
+      when: (v) => v.mode === 'bezier',
+    },
+    {
+      key: 'y1',
+      label: 'y1',
+      type: 'range',
+      min: -0.5,
+      max: 1.5,
+      step: 0.01,
+      value: 0,
+      when: (v) => v.mode === 'bezier',
+    },
+    {
+      key: 'x2',
+      label: 'x2',
+      type: 'range',
+      min: 0,
+      max: 1,
+      step: 0.01,
+      value: 0,
+      when: (v) => v.mode === 'bezier',
+    },
+    {
+      key: 'y2',
+      label: 'y2',
+      type: 'range',
+      min: -0.5,
+      max: 1.5,
+      step: 0.01,
+      value: 1,
+      when: (v) => v.mode === 'bezier',
+    },
+    {
+      key: 'stiffness',
+      label: 'Stiffness',
+      type: 'range',
+      min: 20,
+      max: 600,
+      step: 5,
+      value: 260,
+      when: (v) => v.mode === 'spring',
+    },
+    {
+      key: 'damping',
+      label: 'Damping',
+      type: 'range',
+      min: 2,
+      max: 60,
+      step: 1,
+      value: 14,
+      when: (v) => v.mode === 'spring',
+    },
+    {
+      key: 'mass',
+      label: 'Mass',
+      type: 'range',
+      min: 0.2,
+      max: 4,
+      step: 0.1,
+      value: 1,
+      when: (v) => v.mode === 'spring',
+    },
+    {
+      key: 'duration',
+      label: 'Duration',
+      type: 'range',
+      min: 0.1,
+      max: 3,
+      step: 0.05,
+      value: 1,
+      unit: 's',
+      when: (v) => v.mode !== 'spring',
+    },
   ],
   mount(body, v, scope) {
     const { fn, duration, label } = easeFrom(v);
@@ -172,14 +270,18 @@ const easing: Pattern = {
     const head = root.querySelector<SVGCircleElement>('.head')!;
     const play = () => {
       const distance = track.clientWidth - ball.offsetWidth;
-      const tl = animate(ball, { x: [0, distance] }, {
-        duration,
-        ease: fn,
-        onUpdate: (p) => {
-          head.setAttribute('cx', String(p * 100));
-          head.setAttribute('cy', String((1 - fn(p)) * 100));
+      const tl = animate(
+        ball,
+        { x: [0, distance] },
+        {
+          duration,
+          ease: fn,
+          onUpdate: (p) => {
+            head.setAttribute('cx', String(p * 100));
+            head.setAttribute('cy', String((1 - fn(p)) * 100));
+          },
         },
-      });
+      );
       scope.add(() => tl.kill());
     };
     play();
@@ -196,7 +298,10 @@ animate('.ball', { x: [0, 320] }, { ease, duration });
 // Same curve for CSS transitions / WAAPI:
 el.style.transitionTimingFunction = toCssLinear(ease);`;
     }
-    const ease = v.mode === 'bezier' ? `'cubic-bezier(${n(v, 'x1')}, ${n(v, 'y1')}, ${n(v, 'x2')}, ${n(v, 'y2')})'` : `'${s(v, 'name')}'`;
+    const ease =
+      v.mode === 'bezier'
+        ? `'cubic-bezier(${n(v, 'x1')}, ${n(v, 'y1')}, ${n(v, 'x2')}, ${n(v, 'y2')})'`
+        : `'${s(v, 'name')}'`;
     return `import { animate } from '@snowbros/motion';
 
 animate('.ball', { x: [0, 320] }, {
@@ -225,7 +330,8 @@ const PRESETS: RevealPreset[] = ['rise', 'fade-up', 'fade', 'blur', 'wipe', 'set
 const reveal: Pattern = {
   id: 'text-reveal',
   title: 'Text reveal',
-  summary: 'Accessible splitting by line, word or character. Screen readers get the sentence, not the fragments.',
+  summary:
+    'Accessible splitting by line, word or character. Screen readers get the sentence, not the fragments.',
   reduced: 'Spatial movement is dropped; units fade in over 0.2s.',
   controls: [
     { key: 'text', label: 'Headline', type: 'text', value: 'Motion with intent, built to last.' },
@@ -240,9 +346,33 @@ const reveal: Pattern = {
         ['chars', 'Characters'],
       ],
     },
-    { key: 'preset', label: 'Preset', type: 'select', value: 'rise', options: PRESETS.map((p) => [p, p]) },
-    { key: 'stagger', label: 'Stagger', type: 'range', min: 0, max: 0.2, step: 0.005, value: 0.08, unit: 's' },
-    { key: 'duration', label: 'Duration', type: 'range', min: 0.2, max: 2, step: 0.05, value: 0.9, unit: 's' },
+    {
+      key: 'preset',
+      label: 'Preset',
+      type: 'select',
+      value: 'rise',
+      options: PRESETS.map((p) => [p, p]),
+    },
+    {
+      key: 'stagger',
+      label: 'Stagger',
+      type: 'range',
+      min: 0,
+      max: 0.2,
+      step: 0.005,
+      value: 0.08,
+      unit: 's',
+    },
+    {
+      key: 'duration',
+      label: 'Duration',
+      type: 'range',
+      min: 0.2,
+      max: 2,
+      step: 0.05,
+      value: 0.9,
+      unit: 's',
+    },
   ],
   mount(body, v, scope) {
     const wrap = html(`<div class="pg-center"><h3 class="pg-reveal-text"></h3></div>`);
@@ -298,11 +428,31 @@ const staggerGrid: Pattern = {
         ['clicked', 'Clicked dot'],
       ],
     },
-    { key: 'each', label: 'Each', type: 'range', min: 0.01, max: 0.2, step: 0.005, value: 0.06, unit: 's' },
-    { key: 'duration', label: 'Duration', type: 'range', min: 0.2, max: 1.6, step: 0.05, value: 0.7, unit: 's' },
+    {
+      key: 'each',
+      label: 'Each',
+      type: 'range',
+      min: 0.01,
+      max: 0.2,
+      step: 0.005,
+      value: 0.06,
+      unit: 's',
+    },
+    {
+      key: 'duration',
+      label: 'Duration',
+      type: 'range',
+      min: 0.2,
+      max: 1.6,
+      step: 0.05,
+      value: 0.7,
+      unit: 's',
+    },
   ],
   mount(body, v, scope) {
-    const grid = html(`<div class="pg-center"><div class="pg-grid" aria-hidden="true"></div></div>`);
+    const grid = html(
+      `<div class="pg-center"><div class="pg-grid" aria-hidden="true"></div></div>`,
+    );
     const g = grid.querySelector<HTMLElement>('.pg-grid')!;
     const dots: HTMLElement[] = [];
     for (let i = 0; i < COLS * ROWS; i++) {
@@ -319,11 +469,15 @@ const staggerGrid: Pattern = {
     let tl: ReturnType<typeof animate> | null = null;
     const play = () => {
       tl?.kill();
-      tl = animate(dots, { scale: [0.2, 1], opacity: [0.15, 1] }, {
-        duration: n(v, 'duration'),
-        ease: 'outExpo',
-        stagger: stagger(n(v, 'each'), { from: origin, grid: [COLS, ROWS] }),
-      });
+      tl = animate(
+        dots,
+        { scale: [0.2, 1], opacity: [0.15, 1] },
+        {
+          duration: n(v, 'duration'),
+          ease: 'outExpo',
+          stagger: stagger(n(v, 'each'), { from: origin, grid: [COLS, ROWS] }),
+        },
+      );
     };
     play();
     scope.listen(g, 'click', (e) => {
@@ -350,12 +504,40 @@ animate('.dot', { scale: [0.2, 1], opacity: [0.15, 1] }, {
 const springFollower: Pattern = {
   id: 'spring',
   title: 'Spring follower',
-  summary: 'Retargetable springs keep their velocity. Move the pointer, or focus the stage and use arrow keys.',
+  summary:
+    'Retargetable springs keep their velocity. Move the pointer, or focus the stage and use arrow keys.',
   reduced: 'The dot jumps straight to the target — no lag, no overshoot.',
   controls: [
-    { key: 'stiffness', label: 'Stiffness', type: 'range', min: 20, max: 800, step: 5, value: 170, live: true },
-    { key: 'damping', label: 'Damping', type: 'range', min: 2, max: 60, step: 1, value: 18, live: true },
-    { key: 'mass', label: 'Mass', type: 'range', min: 0.2, max: 4, step: 0.1, value: 1, live: true },
+    {
+      key: 'stiffness',
+      label: 'Stiffness',
+      type: 'range',
+      min: 20,
+      max: 800,
+      step: 5,
+      value: 170,
+      live: true,
+    },
+    {
+      key: 'damping',
+      label: 'Damping',
+      type: 'range',
+      min: 2,
+      max: 60,
+      step: 1,
+      value: 18,
+      live: true,
+    },
+    {
+      key: 'mass',
+      label: 'Mass',
+      type: 'range',
+      min: 0.2,
+      max: 4,
+      step: 0.1,
+      value: 1,
+      live: true,
+    },
   ],
   mount(body, v, scope) {
     const area = html(`
@@ -432,7 +614,11 @@ const springFollower: Pattern = {
     return {
       dispose: () => scope.dispose(),
       update(values) {
-        cfg = { stiffness: n(values, 'stiffness'), damping: n(values, 'damping'), mass: n(values, 'mass') };
+        cfg = {
+          stiffness: n(values, 'stiffness'),
+          damping: n(values, 'damping'),
+          mass: n(values, 'mass'),
+        };
         const nx = createSpringValue(x.value, cfg);
         const ny = createSpringValue(y.value, cfg);
         nx.set(tx);
@@ -463,11 +649,29 @@ const stop = ticker.add(({ delta }) => {
 const magnets: Pattern = {
   id: 'magnetic',
   title: 'Magnetic & tilt',
-  summary: 'Pointer-attraction on springs and 3D tilt. Disabled automatically on touch-first devices.',
+  summary:
+    'Pointer-attraction on springs and 3D tilt. Disabled automatically on touch-first devices.',
   reduced: 'Elements still respond, but without spring lag or overshoot.',
   controls: [
-    { key: 'strength', label: 'Magnet strength', type: 'range', min: 0.05, max: 1, step: 0.05, value: 0.35 },
-    { key: 'radius', label: 'Magnet radius', type: 'range', min: 0, max: 160, step: 5, value: 60, unit: 'px' },
+    {
+      key: 'strength',
+      label: 'Magnet strength',
+      type: 'range',
+      min: 0.05,
+      max: 1,
+      step: 0.05,
+      value: 0.35,
+    },
+    {
+      key: 'radius',
+      label: 'Magnet radius',
+      type: 'range',
+      min: 0,
+      max: 160,
+      step: 5,
+      value: 60,
+      unit: 'px',
+    },
     { key: 'max', label: 'Tilt max', type: 'range', min: 1, max: 25, step: 1, value: 8, unit: '°' },
     { key: 'glare', label: 'Tilt glare', type: 'checkbox', value: true },
     { key: 'force', label: 'Force on coarse pointers', type: 'checkbox', value: false },
@@ -494,7 +698,13 @@ const magnets: Pattern = {
         }),
       );
     }
-    scope.add(tilt(wrap.querySelector<HTMLElement>('.pg-tilt-card')!, { max: n(v, 'max'), glare: b(v, 'glare'), force }));
+    scope.add(
+      tilt(wrap.querySelector<HTMLElement>('.pg-tilt-card')!, {
+        max: n(v, 'max'),
+        glare: b(v, 'glare'),
+        force,
+      }),
+    );
     return { dispose: () => scope.dispose() };
   },
   code(v) {
@@ -538,14 +748,28 @@ const scrambleP: Pattern = {
         ['lower', 'Lowercase'],
       ],
     },
-    { key: 'duration', label: 'Duration', type: 'range', min: 0.2, max: 3, step: 0.05, value: 1.2, unit: 's' },
+    {
+      key: 'duration',
+      label: 'Duration',
+      type: 'range',
+      min: 0.2,
+      max: 3,
+      step: 0.05,
+      value: 1.2,
+      unit: 's',
+    },
   ],
   mount(body, v, scope) {
     const wrap = html(`<div class="pg-center"><p class="pg-scramble"></p></div>`);
     const p = wrap.querySelector<HTMLElement>('p')!;
     p.textContent = s(v, 'text');
     body.append(wrap);
-    const h = scramble(p, { text: s(v, 'text'), chars: CHARSETS[s(v, 'chars')], duration: n(v, 'duration'), trigger: 'manual' });
+    const h = scramble(p, {
+      text: s(v, 'text'),
+      chars: CHARSETS[s(v, 'chars')],
+      duration: n(v, 'duration'),
+      trigger: 'manual',
+    });
     scope.add(h);
     void h.play();
     return { dispose: () => scope.dispose(), replay: () => void h.play() };
@@ -565,13 +789,31 @@ const s = scramble(el, {
 const flow: Pattern = {
   id: 'flow-field',
   title: 'Flow field',
-  summary: 'Procedural canvas lines following seeded gradient noise. Pauses offscreen and in hidden tabs.',
+  summary:
+    'Procedural canvas lines following seeded gradient noise. Pauses offscreen and in hidden tabs.',
   reduced: 'A single static frame is drawn instead of a moving field.',
   controls: [
     { key: 'density', label: 'Density', type: 'range', min: 0.2, max: 2, step: 0.05, value: 1 },
     { key: 'speed', label: 'Speed', type: 'range', min: 0.1, max: 3, step: 0.05, value: 1 },
-    { key: 'lineWidth', label: 'Line width', type: 'range', min: 0.5, max: 4, step: 0.25, value: 1, unit: 'px' },
-    { key: 'fade', label: 'Trail fade', type: 'range', min: 0.01, max: 0.3, step: 0.01, value: 0.06 },
+    {
+      key: 'lineWidth',
+      label: 'Line width',
+      type: 'range',
+      min: 0.5,
+      max: 4,
+      step: 0.25,
+      value: 1,
+      unit: 'px',
+    },
+    {
+      key: 'fade',
+      label: 'Trail fade',
+      type: 'range',
+      min: 0.01,
+      max: 0.3,
+      step: 0.01,
+      value: 0.06,
+    },
     { key: 'color', label: 'Color', type: 'color', value: '#0b0c0e' },
     { key: 'seed', label: 'Seed', type: 'range', min: 1, max: 999, step: 1, value: 7 },
   ],
@@ -629,8 +871,26 @@ const draw: Pattern = {
   summary: 'Stroke drawing from any progress source — a slider here, scroll on a page.',
   reduced: '“Play” jumps to the drawn state. The slider still works: it is your own input.',
   controls: [
-    { key: 'progress', label: 'Progress', type: 'range', min: 0, max: 1, step: 0.001, value: 0.6, live: true },
-    { key: 'duration', label: 'Play duration', type: 'range', min: 0.3, max: 4, step: 0.1, value: 1.6, unit: 's' },
+    {
+      key: 'progress',
+      label: 'Progress',
+      type: 'range',
+      min: 0,
+      max: 1,
+      step: 0.001,
+      value: 0.6,
+      live: true,
+    },
+    {
+      key: 'duration',
+      label: 'Play duration',
+      type: 'range',
+      min: 0.3,
+      max: 4,
+      step: 0.1,
+      value: 1.6,
+      unit: 's',
+    },
   ],
   mount(body, v, scope) {
     const wrap = html(`<div class="pg-center pg-draw">${DRAWING}</div>`);
@@ -670,7 +930,8 @@ let lastDisposal = '';
 const three: Pattern = {
   id: '3d',
   title: '3D stage',
-  summary: 'Managed Three.js stage: studio lighting without HDR, particle snow, drag with inertia, full GPU cleanup.',
+  summary:
+    'Managed Three.js stage: studio lighting without HDR, particle snow, drag with inertia, full GPU cleanup.',
   reduced: 'The static fallback is shown instead of WebGL (respect-reduced-motion is on).',
   controls: [
     { key: 'count', label: 'Particles', type: 'range', min: 0, max: 4000, step: 100, value: 1200 },
@@ -697,7 +958,9 @@ const three: Pattern = {
       fallback(el) {
         const reason = el.dataset.reason ?? 'unsupported';
         el.append(
-          html(`<div class="pg-fallback">${CRYSTAL_SVG}<p class="muted">Static fallback (${reason}). The same content, without WebGL — this is what low-power devices and reduced-motion users get.</p></div>`),
+          html(
+            `<div class="pg-fallback">${CRYSTAL_SVG}<p class="muted">Static fallback (${reason}). The same content, without WebGL — this is what low-power devices and reduced-motion users get.</p></div>`,
+          ),
         );
       },
       onDecision(mode, reason) {
@@ -746,8 +1009,25 @@ const scrubP: Pattern = {
   summary: 'Scroll the left panel. One listener per container, cached layout, optional damping.',
   reduced: 'Scrubbing still follows your scroll (it is your own input); smoothing is unaffected.',
   controls: [
-    { key: 'smooth', label: 'Smoothing (rate/s, 0 = off)', type: 'range', min: 0, max: 24, step: 1, value: 8 },
-    { key: 'rotate', label: 'Rotation', type: 'range', min: 0, max: 720, step: 15, value: 180, unit: '°' },
+    {
+      key: 'smooth',
+      label: 'Smoothing (rate/s, 0 = off)',
+      type: 'range',
+      min: 0,
+      max: 24,
+      step: 1,
+      value: 8,
+    },
+    {
+      key: 'rotate',
+      label: 'Rotation',
+      type: 'range',
+      min: 0,
+      max: 720,
+      step: 15,
+      value: 180,
+      unit: '°',
+    },
   ],
   mount(body, v, scope) {
     const wrap = html(`
@@ -767,10 +1047,18 @@ const scrubP: Pattern = {
     const num = wrap.querySelector<HTMLElement>('.pg-scrub-num')!;
     const shape = wrap.querySelector<HTMLElement>('.pg-scrub-shape')!;
     const bar = wrap.querySelector<HTMLElement>('.pg-scrub-bar i')!;
-    const p = scrollProgress(track, { container: scroller, start: 'top top', end: 'bottom bottom' });
+    const p = scrollProgress(track, {
+      container: scroller,
+      start: 'top top',
+      end: 'bottom bottom',
+    });
     scope.add(p);
     const tl = timeline()
-      .to(shape, { rotate: [0, n(v, 'rotate')], scale: [0.6, 1.1] }, { duration: 1, ease: 'linear' })
+      .to(
+        shape,
+        { rotate: [0, n(v, 'rotate')], scale: [0.6, 1.1] },
+        { duration: 1, ease: 'linear' },
+      )
       .to(bar, { scaleX: [0, 1] }, { duration: 1, ease: 'linear' }, 0)
       .to(shape, { borderRadius: ['0%', '50%'] }, { duration: 0.5, ease: 'inOutCubic' }, 0.5);
     scope.add(() => tl.kill());
@@ -783,7 +1071,8 @@ const scrubP: Pattern = {
     scope.add(p.subscribe(write));
     return {
       dispose: () => scope.dispose(),
-      replay: () => scroller.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' }),
+      replay: () =>
+        scroller.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' }),
     };
   },
   code(v) {
@@ -803,7 +1092,18 @@ scrub(tl, progress, { smooth: ${smooth > 0 ? smooth : 'false'} });`;
   },
 };
 
-const PATTERNS: Pattern[] = [easing, reveal, staggerGrid, springFollower, magnets, scrambleP, flow, draw, three, scrubP];
+const PATTERNS: Pattern[] = [
+  easing,
+  reveal,
+  staggerGrid,
+  springFollower,
+  magnets,
+  scrambleP,
+  flow,
+  draw,
+  three,
+  scrubP,
+];
 
 // ---------------------------------------------------------------- app state
 
@@ -880,11 +1180,15 @@ function renderControls() {
     const v = values[c.key];
     let row: HTMLElement;
     if (c.type === 'checkbox') {
-      row = html(`<div class="pg-control-check"><input type="checkbox" id="${id}"/><label for="${id}"></label></div>`);
+      row = html(
+        `<div class="pg-control-check"><input type="checkbox" id="${id}"/><label for="${id}"></label></div>`,
+      );
       row.querySelector('label')!.textContent = c.label;
       row.querySelector('input')!.checked = v === true;
     } else {
-      row = html(`<div class="pg-control"><div class="pg-control-row"><label for="${id}"></label></div></div>`);
+      row = html(
+        `<div class="pg-control"><div class="pg-control-row"><label for="${id}"></label></div></div>`,
+      );
       row.querySelector('label')!.textContent = c.label;
       const headRow = row.querySelector('.pg-control-row')!;
       let input: HTMLInputElement | HTMLSelectElement;
@@ -929,7 +1233,11 @@ function onControlInput(e: Event) {
   const c = active.controls.find((x) => x.key === key);
   if (!c) return;
   const value: string | number | boolean =
-    c.type === 'checkbox' ? (input as HTMLInputElement).checked : c.type === 'range' ? Number(input.value) : input.value;
+    c.type === 'checkbox'
+      ? (input as HTMLInputElement).checked
+      : c.type === 'range'
+        ? Number(input.value)
+        : input.value;
   // Text inputs rebuild on `change` only, so typing isn't interrupted every keystroke.
   if (c.type === 'text' && e.type === 'input') return;
   values[key] = value;
@@ -954,7 +1262,8 @@ function onControlInput(e: Event) {
 app.listen(controlList, 'input', onControlInput);
 app.listen(controlList, 'change', (e) => {
   const t = e.target as HTMLInputElement;
-  if (t.type === 'text' || t.tagName === 'SELECT' || t.type === 'checkbox' || t.type === 'color') onControlInput(e);
+  if (t.type === 'text' || t.tagName === 'SELECT' || t.type === 'checkbox' || t.type === 'color')
+    onControlInput(e);
 });
 
 // ---------------------------------------------------------------- tabs
@@ -974,7 +1283,10 @@ const tabs: HTMLButtonElement[] = PATTERNS.map((p, i) => {
 });
 
 function select(id: string, { focus = false, updateHash = true } = {}) {
-  const idx = Math.max(0, PATTERNS.findIndex((p) => p.id === id));
+  const idx = Math.max(
+    0,
+    PATTERNS.findIndex((p) => p.id === id),
+  );
   active = PATTERNS[idx]!;
   values = { ...defaults(active), ...valueStore.get(active.id) };
   tabs.forEach((t, i) => {
@@ -985,11 +1297,13 @@ function select(id: string, { focus = false, updateHash = true } = {}) {
   if (focus) tabs[idx]!.focus();
   tabs[idx]!.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   document.getElementById('pg-stage')!.setAttribute('aria-labelledby', `pg-tab-${active.id}`);
-  document.getElementById('pg-pattern-index')!.textContent = `${String(idx + 1).padStart(2, '0')} / ${PATTERNS.length}`;
+  document.getElementById('pg-pattern-index')!.textContent =
+    `${String(idx + 1).padStart(2, '0')} / ${PATTERNS.length}`;
   document.getElementById('pg-pattern-title')!.textContent = active.title;
   document.getElementById('pg-pattern-summary')!.textContent = active.summary;
   bannerText.textContent = active.reduced;
-  if (updateHash && location.hash !== `#pattern=${active.id}`) history.replaceState(null, '', `#pattern=${active.id}`);
+  if (updateHash && location.hash !== `#pattern=${active.id}`)
+    history.replaceState(null, '', `#pattern=${active.id}`);
   renderControls();
   copyNote.textContent = '';
   mount();
@@ -1055,7 +1369,9 @@ async function copy(text: string): Promise<boolean> {
 let noteTimer = 0;
 app.listen(document.getElementById('pg-copy')!, 'click', async () => {
   const ok = await copy(codeEl.textContent ?? '');
-  const msg = ok ? `Copied ${active.title} snippet to clipboard` : 'Copy failed — select the code and copy manually';
+  const msg = ok
+    ? `Copied ${active.title} snippet to clipboard`
+    : 'Copy failed — select the code and copy manually';
   statusEl.textContent = msg;
   copyNote.textContent = ok ? 'Copied ✓' : 'Copy failed';
   clearTimeout(noteTimer);

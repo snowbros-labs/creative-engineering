@@ -50,11 +50,20 @@ export async function flip(
     const dy = first.top - last.top;
     const sx = options.scale === false || last.width === 0 ? 1 : first.width / last.width;
     const sy = options.scale === false || last.height === 0 ? 1 : first.height / last.height;
-    if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5 && Math.abs(sx - 1) < 0.01 && Math.abs(sy - 1) < 0.01) continue;
+    if (
+      Math.abs(dx) < 0.5 &&
+      Math.abs(dy) < 0.5 &&
+      Math.abs(sx - 1) < 0.01 &&
+      Math.abs(sy - 1) < 0.01
+    )
+      continue;
     animations.push(
       el.animate(
         [
-          { transformOrigin: 'top left', transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` },
+          {
+            transformOrigin: 'top left',
+            transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`,
+          },
           { transformOrigin: 'top left', transform: 'none' },
         ],
         { duration, easing },
@@ -64,7 +73,11 @@ export async function flip(
   await Promise.all(animations.map((a) => a.finished.catch(() => undefined)));
 }
 
-type ViewTransitionLike = { finished: Promise<void>; ready: Promise<void>; updateCallbackDone: Promise<void> };
+type ViewTransitionLike = {
+  finished: Promise<void>;
+  ready: Promise<void>;
+  updateCallbackDone: Promise<void>;
+};
 
 /**
  * Same-document View Transition with graceful fallback: runs `update` directly when the API is
@@ -73,7 +86,10 @@ type ViewTransitionLike = { finished: Promise<void>; ready: Promise<void>; updat
  * Name participating elements with `view-transition-name` in CSS; keep durations in the
  * functional range for product UI.
  */
-export async function viewTransition(update: () => void | Promise<void>, options: { types?: string[] } = {}): Promise<void> {
+export async function viewTransition(
+  update: () => void | Promise<void>,
+  options: { types?: string[] } = {},
+): Promise<void> {
   const doc = document as Document & {
     startViewTransition?: (arg: unknown) => ViewTransitionLike;
   };

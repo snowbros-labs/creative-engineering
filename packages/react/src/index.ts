@@ -1,4 +1,5 @@
 export { Reveal, type RevealProps, RevealText, type RevealTextProps } from './components.js';
+export { useMagnetic, useMarquee, useSpotlight, useTilt } from './effects.js';
 export {
   useFlip,
   useInView,
@@ -10,4 +11,3 @@ export {
   useSnowbros,
   useTimeline,
 } from './hooks.js';
-export { useMagnetic, useMarquee, useSpotlight, useTilt } from './effects.js';

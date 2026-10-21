@@ -15,20 +15,20 @@ respect the user's motion preference. `core` is that contract, with no dependenc
 
 ## API
 
-| Export | What it does |
-|---|---|
-| `ticker` | Shared loop. `ticker.add(fn, priority?)` → unsubscribe. Priorities: `Priority.input` (-100), `update` (0), `render` (100). Sleeps when idle or the tab is hidden. `timeScale`, `maxDelta`, `useExternalClock()`, `tick(time)`. |
-| `createTicker()` | Isolated ticker (tests, embedded widgets). |
-| `eases`, `cubicBezier()`, `resolveEase()`, `toCssLinear()` | Named curves (`outExpo`, `editorial`, `cinematic`, …), a CSS-exact cubic-bezier solver, and export of any JS curve to CSS `linear()`. |
-| `springPosition()`, `springEase()`, `springDuration()`, `springs` | Analytic (seekable) damped springs; convert to an ease + natural duration. |
-| `createSpringValue()` | Stateful spring that keeps velocity when retargeted — pointer following, magnetic UI, drag release. |
-| `createScope()` | Lifecycle container: `add`, `listen` (auto-removed via `AbortSignal`), `child`, `dispose`, `signal`. |
-| `createSignal()`, `derive()` | Minimal observable values; `useSyncExternalStore`-compatible. |
-| `motionPreference`, `prefersReducedMotion()`, `setMotionPreference()` | OS setting + optional in-app override, reactive. |
-| `capabilities()`, `deviceTier()` | WebGL/WebGL2/WebGPU, scroll timelines, view transitions, pointer type, save-data; `low`/`mid`/`high` tier heuristic. |
-| `createMediaContext()` | Responsive + preference-aware setup/teardown, with `reduced-motion` / `full-motion` keywords. |
-| `clamp`, `lerp`, `invLerp`, `mapRange`, `damp`, `wrap`, `segment` | Math. `damp` is frame-rate independent; `segment(p, a, b)` splits one progress into sub-ranges. |
-| Types | `ProgressSource`, `Seekable`, `Playable`, `TimingOptions`, `ExpressionOptions`, `ReducedMotionPolicy`, `PatternHandle` — the interaction contract. |
+| Export                                                                | What it does                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ticker`                                                              | Shared loop. `ticker.add(fn, priority?)` → unsubscribe. Priorities: `Priority.input` (-100), `update` (0), `render` (100). Sleeps when idle or the tab is hidden. `timeScale`, `maxDelta`, `useExternalClock()`, `tick(time)`. |
+| `createTicker()`                                                      | Isolated ticker (tests, embedded widgets).                                                                                                                                                                                     |
+| `eases`, `cubicBezier()`, `resolveEase()`, `toCssLinear()`            | Named curves (`outExpo`, `editorial`, `cinematic`, …), a CSS-exact cubic-bezier solver, and export of any JS curve to CSS `linear()`.                                                                                          |
+| `springPosition()`, `springEase()`, `springDuration()`, `springs`     | Analytic (seekable) damped springs; convert to an ease + natural duration.                                                                                                                                                     |
+| `createSpringValue()`                                                 | Stateful spring that keeps velocity when retargeted — pointer following, magnetic UI, drag release.                                                                                                                            |
+| `createScope()`                                                       | Lifecycle container: `add`, `listen` (auto-removed via `AbortSignal`), `child`, `dispose`, `signal`.                                                                                                                           |
+| `createSignal()`, `derive()`                                          | Minimal observable values; `useSyncExternalStore`-compatible.                                                                                                                                                                  |
+| `motionPreference`, `prefersReducedMotion()`, `setMotionPreference()` | OS setting + optional in-app override, reactive.                                                                                                                                                                               |
+| `capabilities()`, `deviceTier()`                                      | WebGL/WebGL2/WebGPU, scroll timelines, view transitions, pointer type, save-data; `low`/`mid`/`high` tier heuristic.                                                                                                           |
+| `createMediaContext()`                                                | Responsive + preference-aware setup/teardown, with `reduced-motion` / `full-motion` keywords.                                                                                                                                  |
+| `clamp`, `lerp`, `invLerp`, `mapRange`, `damp`, `wrap`, `segment`     | Math. `damp` is frame-rate independent; `segment(p, a, b)` splits one progress into sub-ranges.                                                                                                                                |
+| Types                                                                 | `ProgressSource`, `Seekable`, `Playable`, `TimingOptions`, `ExpressionOptions`, `ReducedMotionPolicy`, `PatternHandle` — the interaction contract.                                                                             |
 
 ## Examples
 

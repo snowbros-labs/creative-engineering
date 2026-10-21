@@ -5,7 +5,6 @@ followers, 3D tilt, text scramble, SVG path drawing, clip-path image reveals, in
 seeded noise and a procedural canvas flow field.
 
 These effects are built for real products. Each one:
-
 - returns a handle whose `dispose()` can be called more than once and restores the styles it changed;
 - follows a documented reduced-motion policy (see the table below);
 - does nothing on touch or no-hover devices when it depends on a pointer (pass `force: true` to override);
@@ -29,7 +28,12 @@ If the target changes mid-move, the spring keeps its velocity.
 
 ```ts
 import { magnetic } from '@snowbros/fx';
-const h = magnetic(button, { strength: 0.35, radius: 60, spring: 'snappy', inner: button.querySelector('span') });
+const h = magnetic(button, {
+  strength: 0.35,
+  radius: 60,
+  spring: 'snappy',
+  inner: button.querySelector('span'),
+});
 // later
 h.dispose();
 ```
@@ -42,7 +46,11 @@ A follower dot that sits alongside the native cursor. It does not replace it: `h
 listener.
 
 ```ts
-const cursor = createCursor({ size: 14, mix: 'difference', states: { view: { scale: 5, label: 'View' } } });
+const cursor = createCursor({
+  size: 14,
+  mix: 'difference',
+  states: { view: { scale: 5, label: 'View' } },
+});
 // <a data-cursor="view" href="/work/aurora">…</a>
 cursor.setState(null); // manual control
 ```
@@ -76,9 +84,9 @@ are three ways to drive it:
 
 ```ts
 import { scrollProgress, scrub } from '@snowbros/motion';
-drawPath('#route path', scrollProgress(section));   // follow scroll
+drawPath('#route path', scrollProgress(section)); // follow scroll
 drawPath(path, { duration: 1.4, ease: 'inOutCubic' }); // play on time
-scrub(drawPath(path), progress, { smooth: 10 });       // smoothed scrub
+scrub(drawPath(path), progress, { smooth: 10 }); // smoothed scrub
 ```
 
 Call `refresh()` after a path's `d` changes.
@@ -127,26 +135,32 @@ grids:
 ```css
 .card {
   background:
-    radial-gradient(var(--sb-spot-r) circle at var(--sb-x) var(--sb-y),
-      color-mix(in oklab, var(--sb-spot-color, white) calc(var(--sb-spot-opacity) * 12%), transparent),
-      transparent),
+    radial-gradient(
+      var(--sb-spot-r) circle at var(--sb-x) var(--sb-y),
+      color-mix(
+        in oklab,
+        var(--sb-spot-color, white) calc(var(--sb-spot-opacity) * 12%),
+        transparent
+      ),
+      transparent
+    ),
     var(--surface);
 }
 ```
 
 ## Accessibility and reduced-motion policy
 
-| Effect | Reduced motion | Touch / no hover | Assistive tech |
-|---|---|---|---|
-| `magnetic` | Disabled (no movement) | No-op | Unaffected (transform only) |
-| `createCursor` | Follows the pointer without lag; no scale animation | Not created | `aria-hidden`, `pointer-events: none`; native cursor kept |
-| `tilt` | Disabled | No-op | Glare layer is `aria-hidden` |
-| `scramble` | Final text shown immediately | Works (no pointer needed) | Real text in a visually hidden span; glyphs `aria-hidden` |
-| `drawPath` | `play()` jumps to drawn; scroll-driven still follows the user's own scrolling | Works | Unaffected |
-| `imageReveal` | `play()` jumps to revealed; when scrubbed, the clip follows scroll but there's no scale | Works | Unaffected |
-| `marquee` | Static; `play()` ignored | Works | Clones `aria-hidden` + `inert`; expose pause/play |
-| `flowField` | One static frame, then stops | Works | Decorative: mark the canvas `aria-hidden="true"` |
-| `spotlight` | Active (it's a static highlight, not motion) | No-op | Unaffected |
+| Effect         | Reduced motion                                                                          | Touch / no hover          | Assistive tech                                            |
+| -------------- | --------------------------------------------------------------------------------------- | ------------------------- | --------------------------------------------------------- |
+| `magnetic`     | Disabled (no movement)                                                                  | No-op                     | Unaffected (transform only)                               |
+| `createCursor` | Follows the pointer without lag; no scale animation                                     | Not created               | `aria-hidden`, `pointer-events: none`; native cursor kept |
+| `tilt`         | Disabled                                                                                | No-op                     | Glare layer is `aria-hidden`                              |
+| `scramble`     | Final text shown immediately                                                            | Works (no pointer needed) | Real text in a visually hidden span; glyphs `aria-hidden` |
+| `drawPath`     | `play()` jumps to drawn; scroll-driven still follows the user's own scrolling           | Works                     | Unaffected                                                |
+| `imageReveal`  | `play()` jumps to revealed; when scrubbed, the clip follows scroll but there's no scale | Works                     | Unaffected                                                |
+| `marquee`      | Static; `play()` ignored                                                                | Works                     | Clones `aria-hidden` + `inert`; expose pause/play         |
+| `flowField`    | One static frame, then stops                                                            | Works                     | Decorative: mark the canvas `aria-hidden="true"`          |
+| `spotlight`    | Active (it's a static highlight, not motion)                                            | No-op                     | Unaffected                                                |
 
 ## License
 

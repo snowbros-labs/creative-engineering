@@ -38,15 +38,32 @@ build stands. Newest entries last. Only record what was actually run/verified.
   with the mount-cycle script (see below) — post-fix run not yet confirmed.
 - Root OSS docs, architecture, reference audit, CI workflow, changesets, package READMEs written.
 
+## 2026-10-21 (session 2)
+
+- Lint: 101 errors → 0 errors / 0 warnings. Root-cause fixes: dashboard a11y (native radio
+  segmented control, semantic stat list, listbox divs, chart `<title>`, registry `<section>`),
+  React test components hoisted, misplaced `biome-ignore` comments moved/removed. Justified
+  scoped ignores only for `void` callback-return unions, `!important` in visually-hidden and
+  reduced-motion CSS, and the keyboard-focusable code scroll region (WCAG 2.1.1).
+  `docs/research/**/*.md` excluded from the Biome formatter (its Markdown table formatter
+  oscillates between two outputs on that file — Biome bug).
+- Verified: `pnpm build`, typecheck (packages + showcase), 94/94 unit tests, `validate:skill`,
+  publint on all 8 packages, showcase e2e 21/21 (incl. new WebGL-context regression: 18 3D
+  mount/unmount cycles, no "WebGL context" warnings). Playwright workers capped at 2 —
+  headless WebGL is SwiftShader (CPU) and starved under more.
+- Deployment layout: flagship `website/` at root, showcase built (relative base) for `/demos/`.
+  Dev: showcase serves at :5180/demos/, website dev server (:5173) proxies `/demos`.
+  Showcase "Back to site"/brand links → `../`.
+- Design-check fixes: dashboard demo tag padding, footer text 10.5px → 12px, stale "84 tests" stat → 94.
+- detect-stack pnpm-workspace bug confirmed fixed (walks up; reports pnpm + workspaceRoot).
+- Root README written. Flagship brief saved: `docs/briefs/FLAGSHIP_WEBSITE.md`.
+
 ## RESUME HERE (next steps, in order)
-1. DONE: mount-cycle re-run after fix → 0 context warnings (was 1). Still add a regression test.
-   context warnings). Add a unit/e2e regression for it.
-2. `npx biome check . --write` then fix remaining lint; `pnpm run build`; `pnpm -r typecheck`;
-   `pnpm test`; `pnpm validate:skill`; `pnpm check:packages` (publint); showcase e2e.
-3. Fix showcase "back to site" links (`./index.html` no longer exists in apps/showcase).
-4. Write root README.md.
-5. User authorized: create public GitHub repo `snowbros-labs/creative-engineering`, push; then
-   `npm publish` all `@snowbros/*` packages (npm logged in as ved-chauhan, owns @snowbros scope).
-6. THEN website/ flagship with full effort, using the skill (home-scene.ts + home.css missing).
-7. Design-hook findings to fix: dashboard.html — 3× cramped padding + 1× functional text < 11px;
-   playground.html — flat type hierarchy (heading/body < 1.25× step).
+1. Push to GitHub `snowbros-labs/creative-engineering` (user authorized).
+2. Flagship website per `docs/briefs/FLAGSHIP_WEBSITE.md`, using the skill workflow. `website/`
+   currently renders unstyled: `src/styles/home.css` and `src/pages/home-scene.ts` never written.
+   Website typecheck fails until home-scene exists.
+3. After the flagship exercises the APIs: `npm publish` all `@snowbros/*` 0.1.0 (npm user
+   ved-chauhan owns the scope; authorized). Then update README/dashboard "not published" copy and
+   the playground claim "runs on the published packages".
+4. Remaining audit items: playground type-hierarchy review; showcase stat numbers are hard-coded.

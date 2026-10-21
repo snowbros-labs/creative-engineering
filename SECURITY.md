@@ -2,10 +2,10 @@
 
 ## Supported versions
 
-| Version | Supported |
-|---|---|
-| 0.1.x (latest) | ✅ |
-| older | ❌ — upgrade to the latest release |
+| Version        | Supported                          |
+| -------------- | ---------------------------------- |
+| 0.1.x (latest) | ✅                                 |
+| older          | ❌ — upgrade to the latest release |
 
 While SNOWBROS Creative Engineering is on 0.x, only the latest release receives security fixes.
 
@@ -20,7 +20,6 @@ If you cannot use GitHub, email **security@snowbros.me**.
 Include: affected package and version, browser/runtime, reproduction steps or proof of concept, and impact.
 
 In scope, for example:
-
 - XSS through library APIs (e.g. `splitText`, `scramble`, element attributes) when given untrusted input.
 - The skill scripts (`detect-stack.mjs`, `audit-motion.mjs`, `validate-skill.mjs`) executing, writing or
   exfiltrating anything — they must only **read** files in the target directory.
