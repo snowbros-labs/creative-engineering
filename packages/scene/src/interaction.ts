@@ -105,24 +105,37 @@ export function createOrbitInertia(
     options.onChange?.();
   });
 
-  scope.add(
-    ticker.add(({ delta, time }) => {
-      if (dragging || delta === 0) return;
-      let moved = false;
-      if (Math.abs(vy) > 0.001 || Math.abs(vx) > 0.001) {
-        object.rotation.y += vy * delta;
-        pitch = clamp(pitch + vx * delta, -maxPitch, maxPitch);
-        object.rotation.x = pitch;
-        vy = damp(vy, 0, decay, delta);
-        vx = damp(vx, 0, decay, delta);
-        moved = true;
-      } else if (autoSpin && !prefersReducedMotion() && time - lastInteraction > resumeAfter) {
-        object.rotation.y += autoSpin * delta;
-        moved = true;
-      }
-      if (moved) options.onChange?.();
-    }, Priority.update),
-  );
+  // With `autoSpin: 0` the inertia loop only runs while the object is coasting, then sleeps;
+  // releases and key presses wake it. A non-zero autoSpin is continuous by definition.
+  let off: (() => void) | null = null;
+  const wake = () => {
+    if (!off) off = ticker.add(coast, Priority.update);
+  };
+  const coast = ({ delta, time }: { delta: number; time: number }) => {
+    if (dragging || delta === 0) return;
+    let moved = false;
+    if (Math.abs(vy) > 0.001 || Math.abs(vx) > 0.001) {
+      object.rotation.y += vy * delta;
+      pitch = clamp(pitch + vx * delta, -maxPitch, maxPitch);
+      object.rotation.x = pitch;
+      vy = damp(vy, 0, decay, delta);
+      vx = damp(vx, 0, decay, delta);
+      moved = true;
+    } else if (autoSpin && !prefersReducedMotion() && time - lastInteraction > resumeAfter) {
+      object.rotation.y += autoSpin * delta;
+      moved = true;
+    }
+    if (moved) options.onChange?.();
+    else if (!autoSpin) {
+      off?.();
+      off = null;
+    }
+  };
+  scope.listen(element, 'pointerup', wake);
+  scope.listen(element, 'pointercancel', wake);
+  scope.listen(element, 'keydown', wake);
+  scope.add(() => off?.());
+  wake();
   return scope;
 }
 
@@ -171,19 +184,31 @@ export function pointerParallax(
     { passive: true },
   );
 
-  scope.add(
-    ticker.add(({ delta }) => {
-      if (prefersReducedMotion()) return;
-      const nx = damp(cx, tx, rate, delta);
-      const ny = damp(cy, ty, rate, delta);
-      if (Math.abs(nx - cx) < 1e-5 && Math.abs(ny - cy) < 1e-5) return;
-      cx = nx;
-      cy = ny;
-      object.rotation.y = baseY + cx * strength;
-      object.rotation.x = baseX + cy * strength;
-      options.onChange?.();
-    }, Priority.update),
+  // Subscribed only while the tilt is catching up with the pointer; settles, then sleeps.
+  let off: (() => void) | null = null;
+  const follow = ({ delta }: { delta: number }) => {
+    const nx = prefersReducedMotion() ? cx : damp(cx, tx, rate, delta);
+    const ny = prefersReducedMotion() ? cy : damp(cy, ty, rate, delta);
+    if (Math.abs(nx - cx) < 1e-5 && Math.abs(ny - cy) < 1e-5) {
+      off?.();
+      off = null;
+      return;
+    }
+    cx = nx;
+    cy = ny;
+    object.rotation.y = baseY + cx * strength;
+    object.rotation.x = baseX + cy * strength;
+    options.onChange?.();
+  };
+  scope.listen(
+    window,
+    'pointermove',
+    () => {
+      if (!off) off = ticker.add(follow, Priority.update);
+    },
+    { passive: true },
   );
+  scope.add(() => off?.());
   scope.add(() => {
     object.rotation.x = baseX;
     object.rotation.y = baseY;

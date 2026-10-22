@@ -3,7 +3,14 @@ import { inView } from '@snowbros/motion';
 import { type DrawPathHandle, drawPath } from './draw.js';
 import { createRandom } from './noise.js';
 
-export type AnnotationType = 'underline' | 'circle' | 'box' | 'strike' | 'cross' | 'bracket';
+export type AnnotationType =
+  | 'underline'
+  | 'circle'
+  | 'box'
+  | 'strike'
+  | 'cross'
+  | 'bracket'
+  | 'arrow';
 
 export interface AnnotateOptions {
   /** Mark style. Default `underline`. */
@@ -27,6 +34,18 @@ export interface AnnotateOptions {
   trigger?: 'inview' | 'manual';
   /** Delay after entering view, seconds. Default 0.15. */
   delay?: number;
+  /**
+   * `arrow` only: which way the arrow leaves the element — a hand-drawn pointer from a label to
+   * the thing it describes ("tap to pluck" → the object). Default `right`.
+   */
+  direction?: 'left' | 'right' | 'up' | 'down';
+  /** `arrow` only: shaft length in px. Default 64. */
+  length?: number;
+  /**
+   * `arrow` only: sideways drift of the tip as a fraction of `length` — positive turns
+   * counter-clockwise (right → up, down → right), negative the other way. Default 0.35.
+   */
+  lean?: number;
 }
 
 export interface AnnotateHandle extends PatternHandle, Seekable {
@@ -95,7 +114,7 @@ function roughEllipse(
 
 /**
  * Hand-drawn annotation ("redline") over text or any element: underline, circle, box,
- * strike-through, cross-out or bracket — generated as a seeded wobbly SVG path and drawn with
+ * strike-through, cross-out, bracket, or an arrow pointing away from the element — generated as a seeded wobbly SVG path and drawn with
  * `drawPath`. The SVG is decorative (`aria-hidden`), ignores pointer input, and follows layout
  * changes. Multi-line inline text gets one underline/strike per line box.
  *
@@ -170,6 +189,39 @@ export function annotate(el: HTMLElement, options: AnnotateOptions = {}): Annota
     } else if (type === 'cross') {
       ds.push(roughLine(rand, b.l - pad, b.t, b.r + pad, b.b, amp));
       ds.push(roughLine(rand, b.r + pad, b.t, b.l - pad, b.b, amp));
+    } else if (type === 'arrow') {
+      // A curved shaft leaving the element's edge with a bend, then a two-stroke head — drawn
+      // in that order, like a hand adding a pointer next to a note.
+      const dir = options.direction ?? 'right';
+      const len = options.length ?? 64;
+      const k = options.lean ?? 0.35;
+      const mx = (b.l + b.r) / 2;
+      const my = (b.t + b.b) / 2;
+      const [sx, sy, ex, ey] =
+        dir === 'right'
+          ? [b.r + pad, my, b.r + pad + len, my - len * k]
+          : dir === 'left'
+            ? [b.l - pad, my, b.l - pad - len, my - len * k]
+            : dir === 'up'
+              ? [mx, b.t - pad, mx + len * k, b.t - pad - len]
+              : [mx, b.b + pad, mx + len * k, b.b + pad + len];
+      const vx = ex - sx;
+      const vy = ey - sy;
+      const vl = Math.hypot(vx, vy) || 1;
+      // Bow the shaft to one side of the straight line (seeded, so it is stable).
+      const bow = (0.22 + rand() * 0.12) * len;
+      const qx = (sx + ex) / 2 + (-vy / vl) * bow;
+      const qy = (sy + ey) / 2 + (vx / vl) * bow;
+      ds.push(`M${f(sx)} ${f(sy)}Q${f(qx)} ${f(qy)} ${f(ex)} ${f(ey)}`);
+      // Head follows the tangent at the tip (from the control point toward the end).
+      const tx = ex - qx;
+      const ty = ey - qy;
+      const tl = Math.hypot(tx, ty) || 1;
+      const h = 8 + width * 2;
+      for (const sign of [1, -1]) {
+        const a = Math.atan2(ty / tl, tx / tl) + Math.PI + sign * (0.5 + (rand() - 0.5) * 0.15);
+        ds.push(roughLine(rand, ex, ey, ex + Math.cos(a) * h, ey + Math.sin(a) * h, amp * 0.25));
+      }
     } else {
       // bracket: a left-hand margin mark, like an editor flagging a passage.
       const x = b.l - pad * 2;

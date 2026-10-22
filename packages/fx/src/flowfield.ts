@@ -9,11 +9,14 @@ import {
 import { createNoise, createRandom } from './noise.js';
 
 export interface FlowFieldOptions {
-  /** Particles per CSS pixel² (scaled by device tier). Default 0.00035. */
+  /**
+   * Particles per CSS pixel² (scaled by device tier). Default 0.00035 — about 300 particles on a
+   * 900 × 950 canvas. Values ≥ 0.01 are almost certainly a unit mistake (warned in dev).
+   */
   density?: number;
   /** Stroke color. Default `currentColor` of the canvas, falling back to #fff. */
   color?: string;
-  /** Pixels per second. Default 40. */
+  /** CSS pixels per second — not a 0..1 factor. Default 40; values < 2 are invisible (warned). */
   speed?: number;
   /** CSS px. Default 1. */
   lineWidth?: number;
@@ -58,6 +61,12 @@ export function flowField(
 
   const density = options.density ?? 0.00035;
   const speed = options.speed ?? 40;
+  // A real misuse found while building the flagship: `speed: 0.5, density: 0.6` (read as
+  // fractions) renders nothing visible and floods the canvas. Say so instead of failing silently.
+  if (speed < 2 || density >= 0.01)
+    console.warn(
+      `[snowbros] flowField: speed is px/s and density is particles per px² (got speed ${speed}, density ${density}); defaults are 40 and 0.00035.`,
+    );
   const fadeAmount = options.fade ?? 0.06;
   const freq = options.scale ?? 0.0018;
   const noise = createNoise(options.seed ?? 7);

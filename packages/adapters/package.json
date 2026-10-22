@@ -1,7 +1,7 @@
 {
   "name": "@snowbros/adapters",
   "version": "0.1.0",
-  "description": "Interop with Lenis, GSAP and Motion (motion.dev): share one frame loop and drive their animations from SNOWBROS progress sources. Structural typing only — never imports or bundles those libraries.",
+  "description": "Interop adapters: share one frame loop and scroll model with Lenis, GSAP, Motion, Rive, Rapier and Howler \u2014 without bundling them.",
   "license": "(MIT OR Apache-2.0)",
   "type": "module",
   "sideEffects": false,
@@ -51,7 +51,10 @@
   "peerDependencies": {
     "lenis": "^1.1.0",
     "gsap": "^3.12.0",
-    "motion": ">=11.0.0"
+    "motion": ">=11.0.0",
+    "@rive-app/canvas": ">=2.0.0",
+    "@dimforge/rapier3d-compat": ">=0.11.0",
+    "howler": "^2.2.0"
   },
   "peerDependenciesMeta": {
     "lenis": {
@@ -61,6 +64,15 @@
       "optional": true
     },
     "motion": {
+      "optional": true
+    },
+    "@rive-app/canvas": {
+      "optional": true
+    },
+    "@dimforge/rapier3d-compat": {
+      "optional": true
+    },
+    "howler": {
       "optional": true
     }
   }

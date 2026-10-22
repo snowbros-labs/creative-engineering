@@ -14,11 +14,13 @@
     "build:site": "vite build && pnpm --filter @snowbros/showcase exec vite build --outDir ../../website/dist/demos --emptyOutDir"
   },
   "dependencies": {
+    "@snowbros/adapters": "workspace:^",
     "@snowbros/core": "workspace:^",
     "@snowbros/fx": "workspace:^",
     "@snowbros/motion": "workspace:^",
     "@snowbros/scene": "workspace:^",
     "@snowbros/tokens": "workspace:^",
+    "gsap": "3.15.0",
     "three": "0.186.1"
   },
   "devDependencies": {

@@ -1,5 +1,12 @@
 export { Reveal, type RevealProps, RevealText, type RevealTextProps } from './components.js';
-export { useMagnetic, useMarquee, useSpotlight, useTilt } from './effects.js';
+export {
+  useMagnetic,
+  useMarquee,
+  usePressable,
+  useProximity,
+  useSpotlight,
+  useTilt,
+} from './effects.js';
 export {
   useFlip,
   useInView,

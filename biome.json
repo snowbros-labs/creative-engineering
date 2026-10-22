@@ -8,7 +8,9 @@
       "!**/coverage",
       "!docs/research/screens",
       "!**/playwright-report",
-      "!**/test-results"
+      "!**/test-results",
+      "!.playwright-mcp",
+      "!**/.impeccable"
     ]
   },
   "formatter": {

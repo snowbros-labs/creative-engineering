@@ -14,19 +14,33 @@ Two failure modes to avoid above all:
 1. **Generic AI aesthetic** — dark gradient, neon glow, glass cards, everything fading up. Decoration without a concept.
 2. **Rewrite reflex** — replacing a working framework, design system or library with your favourite one.
 
+## Three layers
+
+1. **Method (this skill)** — decide what the interface should do and look like, then prove it in
+   the rendered page. No library compensates for a weak decision.
+2. **Engines** — GSAP, three.js/R3F, Rive, Lenis, Radix, Rapier, Howler: use the project's own, or
+   add one only for a missing capability. [references/engines.md](references/engines.md)
+3. **@snowbros/\*** — primitives on one ticker, one scroll model, one cleanup model, plus adapters
+   that let layer-2 engines join that model. [references/toolkit-and-libraries.md](references/toolkit-and-libraries.md)
+
 ## Operating loop
 
 Run these phases in order. Scale each to the task: a button micro-interaction needs minutes of
 Recon; a campaign site needs all of it. Full checklists: [references/workflow.md](references/workflow.md).
 
-| #   | Phase                                                                                                                    | Output (always state it)                          |
-| --- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
-| 1   | **Recon** — run `scripts/detect-stack.mjs`, read existing tokens/components, run the app if possible                     | Stack profile + constraints in 5–10 lines         |
-| 2   | **Direction** — define the job of the interface, its audience, its one memorable idea                                    | 1 direction (or 3 in Concept mode) with rationale |
-| 3   | **Plan** — patterns, technologies, files touched, budgets, reduced-motion policy per pattern                             | Short plan; ask before adding dependencies        |
-| 4   | **Build** — implement in the project's conventions; smallest diff that achieves the direction                            | Working code                                      |
-| 5   | **Verify** — run build, tests, `scripts/audit-motion.mjs`, browser checks (reduced motion, keyboard, mobile width, perf) | Actual results, failures included                 |
-| 6   | **Deliver** — summarize what changed, what was verified, what was not, known limits                                      | Honest report                                     |
+| #   | Phase                                                                                                                      | Output (always state it)                                                             |
+| --- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1   | **Recon** — `scripts/detect-stack.mjs`, read tokens/components, run the app, capture it with `scripts/inspect-render.mjs`  | Stack profile + constraints + current defects                                        |
+| 2   | **Research** — study references live (scroll, hover, open menus, phone width); verified vs inferred                        | Principles + "not taking" list ([reference-study.md](references/reference-study.md)) |
+| 3   | **Direction** — job, audience, the one memorable idea, type/colour/space system, one signature technique                   | Direction + system + per-section, per-breakpoint composition                         |
+| 4   | **Plan** — patterns, engine ownership table, budgets, reduced-motion policy, files touched                                 | Short plan; ask before adding dependencies                                           |
+| 5   | **Build** — project conventions; tokens → primitives → sections; smallest diff that achieves the direction                 | Working code                                                                         |
+| 6   | **Inspect & refine** — render the viewport matrix, interact, name defects, fix, re-render. Repeat until exit criteria hold | Defect list → fixes → evidence ([visual-qa.md](references/visual-qa.md))             |
+| 7   | **Verify** — build, typecheck, lint, `scripts/audit-motion.mjs`, reduced motion, keyboard, idle frames                     | Actual results, failures included                                                    |
+| 8   | **Deliver** — what changed, what was inspected (widths, states), what was not, known limits                                | Honest report                                                                        |
+
+Phase 6 is where quality comes from. A build that passes and one good screenshot prove nothing:
+inspect every section at 320–1440 px, open every menu, press every control, then fix what you see.
 
 ## Modes
 
@@ -72,6 +86,7 @@ Run from any directory; both are zero-dependency Node ≥ 18.
 node <skill>/scripts/detect-stack.mjs <project-dir> --pretty   # stack profile + recommendations (JSON)
 node <skill>/scripts/audit-motion.mjs <project-dir>            # motion/a11y/perf smells with file:line
 node <skill>/scripts/audit-motion.mjs <project-dir> --json --strict   # CI: exit 1 on errors
+node <skill>/scripts/inspect-render.mjs <url> [--out dir] [--widths 320,390,768,1440]  # screenshots per section + overflow/text/touch/console report (needs playwright)
 ```
 
 `<skill>` is this skill's directory (e.g. `~/.claude/skills/snowbros-creative`). Treat audit findings
@@ -85,10 +100,11 @@ Libraries live in the same repository (`packages/*`, npm scope `@snowbros`). The
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | `@snowbros/core`                        | shared ticker (one rAF), easing incl. cubic-bezier, analytic springs, scopes (cleanup), signals, `prefersReducedMotion`, capability/device tier, `createMediaContext`                    | any JS motion work in a web project without an existing engine |
 | `@snowbros/motion`                      | `animate`, `timeline`, `stagger`, `scrollProgress`, `scrub`, `pin` (CSS sticky), `horizontalScroll`, `splitText` (accessible), `revealText`/`reveal`, `inView`, `flip`, `viewTransition` | scroll choreography, text reveals, FLIP, coordinated sequences |
-| `@snowbros/fx`                          | pointer effects, cursor, marquee, image reveals, text scramble, SVG draw, procedural canvas                                                                                              | expressive details on marketing pages                          |
+| `@snowbros/fx`                          | pointer effects, press depth, proximity, cursor, marquee, hand-drawn `annotate` (incl. arrows), image reveals, scramble, SVG draw, procedural canvas                                     | expressive details on marketing pages                          |
 | `@snowbros/scene`                       | three.js stage lifecycle, DPR caps, quality governor, camera rig on progress, disposal, fallbacks                                                                                        | vanilla three.js scenes                                        |
 | `@snowbros/react`, `@snowbros/elements` | React hooks/components; Web Components for Vue, Svelte, Astro, plain HTML                                                                                                                | adapter layer for those stacks                                 |
 | `@snowbros/tokens`                      | functional vs expressive motion tokens, CSS variables                                                                                                                                    | projects without their own motion tokens                       |
+| `@snowbros/adapters`                    | join external engines to the shared ticker/scroll: Lenis, GSAP (`fromGsap`), Motion, Rive inputs, Rapier stepping, opt-in Howler cues                                                    | a project uses or needs one of those engines                   |
 
 **Do not use them when:** the project is native (Flutter/SwiftUI/Compose/React Native) — use native
 primitives; GSAP or Motion is already installed — use it (add `@snowbros/motion` only for a capability
@@ -120,6 +136,12 @@ revealText(document.querySelector<HTMLElement>('h1')!, { by: 'lines' });
 | Load when…                                                     | File                                                                                                                                                                                                                     |
 | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | planning any non-trivial task                                  | [references/workflow.md](references/workflow.md)                                                                                                                                                                         |
+| studying reference sites (verified vs inferred)                | [references/reference-study.md](references/reference-study.md)                                                                                                                                                           |
+| choosing a signature technique learned from top sites          | [references/patterns/signature-techniques.md](references/patterns/signature-techniques.md)                                                                                                                               |
+| composing phones/tablets on purpose (not shrinking desktop)    | [references/responsive-art-direction.md](references/responsive-art-direction.md)                                                                                                                                         |
+| inspecting the rendered page, diagnosing visual defects        | [references/visual-qa.md](references/visual-qa.md)                                                                                                                                                                       |
+| which @snowbros package / external library to use              | [references/toolkit-and-libraries.md](references/toolkit-and-libraries.md)                                                                                                                                               |
+| mixing GSAP, Lenis, three/R3F, Rive, Radix, Rapier, Howler     | [references/engines.md](references/engines.md)                                                                                                                                                                           |
 | choosing or combining modes                                    | [references/modes.md](references/modes.md)                                                                                                                                                                               |
 | deciding the look, producing concepts, avoiding generic output | [references/design-direction.md](references/design-direction.md)                                                                                                                                                         |
 | choosing durations, easings, springs, choreography             | [references/motion-system.md](references/motion-system.md)                                                                                                                                                               |
@@ -142,7 +164,9 @@ revealText(document.querySelector<HTMLElement>('h1')!, { by: 'lines' });
 ```
 Direction: <one line>
 Changed: <files / components>
-Verified: <commands run + results; browsers/viewports checked; reduced-motion checked>
+Inspected: <widths × sections captured; states opened (menu, hover, focus, pressed); reduced motion; no-WebGL>
+Defects found → fixed: <list>
+Verified: <commands run + results; idle frames; console>
 Not verified: <what and why>
 Budgets: <JS added (gz), frame time observed, LCP/CLS if measured>
 Follow-ups: <real remaining issues, not filler>

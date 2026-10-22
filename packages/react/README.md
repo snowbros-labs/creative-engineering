@@ -41,16 +41,17 @@ export function Story() {
 }
 ```
 
-| Export                                                     | Notes                                                                                        |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `useSnowbros(setup, deps)`                                 | Run imperative setup with a scope; everything registered is disposed on unmount/deps change. |
-| `useScrollProgress(ref, options)` / `usePin(ref, options)` | Stable `ProgressSource`.                                                                     |
-| `useTimeline(build, deps, source?, scrubOptions?)`         | Builds, optionally scrubs, kills on cleanup.                                                 |
-| `useInView(ref, options)`                                  | Boolean state.                                                                               |
-| `useFlip()`                                                | `flip(container, () => setState(...))` — waits for commit.                                   |
-| `useReducedMotion()`, `useSignal(signal)`                  | `useSyncExternalStore`-based.                                                                |
-| `useMagnetic`, `useTilt`, `useMarquee`, `useSpotlight`     | `@snowbros/fx` effects.                                                                      |
-| `<RevealText>`, `<Reveal>`                                 | Server-render plain text; split after hydration.                                             |
+| Export                                                     | Notes                                                                                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `useSnowbros(setup, deps)`                                 | Run imperative setup with a scope; everything registered is disposed on unmount/deps change.                            |
+| `useScrollProgress(ref, options)` / `usePin(ref, options)` | Stable `ProgressSource`.                                                                                                |
+| `useTimeline(build, deps, source?, scrubOptions?)`         | Builds, optionally scrubs, kills on cleanup.                                                                            |
+| `useInView(ref, options)`                                  | Boolean state.                                                                                                          |
+| `useFlip()`                                                | `flip(container, () => setState(...))` — waits for commit.                                                              |
+| `useReducedMotion()`, `useSignal(signal)`                  | `useSyncExternalStore`-based.                                                                                           |
+| `useMagnetic`, `useTilt`, `useMarquee`, `useSpotlight`     | `@snowbros/fx` effects.                                                                                                 |
+| `usePressable`, `useProximity`                             | `@snowbros/fx` press depth (`--sb-press`) and pointer proximity (`--sb-proximity`; pass `selector` to target children). |
+| `<RevealText>`, `<Reveal>`                                 | Server-render plain text; split after hydration.                                                                        |
 
 Next.js App Router: these are client APIs — use them in `'use client'` components.
 

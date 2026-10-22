@@ -65,12 +65,21 @@ importers:
 
   packages/adapters:
     dependencies:
+      "@dimforge/rapier3d-compat":
+        specifier: ">=0.11.0"
+        version: 0.12.0
+      "@rive-app/canvas":
+        specifier: ">=2.0.0"
+        version: 2.45.0
       "@snowbros/core":
         specifier: workspace:^
         version: link:../core
       gsap:
         specifier: ^3.12.0
         version: 3.15.0
+      howler:
+        specifier: ^2.2.0
+        version: 2.2.4
       lenis:
         specifier: ^1.1.0
         version: 1.3.27(react@19.3.1)
@@ -152,6 +161,9 @@ importers:
 
   website:
     dependencies:
+      "@snowbros/adapters":
+        specifier: workspace:^
+        version: link:../packages/adapters
       "@snowbros/core":
         specifier: workspace:^
         version: link:../packages/core
@@ -167,6 +179,9 @@ importers:
       "@snowbros/tokens":
         specifier: workspace:^
         version: link:../packages/tokens
+      gsap:
+        specifier: 3.15.0
+        version: 3.15.0
       three:
         specifier: 0.186.1
         version: 0.186.1
@@ -510,6 +525,12 @@ packages:
         integrity: sha512-4EDEmvxWtgsCnnVeBvtFIFZtUhPPt1+bA9JrSwU4Sa//6oKtzCSlGGXYJr44OD9aGISymbieJ4mCKHUygUDU+g==,
       }
     engines: { node: ">=18" }
+
+  "@rive-app/canvas@2.45.0":
+    resolution:
+      {
+        integrity: sha512-GnfJI75Z990maZC7NtXUzuZG2C66j/qIQvFmFAUDS+fPy8k4genTPTrCSgpVpGQDuedFhhmVcPtRZks5lAPf3w==,
+      }
 
   "@rolldown/binding-android-arm-eabi@1.2.14":
     resolution:
@@ -1140,6 +1161,12 @@ packages:
         integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==,
       }
     engines: { node: ">=20.0.0" }
+
+  howler@2.2.4:
+    resolution:
+      {
+        integrity: sha512-iARIBPgcQrwtEr+tALF+rapJ8qSc+Set2GJQl7xT1MQzWaVkFebdJhR3alVlSiUf5U7nAANKuj3aWpwerocD5w==,
+      }
 
   human-id@4.2.2:
     resolution:
@@ -1893,6 +1920,8 @@ snapshots:
     dependencies:
       tinyexec: 1.3.1
 
+  "@rive-app/canvas@2.45.0": {}
+
   "@rolldown/binding-android-arm-eabi@1.2.14":
     optional: true
 
@@ -2156,6 +2185,8 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  howler@2.2.4: {}
 
   human-id@4.2.2: {}
 

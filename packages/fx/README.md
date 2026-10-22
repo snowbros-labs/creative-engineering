@@ -123,8 +123,9 @@ Seeded, deterministic gradient noise written for this package. It returns `noise
 
 A procedural 2D canvas visual: particles follow an evolving noise field and leave fading trails. It
 needs no WebGL, is DPR-aware, resizes with its box and runs only while on screen. The particle count
-scales with `deviceTier()`. Options: `density`, `color`, `speed`, `lineWidth`, `fade`, `scale`,
-`seed` and `maxDpr`.
+scales with `deviceTier()`. Options: `density` (particles per CSS px², default `0.00035`), `color`,
+`speed` (CSS px per second, default `40`), `lineWidth`, `fade`, `scale`, `seed` and `maxDpr`. Both
+units are absolute, not 0–1 factors; obviously out-of-range values log a warning.
 
 ### `spotlight(el, options?)`
 
@@ -158,7 +159,14 @@ accepts CSS variables.
 
 ```ts
 annotate(document.querySelector('em')!, { type: 'circle', color: 'var(--accent)' });
+// A hand-drawn pointer from a label to the object it describes (an affordance, not decoration):
+annotate(hint, { type: 'arrow', direction: 'up', length: 56, color: 'var(--accent)' });
 ```
+
+`arrow` draws a bowed shaft leaving the element's edge (`direction`: `left` | `right` | `up` |
+`down`, `length` in px, `lean` = sideways drift of the tip as a fraction of the length) and a
+two-stroke head. Use it to teach an interaction once ("tap to
+pluck"), next to the thing that answers.
 
 ### `pressable(el, options?)`
 

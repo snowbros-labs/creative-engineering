@@ -3,6 +3,10 @@ import {
   type MarqueeOptions,
   magnetic,
   marquee,
+  type PressableOptions,
+  type ProximityOptions,
+  pressable,
+  proximity,
   type SpotlightOptions,
   spotlight,
   type TiltOptions,
@@ -50,5 +54,35 @@ export function useSpotlight(ref: Ref, options: SpotlightOptions = {}): void {
       if (ref.current) scope.add(spotlight(ref.current, options));
     },
     [ref, JSON.stringify(options)],
+  );
+}
+
+/** Spring-backed press depth (`--sb-press`, 0..1) with an optional haptic tick on supporting phones. */
+export function usePressable(ref: Ref, options: PressableOptions = {}): void {
+  useSnowbros(
+    (scope) => {
+      if (ref.current) scope.add(pressable(ref.current, options));
+    },
+    [ref, JSON.stringify({ ...options, spring: options.spring ?? null })],
+  );
+}
+
+/**
+ * Pointer proximity (`--sb-proximity`, 0 far … 1 under the pointer) on the ref'd element's children
+ * matching `selector` (default: the element itself). Fine pointers only unless `force`.
+ */
+export function useProximity(
+  ref: Ref,
+  options: ProximityOptions & { selector?: string } = {},
+): void {
+  const { selector, ...rest } = options;
+  useSnowbros(
+    (scope) => {
+      const root = ref.current;
+      if (!root) return;
+      const targets = selector ? Array.from(root.querySelectorAll<HTMLElement>(selector)) : [root];
+      scope.add(proximity(targets, rest));
+    },
+    [ref, selector, JSON.stringify(rest)],
   );
 }

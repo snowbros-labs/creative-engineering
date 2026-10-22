@@ -90,6 +90,21 @@ build stands. Newest entries last. Only record what was actually run/verified.
 - Website exported for Vercel to `VED2107/snowbros-website` (private) via
   `tools/export-website.mjs`; standalone `npm install && npm run build` verified.
 
+## 2026-10-22 — reference deep-study, skill completion, toolkit gaps, mobile redesign
+
+- References re-studied live by wheel-scrolling each page end to end (1440 and 390), opening menus,
+  pressing BEGIN (abeto) and driving (bruno). Runtime-verified stacks recorded in
+  `skills/snowbros-creative/references/toolkit-and-libraries.md`.
+- Skill: 8-phase loop with Research and Inspect & refine; new references `visual-qa.md`,
+  `responsive-art-direction.md`, `reference-study.md`, `toolkit-and-libraries.md`, `engines.md`,
+  `patterns/signature-techniques.md`; new script `scripts/inspect-render.mjs` (viewport matrix,
+  overflow/tiny text/touch target/console/idle-frame report).
+- Packages (unreleased, changeset `reference-study-engines`): scene idle sleep + `camera.fit`;
+  adapters `driveRiveInput`, `stepPhysics`, `soundCues`; fx `annotate` arrow + flowField unit
+  warnings; react `usePressable`, `useProximity`. Unit tests for scene/fx/adapters/react: 47 passed.
+- Website: phone hero recomposed (figure plate), contact section, footer card, GSAP (lazy, scrubbed
+  through `fromGsap`), Bricolage Grotesque, mobile fixes across every section.
+
 ## RESUME HERE (next steps, in order)
 
 1. Import `VED2107/snowbros-website` on Vercel (owner). Re-export after site changes.

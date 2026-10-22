@@ -28,6 +28,12 @@ export interface StageOptions {
     near?: number;
     far?: number;
     position?: [number, number, number];
+    /**
+     * Keep a sphere of this radius (centred on the origin) fully in frame at any aspect ratio:
+     * on resize the camera dollies back along its own axis when the narrower field of view would
+     * crop it (portrait phones). Never moves closer than `position`.
+     */
+    fit?: number;
   };
   alpha?: boolean;
   /** `auto` enables MSAA except on the low tier. */
@@ -131,6 +137,8 @@ export function createStage(options: StageOptions = {}): Stage {
   const cam = options.camera ?? {};
   const camera = new PerspectiveCamera(cam.fov ?? 35, 1, cam.near ?? 0.1, cam.far ?? 100);
   camera.position.set(...(cam.position ?? [0, 0, 6]));
+  const baseDistance = camera.position.length() || 1;
+  const axis = camera.position.clone().normalize();
 
   const frameCallbacks = new Set<StageFrameCallback>();
   let needsRender = true;
@@ -147,8 +155,16 @@ export function createStage(options: StageOptions = {}): Stage {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap()));
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    if (cam.fit) {
+      // Narrowest half-angle decides: vertical fov in landscape, horizontal fov in portrait.
+      const halfV = (camera.fov * Math.PI) / 360;
+      const halfH = Math.atan(Math.tan(halfV) * camera.aspect);
+      const needed = cam.fit / Math.sin(Math.min(halfV, halfH));
+      camera.position.copy(axis).multiplyScalar(Math.max(baseDistance, needed));
+    }
     camera.updateProjectionMatrix();
     needsRender = true;
+    wake();
   };
 
   const stage: Stage = {
@@ -165,11 +181,12 @@ export function createStage(options: StageOptions = {}): Stage {
     },
     invalidate() {
       needsRender = true;
+      wake();
     },
     add(object) {
       scene.add(object);
       scope.add(() => disposeObject(object));
-      needsRender = true;
+      stage.invalidate();
       return object;
     },
     track(item) {
@@ -177,6 +194,7 @@ export function createStage(options: StageOptions = {}): Stage {
     },
     onFrame(callback) {
       frameCallbacks.add(callback);
+      wake();
       return () => {
         frameCallbacks.delete(callback);
       };
@@ -193,17 +211,31 @@ export function createStage(options: StageOptions = {}): Stage {
     },
   };
 
+  // The stage only holds a ticker subscription while it has work: in `demand` mode it sleeps after
+  // the last requested frame (so an idle page runs no rAF loop at all) and `invalidate()` wakes it.
+  // Offscreen or context-lost stages sleep too; the observers below wake them.
+  let off: (() => void) | null = null;
+  const sleep = () => {
+    off?.();
+    off = null;
+  };
   const loop = (frame: FrameInfo) => {
-    if (!stage.active) return;
-    if (maxFps > 0 && frame.time - lastRender < 1000 / maxFps - 1) return;
+    if (!stage.active) return sleep();
     const continuous = mode() === 'always';
-    if (!continuous && !needsRender) return;
+    if (!continuous && !needsRender) return sleep();
+    if (maxFps > 0 && frame.time - lastRender < 1000 / maxFps - 1) return;
     lastRender = frame.time;
+    // Cleared before the callbacks run, so a callback that is still animating (damping, springs)
+    // can call invalidate() and keep the next frame coming.
+    needsRender = false;
     for (const cb of frameCallbacks) cb(frame, stage);
     renderer.render(scene, camera);
-    needsRender = false;
   };
-  scope.add(ticker.add(loop, Priority.render));
+  function wake() {
+    if (!off && !scope.disposed) off = ticker.add(loop, Priority.render);
+  }
+  scope.add(sleep);
+  wake();
 
   if (typeof ResizeObserver !== 'undefined') {
     const ro = new ResizeObserver(resize);
@@ -217,7 +249,7 @@ export function createStage(options: StageOptions = {}): Stage {
     const io = new IntersectionObserver(
       ([entry]) => {
         onscreen = !!entry?.isIntersecting;
-        if (onscreen) needsRender = true;
+        if (onscreen) stage.invalidate();
       },
       { rootMargin: '100px' },
     );
@@ -234,10 +266,11 @@ export function createStage(options: StageOptions = {}): Stage {
   scope.listen(canvas, 'webglcontextrestored', () => {
     contextLost = false;
     resize();
+    stage.invalidate();
     options.onContextRestored?.();
   });
 
-  scope.add(motionPreference.subscribe(() => (needsRender = true)));
+  scope.add(motionPreference.subscribe(() => stage.invalidate()));
   resize();
   return stage;
 }
