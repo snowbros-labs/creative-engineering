@@ -11,7 +11,7 @@ import {
   type Scope,
   ticker,
 } from '@snowbros/core';
-import { magnetic, spotlight, tilt } from '@snowbros/fx';
+import { finePointer, magnetic, pressable, spotlight, tilt } from '@snowbros/fx';
 import { buildLattice } from '../lattice/geometry.js';
 import { latticeSvg } from '../lattice/svg.js';
 
@@ -27,14 +27,21 @@ export function init(root: HTMLElement, scope: Scope): void {
         inner: magnet.querySelector('span') ?? undefined,
       }),
     );
+    // Touch has no "near": the same target answers a press instead — a spring squash with a
+    // haptic tick — so the specimen is never dead on a phone.
+    const fine = finePointer();
+    const label = magnet.querySelector('span')!;
+    const idle = fine ? 'Pull me' : 'Press me';
+    label.textContent = idle;
+    if (!fine) scope.add(pressable(magnet, { haptic: 'press' }));
     let count = 0;
-    scope.listen(magnet, 'pointerenter', () => {
+    scope.listen(magnet, fine ? 'pointerenter' : 'pointerdown', () => {
       count++;
-      if (magnetOut) magnetOut.textContent = `${count} activation${count === 1 ? '' : 's'}`;
+      if (magnetOut)
+        magnetOut.textContent = `${count} ${fine ? 'activation' : 'press'}${count === 1 ? '' : fine ? 's' : 'es'}`;
     });
     scope.listen(magnet, 'click', () => {
-      magnet.querySelector('span')!.textContent =
-        magnet.querySelector('span')!.textContent === 'Pull me' ? 'Again' : 'Pull me';
+      label.textContent = label.textContent === idle ? 'Again' : idle;
     });
   }
 

@@ -17,6 +17,10 @@
 
 ### Patch Changes
 
+- annotate: marks follow layout for inline targets (a ResizeObserver never fires for inline
+  elements, so the nearest block ancestor is observed too), rebuild after webfonts load and
+  re-measure when drawing starts; empty line fragments no longer get stray marks.
+
 - Updated dependencies [f27085b]
   - @snowbros/core@0.2.0
   - @snowbros/motion@0.1.1

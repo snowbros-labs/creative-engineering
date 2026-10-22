@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = resolve(process.argv[2] ?? join(root, '..', 'snowbros-website-export'));
-const PACKAGES = ['core', 'motion', 'fx', 'scene'];
+const PACKAGES = ['core', 'motion', 'fx', 'scene', 'adapters'];
 
 const tokensCss = join(root, 'packages/tokens/dist/tokens.css');
 if (!existsSync(tokensCss)) {
@@ -68,8 +68,8 @@ cpSync(tokensCss, join(out, 'toolkit/tokens/tokens.css'));
 copy('LICENSE-MIT', 'LICENSE-MIT');
 copy('LICENSE-APACHE', 'LICENSE-APACHE');
 
-const three = JSON.parse(readFileSync(join(root, 'website/package.json'), 'utf8')).dependencies
-  .three;
+const siteDeps = JSON.parse(readFileSync(join(root, 'website/package.json'), 'utf8')).dependencies;
+const { three, gsap } = siteDeps;
 const vite = JSON.parse(readFileSync(join(root, 'website/package.json'), 'utf8')).devDependencies
   .vite;
 const commit = (() => {
@@ -92,7 +92,7 @@ writeFileSync(
       license: '(MIT OR Apache-2.0)',
       type: 'module',
       scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' },
-      dependencies: { three },
+      dependencies: { gsap, three },
       devDependencies: { vite },
       engines: { node: '>=20.19' },
     },
@@ -167,7 +167,7 @@ Import the repository; Vercel detects Vite. Build command \`npm run build\`, out
 
 - \`index.html\`, \`src/\` — the flagship page
 - \`demos/\` — the Toolkit Ops dashboard and the pattern playground
-- \`toolkit/\` — snapshot of \`@snowbros/core\`, \`motion\`, \`fx\`, \`scene\` sources and the tokens CSS
+- \`toolkit/\` — snapshot of \`@snowbros/core\`, \`motion\`, \`fx\`, \`scene\`, \`adapters\` sources and the tokens CSS
 
 Exported from main-repo commit \`${commit}\`.
 Dual-licensed MIT OR Apache-2.0.

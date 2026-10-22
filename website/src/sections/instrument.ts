@@ -119,6 +119,42 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
     ),
   );
 
+  // Phones: the crystal leaves the full-bleed stage and becomes a framed figure above the
+  // headline (cropped off the right edge), so its branches never run behind the type.
+  // Registered before the renderers so they mount straight into the plate.
+  const plate = $('[data-hero-plate]', section);
+  if (plate) {
+    const home = { parent: host.parentElement, next: host.nextSibling };
+    shell.add(
+      createMediaContext({
+        '(max-width: 799px)': (scope) => {
+          plate.prepend(host);
+          section.dataset.plate = 'on';
+          scope.add(() => {
+            delete section.dataset.plate;
+            home.parent?.insertBefore(host, home.next);
+          });
+          // The figure opens like a shutter, then the crystal grows inside it.
+          scope.add(
+            animate(
+              plate,
+              { clipPath: ['inset(0% 0% 100% 0% round 20px)', 'inset(0% 0% 0% 0% round 20px)'] },
+              {
+                duration: 0.9,
+                delay: 0.05,
+                ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                reducedMotion: 'skip',
+              },
+            ),
+          );
+          scope.add(() => {
+            plate.style.clipPath = '';
+          });
+        },
+      }),
+    );
+  }
+
   shell.add(
     createMediaContext({
       // ------------------------------------------------------------ pinned, full motion
@@ -167,11 +203,13 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
             coda.style.opacity = String(all);
             coda.style.transform = `translate3d(0, ${(1 - all) * 20}px, 0)`;
           }
+          // Narrower desktops: shrink and push the crystal right so it never crosses the headline.
+          const fitK = clamp((innerWidth / innerHeight) * 0.58, 0.78, 1);
           view.setPose({
             rotZ: armToLeft(cc) * inChapters,
             tilt: 0.35 - 0.2 * inChapters,
-            x: 0.52 - 0.1 * inChapters + 0.08 * all,
-            scale: 1.22 - 0.3 * inChapters,
+            x: 0.58 + (1 - fitK) * 0.9 - 0.16 * inChapters + 0.08 * all,
+            scale: (1.22 - 0.3 * inChapters) * fitK,
           });
           view.setFocus(Math.round(cc), inChapters * (1 - all), all);
           // Labels accumulate: by the end the crystal is a labelled diagram of the system.
@@ -251,8 +289,8 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
         scope.add(() => svg.remove());
         upgradeToWebGL(scope, host, lattice, (view3d) => {
           svg.remove();
-          // Above and right of the headline, so lines cross the type less.
-          view3d.setPose({ rotZ: 0.12, tilt: 0.25, x: 0.3, y: 0.55, scale: 0.82 });
+          // Inside the plate: offset right and cropped by its edge — a figure, not wallpaper.
+          view3d.setPose({ rotZ: 0.12, tilt: 0.3, x: 0.78, y: -0.02, scale: 1.32 });
           const g = { v: 0 };
           scope.add(
             animate(

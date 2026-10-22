@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>SNOWBROS Creative Engineering — design and engineering as one instrument</title>
     <meta
       name="description"
       content="An open-source AI skill and a toolkit of small, measured libraries for motion, scroll choreography, interactive 3D and product interfaces. MIT or Apache-2.0."
     />
-    <meta name="theme-color" content="#f5efe4" />
+    <meta name="theme-color" content="#f7f4ee" />
     <meta property="og:title" content="SNOWBROS Creative Engineering" />
     <meta
       property="og:description"
@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300..800&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -45,6 +45,7 @@
             <li><a href="#labs" data-nav>Labs</a></li>
             <li><a href="#system" data-nav>System</a></li>
             <li><a href="#start" data-nav>Start</a></li>
+            <li><a href="#contact" data-nav>Contact</a></li>
           </ul>
         </nav>
         <div class="header-actions">
@@ -78,6 +79,7 @@
           <li class="mi-row"><a href="#labs" data-caption="Motion · Interaction · Space · Interface · Effects · Playground" data-arm="1"><span class="mi-n">02</span><span class="mi-t">Labs</span><span class="mi-d">Six working benches</span></a></li>
           <li class="mi-row"><a href="#system" data-caption="8 packages · zero runtime dependencies · three as optional peer" data-arm="3"><span class="mi-n">03</span><span class="mi-t">System</span><span class="mi-d">Packages and what they bring</span></a></li>
           <li class="mi-row"><a href="#start" data-caption="Skill in one command · packages on npm at 0.1.0" data-arm="5"><span class="mi-n">04</span><span class="mi-t">Start</span><span class="mi-d">From curiosity to commit</span></a></li>
+          <li class="mi-row"><a href="#contact" data-caption="Projects, patterns, questions · on GitHub" data-arm="2"><span class="mi-n">05</span><span class="mi-t">Contact</span><span class="mi-d">Bring us something to build</span></a></li>
         </ol>
         <aside class="menu-side" aria-label="Quick start">
           <div class="menu-glyph" data-menu-glyph aria-hidden="true"></div>
@@ -119,24 +121,32 @@
 
           <div class="wrap hero" data-hero>
             <div class="hero-meta">
-              <span class="label">Open source · MIT / Apache-2.0</span>
-              <span class="label">v0.1</span>
+              <span class="label">Creative engineering studio</span>
+              <span class="label hero-meta-lic">Open source · MIT / Apache-2.0 · v0.1</span>
+              <span class="label hero-meta-short" aria-hidden="true">v0.1 · Open source</span>
               <span class="label readout" aria-hidden="true">t = <span data-clock>0.000</span></span>
               <span class="label strum-hint" aria-hidden="true" data-strum-hint>Strum the lattice with your cursor</span>
               <span class="label strum-hint tap-hint" aria-hidden="true">Tap the lattice to pluck it</span>
+            </div>
+            <div class="hero-plate" data-hero-plate aria-hidden="true">
+              <span class="plate-reg plate-reg-tl"></span><span class="plate-reg plate-reg-br"></span>
+              <span class="label plate-tag">Fig. 01 — The lattice</span>
+              <span class="label plate-hint plate-hint-touch">Tap to pluck an arm</span>
+              <span class="label plate-hint plate-hint-fine">Strum with your cursor</span>
+              <span class="label plate-axis">6 arms · 1 clock</span>
             </div>
             <h1 class="hero-title display" id="hero-title" data-hero-title>
               Design and engineering, <em>played as one instrument.</em>
             </h1>
             <div class="hero-foot">
               <p class="lede" data-hero-lede>
-                An open-source AI skill and a toolkit of small, measured libraries for motion, scroll
-                choreography, interactive 3D and product interfaces. The skill decides what a project
-                needs. The libraries build it — and clean up after themselves.
+                SNOWBROS is a creative engineering studio. We publish our craft in the open — an AI
+                skill that decides what a project needs, and small libraries for motion, 3D and
+                interfaces that build it.
               </p>
               <div class="hero-ctas" data-hero-ctas>
-                <a class="btn btn-accent" href="#labs" data-magnetic>Explore the labs</a>
-                <a class="btn btn-ghost" href="#start" data-magnetic>Install</a>
+                <a class="btn btn-accent" href="#labs" data-magnetic>Explore the labs <span class="btn-arrow" aria-hidden="true">↓</span></a>
+                <a class="btn btn-ghost" href="#contact" data-magnetic>Work with us</a>
               </div>
             </div>
             <a class="scroll-cue label" href="#dimensions"><span aria-hidden="true">↓</span> Six dimensions</a>
@@ -317,7 +327,7 @@
                 <div class="ix-stage ix-magnet">
                   <button class="magnet-btn" type="button" data-ix-magnet><span class="magnet-label">Pull me</span></button>
                 </div>
-                <p class="ix-caption"><span class="mono">magnetic()</span> The target leans toward a fine pointer within 80 px, then springs home. <span data-ix-magnet-out class="mono muted">0 activations</span></p>
+                <p class="ix-caption"><span class="mono">magnetic() · pressable()</span> With a mouse the target leans toward the pointer within 80 px and springs home; on touch it squashes under your thumb. <span data-ix-magnet-out class="mono muted">0 activations</span></p>
               </div>
               <div class="ix-cell">
                 <div class="ix-stage ix-tilt">
@@ -613,16 +623,50 @@ cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pr
           <p class="label copy-status" role="status" data-copy-status></p>
         </div>
       </section>
+
+      <!-- ============================================================ 06 CONTACT -->
+      <section class="closing" id="contact" aria-labelledby="closing-title" data-closing>
+        <div class="wrap closing-grid">
+          <p class="label closing-label">06 — Contact</p>
+          <h2 class="closing-title" id="closing-title" data-closing-title>
+            Bring us something <em>that has to move.</em>
+          </h2>
+          <div class="closing-side">
+            <p class="closing-lede">
+              A launch that needs a moment, a product that needs calm, a scene that needs to run on a
+              four-year-old phone. Tell us what you are building — or what our toolkit is missing.
+            </p>
+            <ul class="closing-actions" data-closing-actions>
+              <li>
+                <a class="closing-link closing-link-primary" href="https://github.com/snowbros-labs/creative-engineering/issues/new" data-magnetic>
+                  <span class="cl-k mono">01</span><span class="cl-t">Start a conversation</span><span class="cl-a" aria-hidden="true">↗</span>
+                </a>
+              </li>
+              <li>
+                <a class="closing-link" href="https://github.com/snowbros-labs">
+                  <span class="cl-k mono">02</span><span class="cl-t">snowbros-labs on GitHub</span><span class="cl-a" aria-hidden="true">↗</span>
+                </a>
+              </li>
+              <li>
+                <a class="closing-link" href="https://www.npmjs.com/org/snowbros">
+                  <span class="cl-k mono">03</span><span class="cl-t">@snowbros on npm</span><span class="cl-a" aria-hidden="true">↗</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer class="site-footer">
+    <footer class="site-footer theme-dark">
+      <div class="footer-tab" aria-hidden="true" data-footer-tab></div>
       <div class="marquee" data-marquee>
         <ul class="marquee-track" aria-label="Six dimensions">
           <li>Skill</li><li aria-hidden="true">✳</li><li>Motion</li><li aria-hidden="true">✳</li><li>Interaction</li><li aria-hidden="true">✳</li><li>Space</li><li aria-hidden="true">✳</li><li>Effects</li><li aria-hidden="true">✳</li><li>Interface</li><li aria-hidden="true">✳</li>
         </ul>
       </div>
       <div class="wrap footer-grid">
-        <p class="footer-mark" aria-hidden="true">SNOWBROS</p>
+        <p class="footer-mark" aria-hidden="true" data-footer-mark>SNOWBROS</p>
         <div class="footer-cols">
           <div>
             <p class="label">Project</p>
@@ -646,10 +690,15 @@ cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pr
             <p class="label">Notes</p>
             <ul>
               <li>MIT OR Apache-2.0</li>
-              <li>Type: Instrument Serif, Inter Tight, JetBrains Mono (OFL-1.1)</li>
+              <li>Type: Bricolage Grotesque, Instrument Serif, JetBrains Mono (OFL-1.1)</li>
               <li>No images — every visual is generated in code</li>
             </ul>
           </div>
+        </div>
+        <div class="footer-base">
+          <span class="label">© 2026 SNOWBROS · Creative Engineering</span>
+          <span class="label footer-clock" aria-hidden="true">t = <span data-footer-clock>1.000</span></span>
+          <a class="label footer-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
         </div>
       </div>
     </footer>

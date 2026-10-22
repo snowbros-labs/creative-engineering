@@ -149,7 +149,8 @@ export function annotate(el: HTMLElement, options: AnnotateOptions = {}): Annota
     svg.replaceChildren();
     const rand = createRandom(options.seed ?? 1);
     const box = el.getBoundingClientRect();
-    const lines = Array.from(el.getClientRects());
+    // Drop empty fragments (a trailing space wrapping to its own line box would get a stray mark).
+    const lines = Array.from(el.getClientRects()).filter((r) => r.width > 4);
     const amp = 1 + rough * 4;
     const ds: string[] = [];
     const rel = (r: DOMRect) => ({
@@ -249,6 +250,9 @@ export function annotate(el: HTMLElement, options: AnnotateOptions = {}): Annota
   build();
 
   const play = () => {
+    // Re-measure at the moment the mark appears: layout may have changed since construction
+    // (webfonts swapping in, responsive modes switching) without anything resizing.
+    if (progress === 0) build();
     if (!draw) return Promise.resolve();
     return draw
       .play({
@@ -277,6 +281,19 @@ export function annotate(el: HTMLElement, options: AnnotateOptions = {}): Annota
     );
   }
 
+  // Follow layout. A ResizeObserver never fires for non-replaced inline elements (the usual
+  // target: an <em> inside a headline), so observe the nearest block ancestor too — its box
+  // changes whenever the text reflows. Font swaps reflow without resizing anything, so rebuild
+  // when fonts finish loading as well.
+  let queued = false;
+  const rebuild = () => {
+    if (queued || scope.disposed) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      if (!scope.disposed) build();
+    });
+  };
   if (typeof ResizeObserver !== 'undefined') {
     let first = true;
     const ro = new ResizeObserver(() => {
@@ -284,10 +301,18 @@ export function annotate(el: HTMLElement, options: AnnotateOptions = {}): Annota
         first = false;
         return;
       }
-      build();
+      rebuild();
     });
     ro.observe(el);
+    let block: HTMLElement | null = el.parentElement;
+    while (block && getComputedStyle(block).display.startsWith('inline'))
+      block = block.parentElement;
+    if (block && block !== el) ro.observe(block);
     scope.add(() => ro.disconnect());
+  }
+  if (typeof document !== 'undefined' && document.fonts) {
+    void document.fonts.ready.then(rebuild);
+    scope.listen(document.fonts as unknown as EventTarget, 'loadingdone', rebuild);
   }
 
   scope.add(() => {

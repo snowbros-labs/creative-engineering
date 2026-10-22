@@ -63,12 +63,14 @@ const SECTION_ARM: Record<string, number> = {
   '#labs': 1,
   '#system': 3,
   '#start': 5,
+  '#contact': 2,
 };
 const SECTION_NAME: Record<string, string> = {
   '#instrument': '01 / Instrument',
   '#labs': '02 / Labs',
   '#system': '03 / System',
   '#start': '04 / Start',
+  '#contact': '05 / Contact',
 };
 const readout = $('[data-readout]');
 let readoutFx: { dispose(): void } | null = null;
@@ -208,7 +210,8 @@ for (const link of navLinks) {
         lightBrand(link.hash);
         return () => {
           link.dataset.active = 'false';
-          if (!navLinks.some((l) => l.dataset.active === 'true')) {
+          // Between sections the readout keeps the last one; only the top of the page resets it.
+          if (!navLinks.some((l) => l.dataset.active === 'true') && window.scrollY < innerHeight) {
             movePill(null);
             lightBrand(null);
           }
@@ -338,7 +341,7 @@ if (menu && menuToggle) {
       if (document.activeElement !== a) focusItem(null);
     });
   });
-  // Keyboard: ↑/↓ walk the index, 1–4 jump straight to an entry.
+  // Keyboard: ↑/↓ walk the index, number keys jump straight to an entry.
   shell.listen(menu, 'keydown', (e: KeyboardEvent) => {
     if (menu.dataset.open !== 'true') return;
     const at = items.indexOf(document.activeElement as HTMLAnchorElement);
@@ -347,7 +350,7 @@ if (menu && menuToggle) {
       const step = e.key === 'ArrowDown' ? 1 : -1;
       items[(at + step + items.length) % items.length]?.focus();
       haptic('tick');
-    } else if (/^[1-4]$/.test(e.key) && !(e.target as Element).closest('input, textarea')) {
+    } else if (/^[1-9]$/.test(e.key) && !(e.target as Element).closest('input, textarea')) {
       items[Number(e.key) - 1]?.click();
     }
   });
@@ -558,6 +561,85 @@ if (mark) {
   });
   mark.replaceChildren(...letters);
   shell.add(proximity(letters, { radius: 320, rate: 8 }));
+  // Fit the wordmark to its column exactly: measured at its heaviest weight, so letters that
+  // thicken under the pointer never push past the edge. Re-fits on resize and font swap.
+  const fit = () => {
+    mark.classList.add('is-measuring');
+    mark.style.fontSize = '100px';
+    const natural = letters.reduce((w, l) => w + l.getBoundingClientRect().width, 0);
+    mark.classList.remove('is-measuring');
+    const box = mark.clientWidth;
+    if (natural > 0 && box > 0) mark.style.fontSize = `${((box / natural) * 100).toFixed(2)}px`;
+  };
+  const ro = new ResizeObserver(fit);
+  ro.observe(mark);
+  shell.add(() => ro.disconnect());
+  void document.fonts.ready.then(fit);
+}
+// Footer tab: the crystal's last appearance, as the mark on the card's notch.
+$('[data-footer-tab]')?.append(
+  latticeSvg(buildLattice({ seed: 11, detail: 0.35 }), { nodes: true }),
+);
+
+// Affordance: once the crystal can be played (WebGL mounted), a hand-drawn arrow runs from the
+// visible hint to the crystal — taught once, next to the thing that answers. Phones point up-right
+// out of the plate's caption; desktop points down from the meta row.
+{
+  const host = $('[data-lattice]');
+  let arrows: Array<{ dispose(): void }> = [];
+  const draw = () => {
+    for (const a of arrows) a.dispose();
+    arrows = [];
+    if (host?.dataset.render !== 'webgl') return;
+    for (const hint of $$('.plate-hint, .strum-hint')) {
+      if (!hint.offsetParent || !hint.getClientRects().length) continue;
+      const inPlate = !!hint.closest('[data-hero-plate]');
+      arrows.push(
+        annotate(hint, {
+          type: 'arrow',
+          direction: inPlate ? 'right' : 'down',
+          length: inPlate ? 46 : 54,
+          lean: inPlate ? 0.45 : -0.8,
+          color: 'var(--accent)',
+          strokeWidth: 1.75,
+          roughness: 0.5,
+          seed: 5,
+          duration: 0.7,
+          delay: 0.6,
+        }),
+      );
+    }
+  };
+  if (host) {
+    const mo = new MutationObserver(draw);
+    mo.observe(host, { attributes: true, attributeFilter: ['data-render'] });
+    shell.add(() => mo.disconnect());
+    shell.add(() => {
+      for (const a of arrows) a.dispose();
+    });
+    shell.add(createMediaContext({ '(max-width: 799px)': draw, '(min-width: 800px)': draw }));
+  }
+}
+
+const footerClock = $('[data-footer-clock]');
+if (footerClock) shell.add(page.subscribe((v) => (footerClock.textContent = v.toFixed(3))));
+
+// ----------------------------------------------------------------- 06 contact + footer (GSAP)
+// GSAP + SplitText load after first paint (idle), so they never weigh on the hero.
+{
+  let gone = false;
+  shell.add(() => {
+    gone = true;
+  });
+  const loadClosing = () =>
+    import('../sections/closing.js')
+      .then((m) => {
+        if (!gone) m.initClosing(shell);
+      })
+      .catch((error) => console.error('[site] closing choreography failed to load', error));
+  if (typeof requestIdleCallback === 'function')
+    requestIdleCallback(loadClosing, { timeout: 1500 });
+  else setTimeout(loadClosing, 400);
 }
 
 // Scroll speed kicks the brand rotor (impulse), then its spring settles back on the section arm.

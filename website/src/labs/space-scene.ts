@@ -32,7 +32,7 @@ export interface SpaceApi {
   memory(): { geometries: number; textures: number };
 }
 
-const SNOW = new Color('#f5efe4');
+const SNOW = new Color('#f7f4ee');
 
 export function mountSpace(
   el: HTMLElement,
@@ -44,7 +44,7 @@ export function mountSpace(
     container: el,
     alpha: true,
     renderMode: initial.spin ? 'always' : 'demand',
-    camera: { position: [0, 0, 4.1], fov: 32 },
+    camera: { position: [0, 0, 4.1], fov: 32, fit: 1.3 },
   });
   scope.add(stage);
   stage.renderer.setClearColor(0x000000, 0);

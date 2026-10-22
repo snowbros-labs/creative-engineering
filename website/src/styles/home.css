@@ -3,9 +3,14 @@
 :root {
   /* Warm site palette: cream paper, bone bands, warm charcoal ink, terracotta-leaning signal.
      Built on the brand tokens, shifted warm for this site only. */
-  --cream: #f5efe4;
-  --bone: #ece3d3;
-  --paper-2: #f9f4ea;
+  --cream: #f7f4ee;
+  --bone: #eee8dc;
+  --paper-2: #fbf9f4;
+  --font-sans: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --safe-l: max(var(--gutter), env(safe-area-inset-left));
+  --safe-r: max(var(--gutter), env(safe-area-inset-right));
   --charcoal: #1d1915;
   --charcoal-2: #2a241e;
   --h1: clamp(2.75rem, 6.4vw, 6.25rem);
@@ -22,11 +27,11 @@
 .theme-dark {
   --bg: var(--charcoal);
   --bg-raised: var(--charcoal-2);
-  --fg: #f5efe4;
+  --fg: #f7f4ee;
   --fg-muted: #bdb1a2;
   --fg-faint: #8f8375;
-  --line: color-mix(in oklab, #f5efe4 12%, transparent);
-  --line-strong: color-mix(in oklab, #f5efe4 24%, transparent);
+  --line: color-mix(in oklab, #f7f4ee 12%, transparent);
+  --line-strong: color-mix(in oklab, #f7f4ee 24%, transparent);
   --accent-ink: #ff8a5c;
 }
 html {
@@ -227,12 +232,36 @@ p {
     display: none;
   }
 }
+.site-header {
+  padding-top: env(safe-area-inset-top);
+  height: calc(var(--header-h) + env(safe-area-inset-top));
+}
+.site-header .header-row {
+  padding-inline: var(--safe-l) var(--safe-r);
+}
+/* The section readout belongs to the header: it leaves with it and never floats over content. */
+.site-header[data-hidden="true"] .header-readout,
+html:has(.menu-panel[data-open="true"]) .header-readout {
+  opacity: 0;
+}
 @media (max-width: 760px) {
   .site-header .header-row {
     grid-template-columns: 1fr auto;
   }
-  .header-gh {
+  /* The <nav> still occupied a grid cell after its list was hidden, wrapping onto a second row
+     and pushing the brand above the viewport. On phones the menu button is the navigation. */
+  .site-header nav,
+  .header-gh,
+  .header-readout {
     display: none;
+  }
+  .site-header[data-scrolled="true"] .header-row {
+    width: calc(100% - 16px);
+    padding: 5px 5px 5px 16px;
+  }
+  .site-header .icon-btn {
+    width: 46px;
+    height: 46px;
   }
 }
 
@@ -454,6 +483,18 @@ p {
   color: var(--fg);
 }
 
+.hero-plate,
+.hero-meta-short {
+  display: none;
+}
+.btn-arrow {
+  display: inline-block;
+  transition: translate 0.35s var(--ease-out-expo);
+}
+.btn:hover .btn-arrow {
+  translate: 0 2px;
+}
+
 /* Dimensions — flow layout by default (no JS, mobile, reduced motion). */
 .dimensions {
   position: relative;
@@ -610,27 +651,272 @@ p {
 }
 
 @media (max-width: 799px) {
-  .lattice-host canvas {
-    opacity: 0.55;
+  /* ---- Phone hero: eyebrow → figure plate → headline → lede → actions. One column, one
+     sequence; the crystal lives in its own framed plate and never sits behind the type. */
+  .instrument-stage::before {
+    display: none;
   }
-  .lattice-host > .lattice-svg {
-    opacity: 0.42;
-    top: calc(var(--header-h) + 34svh);
-    left: 58%;
-    width: min(118vw, 74svh);
+  .hero {
+    min-height: 100svh;
+    grid-template-rows: auto auto auto 1fr;
+    align-content: start;
+    padding-top: calc(var(--header-h) + env(safe-area-inset-top) + 12px);
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-inline: var(--safe-l) var(--safe-r);
+    gap: 0;
+  }
+  .hero-meta {
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+  .hero-meta .label {
+    font-size: 0.6875rem;
+  }
+  .hero-meta-lic,
+  .hero-meta .readout,
+  .hero-meta .strum-hint {
+    /* biome-ignore lint/complexity/noImportantStyles: beats the :has() pointer rules above */
+    display: none !important;
+  }
+  .hero-meta-short {
+    display: inline;
+  }
+  .hero-plate {
+    position: relative;
+    display: block;
+    height: clamp(184px, 34svh, 330px);
+    border-radius: 20px;
+    overflow: clip;
+    background:
+      radial-gradient(60% 75% at 72% 50%, rgba(240, 86, 31, 0.1), transparent 70%),
+      radial-gradient(90% 90% at 75% 45%, rgba(255, 214, 170, 0.45), transparent 75%),
+      var(--paper-2);
+    box-shadow:
+      inset 0 0 0 1px var(--line),
+      0 1px 0 rgba(255, 255, 255, 0.8);
+    /* Fine engineering grid, faded toward the crystal. */
+    isolation: isolate;
+  }
+  .hero-plate::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: -1px -1px;
+    mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.25) 55%, transparent 80%);
+    opacity: 0.7;
+  }
+  .hero-plate .lattice-host {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    pointer-events: none;
+  }
+  .hero-plate .lattice-host canvas {
+    opacity: 1;
+  }
+  .hero-plate .lattice-host > .lattice-svg {
+    opacity: 1;
+    top: 50%;
+    left: 80%;
+    width: auto;
+    height: 150%;
+  }
+  .plate-tag,
+  .plate-hint,
+  .plate-axis {
+    position: absolute;
+    z-index: 1;
+    font-size: 0.625rem;
+  }
+  .plate-tag {
+    top: 14px;
+    left: 16px;
+    color: var(--fg);
+  }
+  .plate-axis {
+    left: 16px;
+    bottom: 14px;
+  }
+  .plate-hint {
+    display: none;
+    left: 16px;
+    bottom: 32px;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-ink);
+  }
+  .plate-hint::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .instrument:has([data-render="webgl"]) .plate-hint-touch {
+    display: inline-flex;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .instrument:has([data-render="webgl"]) .plate-hint-touch {
+      display: none;
+    }
+    .instrument:has([data-render="webgl"]) .plate-hint-fine {
+      display: inline-flex;
+    }
+  }
+  .plate-reg {
+    position: absolute;
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    border: 0 solid var(--line-strong);
+  }
+  .plate-reg-tl {
+    top: 8px;
+    right: 8px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+  }
+  .plate-reg-br {
+    bottom: 8px;
+    right: 8px;
+    border-bottom-width: 1px;
+    border-right-width: 1px;
   }
   .hero-title {
-    font-size: clamp(3rem, 14.5vw, 5.5rem);
+    align-self: start;
+    max-width: none;
+    margin-top: clamp(22px, 4svh, 36px);
+    /* Sized so the longest word ("engineering,") always fits the column, 320 px upward. */
+    font-size: clamp(2.6rem, 13.2vw, 4.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
   }
-  .hero-meta .readout {
+  .hero-foot {
+    align-self: end;
+    display: grid;
+    gap: 22px;
+    margin-top: clamp(18px, 3svh, 28px);
+  }
+  .hero-foot .lede {
+    max-width: 36ch;
+    font-size: 0.9875rem;
+    line-height: 1.5;
+    color: var(--fg-muted);
+  }
+  .hero-ctas {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+  .hero-ctas .btn {
+    min-height: 54px;
+    padding: 0 16px;
+    font-size: 0.9375rem;
+  }
+  .hero-ctas .btn-accent {
+    justify-content: space-between;
+  }
+}
+@media (min-width: 600px) and (max-width: 799px) {
+  .hero-plate {
+    height: clamp(260px, 40svh, 460px);
+  }
+  .hero-title {
+    font-size: clamp(3.5rem, 10vw, 5rem);
+  }
+  .hero {
+    min-height: 0;
+  }
+  .hero-foot {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    align-self: start;
+    margin-top: 36px;
+  }
+  .hero-ctas {
+    width: auto;
+  }
+}
+@media (max-width: 359px) {
+  .hero-ctas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-meta-short {
     display: none;
   }
-  .hero-meta .strum-hint {
-    margin-left: 0;
-    flex-basis: 100%;
-  }
-  .ruler-y {
+}
+@media (max-width: 799px) {
+  .scroll-cue {
     display: none;
+  }
+  .ruler-y,
+  .ruler-x,
+  .frame {
+    display: none;
+  }
+  /* Six dimensions as a stacked deck: each card sticks a little lower than the last, so scrolling
+     deals them onto one another. Pure CSS — works on touch, with reduced motion and without JS. */
+  .dimensions {
+    padding-top: 56px;
+    padding-inline: var(--safe-l) var(--safe-r);
+  }
+  .dim-list {
+    border-top: 0;
+    gap: 14px;
+  }
+  .dim {
+    position: sticky;
+    top: calc(var(--header-h) + 16px + var(--stack, 0) * 10px);
+    grid-template-columns: 52px minmax(0, 1fr);
+    column-gap: 16px;
+    padding: 22px 20px 24px;
+    border: 1px solid var(--line-strong);
+    border-radius: 22px;
+    background: var(--paper-2);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.7) inset,
+      0 -14px 30px -24px rgba(70, 45, 20, 0.35);
+  }
+  .dim:nth-child(2) {
+    --stack: 1;
+  }
+  .dim:nth-child(3) {
+    --stack: 2;
+  }
+  .dim:nth-child(4) {
+    --stack: 3;
+  }
+  .dim:nth-child(5) {
+    --stack: 4;
+  }
+  .dim:nth-child(6) {
+    --stack: 5;
+  }
+  .dim-glyph {
+    width: 52px;
+    height: 52px;
+    grid-row: 1 / span 2;
+  }
+  .dim-title {
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+  }
+  .dim-body,
+  .dim-uses {
+    grid-column: 1 / -1;
+  }
+  .dim-body {
+    margin-top: 6px;
+    font-size: 0.975rem;
+  }
+  .dim-coda {
+    margin-top: 32px;
   }
 }
 
@@ -693,6 +979,29 @@ p {
   .principles {
     grid-template-columns: 1fr 1fr;
     row-gap: 28px;
+  }
+}
+@media (max-width: 560px) {
+  .thesis {
+    padding-block: 88px 72px;
+  }
+  .manifesto {
+    font-size: clamp(1.875rem, 8.6vw, 2.5rem);
+    line-height: 1.08;
+  }
+  .principles {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 0;
+  }
+  .principles > div {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .principles dd {
+    margin: 0;
   }
 }
 
@@ -845,6 +1154,24 @@ p {
   }
   .lab-head {
     position: static;
+  }
+}
+@media (max-width: 600px) {
+  .labs-head {
+    padding-block: 88px 40px;
+  }
+  .lab {
+    padding-block: 64px 72px;
+  }
+  .lab-head .h2 {
+    font-size: clamp(2.25rem, 10.5vw, 3rem);
+  }
+  .lab-index {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lab-index a {
+    min-height: 48px;
   }
 }
 
@@ -1247,6 +1574,19 @@ input[type="range"]:focus-visible {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+@media (min-width: 640px) and (max-width: 1100px) {
+  .ix-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ix-cell:last-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 639px) {
+  .ix-cell {
+    grid-template-rows: 248px auto;
+  }
+}
 
 /* C — space */
 .bench-space {
@@ -1341,8 +1681,26 @@ input[type="range"]:focus-visible {
     grid-template-columns: minmax(0, 1fr);
   }
   .space-view {
-    min-height: 400px;
+    min-height: 0;
+    aspect-ratio: 1;
     border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  /* Readouts become a two-column strip across the top so they stop sitting on the crystal. */
+  .space-readouts {
+    right: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 12px;
+    font-size: 0.6875rem;
+  }
+  .space-readouts dt {
+    min-width: 0;
+  }
+  .space-readouts div {
+    justify-content: space-between;
+  }
+  .lab-space .control-actions {
+    flex-wrap: wrap;
   }
 }
 
@@ -1778,14 +2136,34 @@ select[aria-invalid="true"] {
   margin: 0;
 }
 @media (max-width: 760px) {
+  /* Wires between wrapped rows read as noise on a phone; the lit nodes carry the relationship. */
+  .system-wires {
+    display: none;
+  }
+  .system-map {
+    gap: 20px;
+  }
   .layer {
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding-top: 30px;
   }
   .node {
     min-width: 0;
+    min-height: 48px;
+    padding: 0 14px;
+    font-size: 0.9375rem;
+  }
+  .node-skill {
+    grid-column: 1 / -1;
+  }
+  .node[data-on="true"] {
+    background: color-mix(in oklab, var(--accent) 10%, var(--bg));
   }
   .system-detail {
     grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
   }
 }
 
@@ -1845,6 +2223,17 @@ select[aria-invalid="true"] {
   margin-top: 20px;
   min-height: 1em;
 }
+.start {
+  padding-bottom: clamp(72px, 10vh, 120px);
+}
+@media (max-width: 640px) {
+  .start {
+    padding-top: 88px;
+  }
+  .step {
+    padding: 22px 0 26px;
+  }
+}
 @media (max-width: 1100px) {
   .journey {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1866,11 +2255,178 @@ select[aria-invalid="true"] {
   }
 }
 
-/* ------------------------------------------------------------------ footer */
-.site-footer {
-  border-top: 1px solid var(--line-strong);
-  padding-bottom: 40px;
+/* ------------------------------------------------------------------ 06 contact */
+.closing {
+  position: relative;
+  padding-block: clamp(96px, 18vh, 220px) clamp(72px, 12vh, 140px);
   overflow: clip;
+}
+.closing-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 2vw, 24px);
+  row-gap: clamp(32px, 6vh, 64px);
+  align-items: end;
+}
+.closing-label {
+  grid-column: 1 / -1;
+}
+.closing-title {
+  grid-column: 1 / span 8;
+  font: 400 clamp(3rem, 8.2vw, 8.75rem) / 0.9 var(--font-display);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.closing-title em {
+  font-style: italic;
+  color: var(--accent-ink);
+}
+.closing-side {
+  grid-column: 9 / -1;
+  display: grid;
+  gap: 28px;
+}
+.closing-lede {
+  color: var(--fg-muted);
+  max-width: 36ch;
+}
+.closing-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line-strong);
+}
+.closing-actions li {
+  border-bottom: 1px solid var(--line);
+}
+.closing-link {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  text-decoration: none;
+  isolation: isolate;
+}
+/* A warm fill wipes in from the left on hover/focus, the arrow turns to face where you go. */
+.closing-link::before {
+  content: "";
+  position: absolute;
+  inset: 0 -12px;
+  z-index: -1;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--accent) 12%, var(--bg));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 0.5s var(--ease-out-expo);
+}
+.closing-link:hover::before,
+.closing-link:focus-visible::before {
+  transform: scaleX(1);
+}
+.cl-k {
+  color: var(--fg-faint);
+  font-size: 0.75rem;
+}
+.cl-t {
+  font: 500 clamp(1.125rem, 1.5vw, 1.375rem) / 1.2 var(--font-sans);
+  letter-spacing: -0.01em;
+}
+.cl-a {
+  font-size: 1.125rem;
+  transition: rotate 0.5s var(--ease-out-expo);
+}
+.closing-link:hover .cl-a,
+.closing-link:focus-visible .cl-a {
+  rotate: 45deg;
+}
+.closing-link-primary .cl-t {
+  font-weight: 650;
+}
+.closing-link-primary .cl-k,
+.closing-link-primary .cl-a {
+  color: var(--accent-ink);
+}
+@media (max-width: 960px) {
+  .closing-title,
+  .closing-side {
+    grid-column: 1 / -1;
+  }
+  .closing-title {
+    font-size: clamp(2.75rem, 12.5vw, 6rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .closing-link::before,
+  .cl-a {
+    transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------ footer */
+/* The footer is a destination, not a leftover: a dark card inset from the page with a notched
+   tab at the top that carries the lattice — the crystal's last appearance. */
+.site-footer {
+  position: relative;
+  margin: 56px clamp(8px, 1.2vw, 16px) clamp(8px, 1.2vw, 16px);
+  padding-bottom: 40px;
+  border-radius: clamp(20px, 2.4vw, 32px);
+  background:
+    radial-gradient(60% 40% at 50% 0%, rgba(240, 120, 50, 0.12), transparent 70%), var(--charcoal);
+  color: var(--fg);
+}
+.site-footer > :not(.footer-tab) {
+  overflow: clip;
+}
+.footer-tab {
+  position: absolute;
+  left: 50%;
+  top: -40px;
+  width: 132px;
+  height: 41px;
+  translate: -50% 0;
+  border-radius: 28px 28px 0 0;
+  background: var(--charcoal);
+  display: grid;
+  place-items: center;
+  padding-top: 6px;
+}
+/* Concave shoulders so the tab grows out of the card instead of sitting on it. */
+.footer-tab::before,
+.footer-tab::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle at var(--c) 0, transparent 23.5px, var(--charcoal) 24px);
+}
+.footer-tab::before {
+  --c: 0;
+  right: 100%;
+}
+.footer-tab::after {
+  --c: 100%;
+  left: 100%;
+}
+.footer-tab .lattice-svg {
+  width: 34px;
+  height: 34px;
+}
+.footer-tab .lattice-line {
+  stroke: var(--cream);
+}
+.footer-tab .lattice-node {
+  fill: var(--cream);
+}
+.footer-tab .lattice-node.tip {
+  fill: var(--charcoal);
+}
+.site-footer .marquee {
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 .marquee {
   border-bottom: 1px solid var(--line);
@@ -1891,18 +2447,58 @@ select[aria-invalid="true"] {
 }
 .footer-grid {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 40px;
   padding-top: 48px;
+  container-type: inline-size;
 }
+/* The wordmark always spans the column exactly: sized in container units, never wider. */
 .footer-mark {
+  min-width: 0;
   display: flex;
   justify-content: space-between;
-  font: 400 clamp(4.5rem, 18.5vw, 19rem) / 0.82 var(--font-sans);
-  letter-spacing: -0.06em;
-  margin-left: -0.03em;
+  font: 400 18cqi / 0.8 var(--font-sans);
+  letter-spacing: -0.03em;
+  overflow: clip;
+  padding-bottom: 0.04em;
 }
 .footer-mark span {
-  font-variation-settings: "wght" calc(300 + 520 * var(--sb-proximity, 0));
+  display: inline-block;
+  font-variation-settings:
+    "wght" calc(260 + 540 * var(--sb-proximity, 0)),
+    "opsz" 96;
+}
+.footer-mark.is-measuring span {
+  font-variation-settings:
+    "wght" 800,
+    "opsz" 96;
+}
+.footer-base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.footer-clock {
+  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+}
+.footer-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  text-decoration: none;
+  color: var(--fg);
+}
+.footer-top:hover {
+  color: var(--accent-ink);
+}
+.site-footer {
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
 }
 .footer-cols {
   display: grid;
@@ -2149,8 +2745,17 @@ html.js:not([data-motion="reduced"]) [data-hero-ctas] {
   .menu-panel .menu-index a {
     grid-template-columns: 36px minmax(0, 1fr);
   }
-  .menu-glyph {
+  .menu-glyph,
+  .menu-caption {
     display: none;
+  }
+  .menu-head,
+  .menu-body,
+  .menu-panel .menu-foot {
+    padding-inline: var(--safe-l) var(--safe-r);
+  }
+  .menu-panel .menu-foot {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2322,4 +2927,84 @@ html[data-motion="reduced"] .mi-row::after {
 }
 .brand-glyph .lattice-svg {
   will-change: rotate;
+}
+
+/* ------------------------------------------------------------------ touch sizing (phones) */
+@media (pointer: coarse), (max-width: 600px) {
+  .seg-opt {
+    min-height: 44px;
+    padding: 0 16px;
+  }
+  input[type="range"] {
+    height: 44px;
+  }
+  .btn-sm,
+  .brand {
+    min-height: 44px;
+  }
+  .text-link,
+  .footer-cols a {
+    display: inline-block;
+    padding-block: 10px;
+  }
+  .footer-cols ul {
+    gap: 0;
+  }
+}
+@media (max-width: 600px) {
+  .hero-meta .label,
+  .plate-tag,
+  .plate-axis,
+  .plate-hint,
+  .space-readouts {
+    font-size: 0.75rem;
+  }
+}
+
+/* Touch magnet: squashes under the thumb (pressable → --sb-press). */
+.magnet-btn {
+  scale: calc(1 - var(--sb-press, 0) * 0.08);
+}
+
+/* No orphaned last words on display type. */
+.h1,
+.h2,
+.dim-title,
+.closing-title,
+.step-title,
+.lab-head .h2 {
+  text-wrap: balance;
+}
+@media (max-width: 600px) {
+  .thesis {
+    padding-bottom: 40px;
+  }
+  .labs-head {
+    padding-top: 64px;
+  }
+}
+
+/* Native selects, finished: same radius, border and focus as the rest of the bench. */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) 52%,
+    calc(100% - 15px) 52%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: border-color var(--sb-motion-duration-quick) var(--ease-ui);
+}
+select:hover {
+  border-color: var(--fg);
+}
+@media (pointer: coarse), (max-width: 600px) {
+  select {
+    min-height: 48px;
+  }
 }
