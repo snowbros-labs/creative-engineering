@@ -1,5 +1,13 @@
 # @snowbros/adapters
 
+## 0.2.1
+
+### Patch Changes
+
+- 341c351: smoothScroll: Lenis runs from the shared ticker only while there is scrolling to do (input wakes it, it
+  sleeps once `isScrolling` settles), so an idle page schedules no frames; returns `wake()` for
+  programmatic `scrollTo`.
+
 ## 0.2.0
 
 ### Minor Changes
