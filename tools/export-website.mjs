@@ -68,8 +68,12 @@ cpSync(tokensCss, join(out, 'toolkit/tokens/tokens.css'));
 copy('LICENSE-MIT', 'LICENSE-MIT');
 copy('LICENSE-APACHE', 'LICENSE-APACHE');
 
-const siteDeps = JSON.parse(readFileSync(join(root, 'website/package.json'), 'utf8')).dependencies;
-const { three, gsap } = siteDeps;
+// Every third-party runtime dependency of the site (toolkit packages are snapshotted instead).
+const siteDeps = Object.fromEntries(
+  Object.entries(
+    JSON.parse(readFileSync(join(root, 'website/package.json'), 'utf8')).dependencies,
+  ).filter(([name]) => !name.startsWith('@snowbros/')),
+);
 const vite = JSON.parse(readFileSync(join(root, 'website/package.json'), 'utf8')).devDependencies
   .vite;
 const commit = (() => {
@@ -92,7 +96,7 @@ writeFileSync(
       license: '(MIT OR Apache-2.0)',
       type: 'module',
       scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' },
-      dependencies: { gsap, three },
+      dependencies: siteDeps,
       devDependencies: { vite },
       engines: { node: '>=20.19' },
     },
