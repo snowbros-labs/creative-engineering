@@ -1,6 +1,6 @@
 {
   "name": "@snowbros/adapters",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Interop adapters: share one frame loop and scroll model with Lenis, GSAP, Motion, Rive, Rapier and Howler \u2014 without bundling them.",
   "license": "(MIT OR Apache-2.0)",
   "type": "module",

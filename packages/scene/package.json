@@ -1,6 +1,6 @@
 {
   "name": "@snowbros/scene",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Three.js toolkit: managed stages, scroll-driven camera rigs, model loading, procedural shader materials, adaptive quality and graceful fallbacks.",
   "license": "(MIT OR Apache-2.0)",
   "type": "module",

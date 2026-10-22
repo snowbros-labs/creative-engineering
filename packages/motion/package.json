@@ -1,6 +1,6 @@
 {
   "name": "@snowbros/motion",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Timelines, tweens, scroll choreography, sticky pinning, accessible text splitting, FLIP and view transitions — renderer-agnostic and reduced-motion aware.",
   "license": "(MIT OR Apache-2.0)",
   "type": "module",

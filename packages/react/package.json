@@ -1,6 +1,6 @@
 {
   "name": "@snowbros/react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React adapter for SNOWBROS Creative Engineering: hooks and components for motion, scroll, reveals and effects with correct lifecycle cleanup.",
   "license": "(MIT OR Apache-2.0)",
   "type": "module",
