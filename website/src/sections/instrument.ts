@@ -14,7 +14,7 @@ import {
   type Scope,
   segment,
 } from '@snowbros/core';
-import { animate, pin, revealText, scrub } from '@snowbros/motion';
+import { animate, pin, scrub } from '@snowbros/motion';
 import { buildLattice, type Lattice, project } from '../lattice/geometry.js';
 import type { LatticeView } from '../lattice/scene.js';
 import { latticeSvg } from '../lattice/svg.js';
@@ -30,7 +30,7 @@ const armToLeft = (c: number) => (90 - 60 * c) * DEG;
 
 interface Renderer {
   setGrowth(v: number): void;
-  setPose(p: { rotZ?: number; tilt?: number; x?: number; scale?: number }): void;
+  setPose(p: { rotZ?: number; tilt?: number; x?: number; y?: number; scale?: number }): void;
   setFocus(arm: number, amount: number, all?: number): void;
   onTips(cb: (tips: Array<[number, number]>) => void): void;
 }
@@ -39,10 +39,10 @@ interface Renderer {
 function svgRenderer(host: HTMLElement, lattice: Lattice): Renderer {
   const svg = latticeSvg(lattice);
   host.append(svg);
-  const pose = { rotZ: 0, tilt: 0, x: 0, scale: 1 };
+  const pose = { rotZ: 0, tilt: 0, x: 0, y: 0, scale: 1 };
   let tipsCb: ((t: Array<[number, number]>) => void) | null = null;
   const paint = () => {
-    svg.style.transform = `translateX(${pose.x * 22}vw) rotate(${-pose.rotZ}rad) scale(${pose.scale})`;
+    svg.style.transform = `translate(${pose.x * 22}vw, ${-pose.y * 30}vh) rotate(${-pose.rotZ}rad) scale(${pose.scale})`;
     if (!tipsCb) return;
     const hostBox = host.getBoundingClientRect();
     const box = svg.getBoundingClientRect();
@@ -79,11 +79,16 @@ function svgRenderer(host: HTMLElement, lattice: Lattice): Renderer {
   };
 }
 
-export function initInstrument(shell: Scope, clock = createSignal(0)): void {
+export function initInstrument(
+  shell: Scope,
+  clock = createSignal(0),
+  options: { onPluck?: (arm: number, strength: number) => void } = {},
+): void {
   const section = $('[data-instrument]');
   const host = $('[data-lattice]');
   if (!section || !host) return;
 
+  onPluck = options.onPluck;
   const lattice = buildLattice({ seed: 11, detail: 0.7, relief: 0.12 });
   const hero = $('[data-hero]', section)!;
   const stage = $('.instrument-stage', section)!;
@@ -99,9 +104,7 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
   }
 
   // Headline: masked line rise on load. Reduced motion → short fade (revealText policy).
-  const title = $('[data-hero-title]', section);
-  if (title)
-    shell.add(revealText(title, { by: 'lines', preset: 'rise', trigger: 'load', delay: 0.1 }));
+  // The headline's entrance and play live in hero-play.ts (it owns the split).
   const after = [$('[data-hero-lede]', section), $('[data-hero-ctas]', section)].filter(
     (el): el is HTMLElement => !!el,
   );
@@ -118,42 +121,6 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
       },
     ),
   );
-
-  // Phones: the crystal leaves the full-bleed stage and becomes a framed figure above the
-  // headline (cropped off the right edge), so its branches never run behind the type.
-  // Registered before the renderers so they mount straight into the plate.
-  const plate = $('[data-hero-plate]', section);
-  if (plate) {
-    const home = { parent: host.parentElement, next: host.nextSibling };
-    shell.add(
-      createMediaContext({
-        '(max-width: 799px)': (scope) => {
-          plate.prepend(host);
-          section.dataset.plate = 'on';
-          scope.add(() => {
-            delete section.dataset.plate;
-            home.parent?.insertBefore(host, home.next);
-          });
-          // The figure opens like a shutter, then the crystal grows inside it.
-          scope.add(
-            animate(
-              plate,
-              { clipPath: ['inset(0% 0% 100% 0% round 20px)', 'inset(0% 0% 0% 0% round 20px)'] },
-              {
-                duration: 0.9,
-                delay: 0.05,
-                ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-                reducedMotion: 'skip',
-              },
-            ),
-          );
-          scope.add(() => {
-            plate.style.clipPath = '';
-          });
-        },
-      }),
-    );
-  }
 
   shell.add(
     createMediaContext({
@@ -204,12 +171,16 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
             coda.style.transform = `translate3d(0, ${(1 - all) * 20}px, 0)`;
           }
           // Narrower desktops: shrink and push the crystal right so it never crosses the headline.
+          // Title card: the crystal floats centred in the upper frame, above the fitted title;
+          // in the chapters it moves right of the text and turns to point at it.
           const fitK = clamp((innerWidth / innerHeight) * 0.58, 0.78, 1);
+          const chX = 0.44 + (1 - fitK) * 0.9;
           view.setPose({
             rotZ: armToLeft(cc) * inChapters,
             tilt: 0.35 - 0.2 * inChapters,
-            x: 0.58 + (1 - fitK) * 0.9 - 0.16 * inChapters + 0.08 * all,
-            scale: (1.22 - 0.3 * inChapters) * fitK,
+            x: chX * inChapters + 0.08 * all,
+            y: 0.5 * (1 - inChapters),
+            scale: (0.62 + 0.3 * inChapters) * fitK,
           });
           view.setFocus(Math.round(cc), inChapters * (1 - all), all);
           // Labels accumulate: by the end the crystal is a labelled diagram of the system.
@@ -289,8 +260,8 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
         scope.add(() => svg.remove());
         upgradeToWebGL(scope, host, lattice, (view3d) => {
           svg.remove();
-          // Inside the plate: offset right and cropped by its edge — a figure, not wallpaper.
-          view3d.setPose({ rotZ: 0.12, tilt: 0.3, x: 0.78, y: -0.02, scale: 1.32 });
+          // Poster: crystal centred in the upper frame, clear of the title below.
+          view3d.setPose({ rotZ: 0.12, tilt: 0.3, x: 0, y: 0.6, scale: 0.46 });
           const g = { v: 0 };
           scope.add(
             animate(
@@ -317,6 +288,8 @@ export function initInstrument(shell: Scope, clock = createSignal(0)): void {
 }
 
 /** Swap the SVG for the WebGL lattice after first paint, when available. Failure keeps the SVG. */
+let onPluck: ((arm: number, strength: number) => void) | undefined;
+
 function upgradeToWebGL(
   scope: Scope,
   host: HTMLElement,
@@ -333,7 +306,9 @@ function upgradeToWebGL(
     import('../lattice/scene.js')
       .then(({ mountLattice }) => {
         if (cancelled) return;
-        onMount(mountLattice(host, scope.child(), lattice));
+        const view = mountLattice(host, scope.child(), lattice);
+        if (onPluck) view.onPluck(onPluck);
+        onMount(view);
         host.dataset.render = 'webgl';
       })
       .catch((error) => console.warn('[site] WebGL lattice unavailable, using SVG', error));

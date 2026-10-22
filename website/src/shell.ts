@@ -3,7 +3,6 @@
  * Every page calls `initShell()` once.
  */
 import { createScope, motionPreference, type Scope, setMotionPreference } from '@snowbros/core';
-import { animate } from '@snowbros/motion';
 
 const MOTION_KEY = 'sb-motion';
 
@@ -71,11 +70,7 @@ function initMenu(scope: Scope) {
     panel.toggleAttribute('inert', !open);
     document.documentElement.style.overflow = open ? 'hidden' : '';
     if (open) {
-      animate(
-        links,
-        { y: ['105%', '0%'] },
-        { duration: 0.7, stagger: 0.05, delay: 0.12, ease: 'editorial', reducedMotion: 'skip' },
-      );
+      // Row reveal is CSS (transitions on [data-open]) — interruptible if closed mid-way.
       (links[0] ?? close)?.focus({ preventScroll: true });
     } else {
       toggle.focus({ preventScroll: true });

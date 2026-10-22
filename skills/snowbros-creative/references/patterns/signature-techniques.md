@@ -139,3 +139,18 @@ captions as real text. Requires real photography; skip it otherwise.
 | Developer tool / library | interactive specimen (labs) | 1, 2, 3, 8, 10 |
 | SaaS marketing           | real product UI as hero     | 3, 6, 8        |
 | Personality / athlete    | 12, 1                       | 3, 5, 6        |
+
+## 13. Playable type (the headline is the instrument)
+
+Built for the SNOWBROS site (original): every letter of the hero title is a key. Letters lift toward
+a fine pointer (proximity → `translate`), a click/tap plays a note and sends a hammer wave outward
+from that letter, and a piano-key strip under the title maps x-position to keys both ways. Rows are
+fitted edge-to-edge by measurement, so the title spans the width like a keyboard.
+
+Build: `splitText(title, { by: ['lines', 'words', 'chars'], mask: true })` (accessible copy kept),
+`proximity(chars)`, a CSS keyframe on `transform` with `animation-delay: calc(var(--d) * 22ms)` where
+`--d` is the distance from the struck letter, and `soundCues` for opt-in notes. Words never break
+(`white-space: nowrap` on words). Reduced motion: no split, static title; keyboard Space/Enter plays
+a chord. Live code: `website/src/sections/hero-play.ts`.
+
+Use when the brand's idea is play, sound or making; skip on content-first or product pages.

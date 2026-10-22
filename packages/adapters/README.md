@@ -18,6 +18,11 @@ const smooth = smoothScroll({ create: () => new Lenis({ lerp: 0.12 }) });
 // motion, and destroyed if the user switches to reduced motion at runtime.
 ```
 
+Create Lenis with `autoRaf: false` (the default). The adapter runs `lenis.raf` from the shared ticker
+only while there is scrolling to do — input (wheel, keys, pointer, touch, clicks on anchors) wakes it
+and it sleeps once `lenis.isScrolling` settles — so an idle page schedules no frames. Call
+`smooth.wake()` after a programmatic `lenis.scrollTo()`.
+
 ## GSAP
 
 ```ts

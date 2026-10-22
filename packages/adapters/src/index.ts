@@ -22,6 +22,8 @@ export interface LenisLike {
   destroy(): void;
   stop?(): void;
   start?(): void;
+  /** Lenis ≥ 1.1: falsy once the smoothed scroll has settled. Lets the loop sleep. */
+  isScrolling?: unknown;
 }
 
 export interface SmoothScrollOptions<L extends LenisLike> {
@@ -38,7 +40,7 @@ export interface SmoothScrollOptions<L extends LenisLike> {
  */
 export function smoothScroll<L extends LenisLike>(
   options: SmoothScrollOptions<L>,
-): PatternHandle & { readonly instance: L | null } {
+): PatternHandle & { readonly instance: L | null; wake(): void } {
   const scope = createScope();
   let instance: L | null = null;
   let off: (() => void) | null = null;
@@ -46,18 +48,39 @@ export function smoothScroll<L extends LenisLike>(
     typeof matchMedia === 'function' &&
     matchMedia('(pointer: coarse)').matches &&
     (options.skipOnTouch ?? true);
+  // Drive Lenis from the shared ticker only while it has work: input wakes the loop, and it
+  // sleeps once Lenis reports it has settled. (Lenis's own autoRaf, or a permanent ticker
+  // subscription, would keep a frame loop running on an idle page forever.) Instances without
+  // `isScrolling` fall back to always running.
+  let lastWake = 0;
+  const tick = (f: { time: number }) => {
+    if (!instance) return;
+    instance.raf(f.time);
+    if ('isScrolling' in instance && !instance.isScrolling && f.time - lastWake > 250) {
+      off?.();
+      off = null;
+    }
+  };
+  const wake = () => {
+    lastWake = typeof performance !== 'undefined' ? performance.now() : 0;
+    if (instance && !off) off = ticker.add(tick, Priority.input);
+  };
+  const WAKE_EVENTS = ['wheel', 'keydown', 'pointerdown', 'touchstart', 'click', 'scroll'] as const;
   const sync = () => {
     const allowed = motionPreference.get() === 'full' && !touch;
     if (allowed && !instance) {
       instance = options.create();
-      const current = instance;
-      off = ticker.add((f) => current.raf(f.time), Priority.input);
+      wake();
     } else if (!allowed && instance) {
       off?.();
+      off = null;
       instance.destroy();
       instance = null;
     }
   };
+  if (typeof window !== 'undefined')
+    for (const type of WAKE_EVENTS)
+      scope.listen(window, type, wake, { passive: true, capture: true });
   sync();
   scope.add(motionPreference.subscribe(sync));
   scope.add(() => {
@@ -69,6 +92,7 @@ export function smoothScroll<L extends LenisLike>(
     get instance() {
       return instance;
     },
+    wake,
     dispose: () => scope.dispose(),
   };
 }

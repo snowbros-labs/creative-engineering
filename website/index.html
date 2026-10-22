@@ -19,7 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Geist+Mono:wght@400..600&family=Geist:wght@300..700&display=swap"
       rel="stylesheet"
     />
     <script>
@@ -30,34 +30,30 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
-    <div class="page-progress" aria-hidden="true"><span data-page-progress></span></div>
 
     <header class="site-header">
       <div class="wrap header-row">
         <a class="brand" href="#top" aria-label="SNOWBROS Creative Engineering, back to top" data-brand>
           <span class="brand-word" data-brand-word>SNOWBROS</span><span class="brand-sub" data-brand-sub>Creative Engineering</span>
         </a>
-        <span class="header-readout mono" aria-hidden="true" data-readout>00 / Top</span>
-        <nav aria-label="Primary">
-          <ul class="nav-links" data-nav-list>
-            <li class="nav-pill" aria-hidden="true" data-nav-pill></li>
-            <li><a href="#instrument" data-nav>Instrument</a></li>
-            <li><a href="#labs" data-nav>Labs</a></li>
-            <li><a href="#system" data-nav>System</a></li>
-            <li><a href="#start" data-nav>Start</a></li>
-            <li><a href="#contact" data-nav>Contact</a></li>
-          </ul>
+        <nav class="tl" aria-label="Primary" data-tl>
+          <ol class="tl-list">
+            <li><a href="#instrument" data-nav><span class="tl-n">01</span><span class="tl-t">Instrument</span></a></li>
+            <li><a href="#labs" data-nav><span class="tl-n">02</span><span class="tl-t">Labs</span></a></li>
+            <li><a href="#system" data-nav><span class="tl-n">03</span><span class="tl-t">System</span></a></li>
+            <li><a href="#start" data-nav><span class="tl-n">04</span><span class="tl-t">Start</span></a></li>
+            <li><a href="#contact" data-nav><span class="tl-n">05</span><span class="tl-t">Contact</span></a></li>
+          </ol>
+          <span class="tl-track" aria-hidden="true"><span class="tl-fill" data-tl-fill></span><span class="tl-head" data-tl-head></span></span>
         </nav>
         <div class="header-actions">
-          <button class="btn btn-ghost btn-sm motion-toggle" type="button" data-motion-toggle aria-pressed="false">
-            <span data-motion-label>Motion: full</span>
+          <button class="key sound-key" type="button" data-sound-toggle aria-pressed="false">
+            <span class="sound-wave" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="visually-hidden" data-sound-label>Sound: off</span>
           </button>
-          <a class="btn btn-ink btn-sm header-gh" href="https://github.com/snowbros-labs/creative-engineering">
-            GitHub <span aria-hidden="true">↗</span>
-          </a>
-          <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
+          <button class="icon-btn menu-toggle key" type="button" data-menu-toggle aria-controls="menu" aria-expanded="false">
             <span class="visually-hidden">Open menu</span>
-            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 6h14M2 12h14" stroke="currentColor" stroke-width="1.5" /></svg>
+            <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
             <svg class="clock-ring" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22.5" pathLength="1" data-clock-ring /></svg>
           </button>
         </div>
@@ -97,6 +93,9 @@
       <div class="wrap menu-foot">
         <span class="label">MIT OR Apache-2.0 · v0.1</span>
         <div class="menu-toggles">
+          <button class="btn btn-ghost btn-sm sound-toggle" type="button" data-sound-toggle aria-pressed="false">
+            <span class="sound-wave" aria-hidden="true"><i></i><i></i><i></i></span><span data-sound-label>Sound: off</span>
+          </button>
           <button class="btn btn-ghost btn-sm" type="button" data-haptics-toggle aria-pressed="true" hidden>Haptics: on</button>
           <button class="btn btn-ghost btn-sm" type="button" data-motion-toggle aria-pressed="false">
             <span data-motion-label>Motion: full</span>
@@ -112,44 +111,25 @@
           <div class="lattice-host" data-lattice aria-hidden="true"></div>
           <svg class="callout-lines" data-callout-lines aria-hidden="true"></svg>
 
-          <div class="frame" aria-hidden="true">
-            <span class="reg reg-tl"></span><span class="reg reg-tr"></span>
-            <span class="reg reg-bl"></span><span class="reg reg-br"></span>
-            <div class="ruler ruler-x"></div>
-            <div class="ruler ruler-y"></div>
-          </div>
-
+          <svg class="hero-dial" data-hero-dial aria-hidden="true" viewBox="-100 -100 200 200"></svg>
           <div class="wrap hero" data-hero>
-            <div class="hero-meta">
-              <span class="label">Creative engineering studio</span>
-              <span class="label hero-meta-lic">Open source · MIT / Apache-2.0 · v0.1</span>
-              <span class="label hero-meta-short" aria-hidden="true">v0.1 · Open source</span>
-              <span class="label readout" aria-hidden="true">t = <span data-clock>0.000</span></span>
-              <span class="label strum-hint" aria-hidden="true" data-strum-hint>Strum the lattice with your cursor</span>
-              <span class="label strum-hint tap-hint" aria-hidden="true">Tap the lattice to pluck it</span>
-            </div>
-            <div class="hero-plate" data-hero-plate aria-hidden="true">
-              <span class="plate-reg plate-reg-tl"></span><span class="plate-reg plate-reg-br"></span>
-              <span class="label plate-tag">Fig. 01 — The lattice</span>
-              <span class="label plate-hint plate-hint-touch">Tap to pluck an arm</span>
-              <span class="label plate-hint plate-hint-fine">Strum with your cursor</span>
-              <span class="label plate-axis">6 arms · 1 clock</span>
-            </div>
+            <span class="hero-meta" aria-hidden="true"></span>
             <h1 class="hero-title display" id="hero-title" data-hero-title>
-              Design and engineering, <em>played as one instrument.</em>
+              <span class="ht-row ht-a" data-fit="d"><span data-fit="m">Design and</span> <span data-fit="m">engineering,</span></span>
+              <em class="ht-row ht-b" data-fit="d m">played as one instrument.</em>
             </h1>
+            <div class="hero-keys" data-hero-keys aria-hidden="true"></div>
+            <p class="visually-hidden" id="hero-play-help">The headline is playable: press Space or Enter to play a chord.</p>
             <div class="hero-foot">
               <p class="lede" data-hero-lede>
-                SNOWBROS is a creative engineering studio. We publish our craft in the open — an AI
-                skill that decides what a project needs, and small libraries for motion, 3D and
-                interfaces that build it.
+                A creative engineering studio. We publish our craft in the open — an AI skill and the
+                libraries it builds with. Strum the crystal, play the title.
               </p>
               <div class="hero-ctas" data-hero-ctas>
-                <a class="btn btn-accent" href="#labs" data-magnetic>Explore the labs <span class="btn-arrow" aria-hidden="true">↓</span></a>
+                <a class="btn btn-accent btn-island" href="#labs" data-magnetic>Explore the labs <span class="btn-orb" aria-hidden="true"><span class="btn-arrow">↓</span></span></a>
                 <a class="btn btn-ghost" href="#contact" data-magnetic>Work with us</a>
               </div>
             </div>
-            <a class="scroll-cue label" href="#dimensions"><span aria-hidden="true">↓</span> Six dimensions</a>
           </div>
 
           <div class="dimensions" id="dimensions" data-dimensions>
@@ -235,20 +215,34 @@
         </div>
       </section>
 
+      <!-- ============================================================ TITLE SEQUENCE
+           A film-title band between argument and evidence: two lines of giant type travel in
+           opposite directions as you scroll. Decorative repetition of words said elsewhere, so it
+           is hidden from assistive tech; static under reduced motion. -->
+      <section class="credits" aria-hidden="true" data-credits>
+        <div class="credits-row credits-serif" data-credits-row="1">
+          <span>Design</span><i>✳</i><span><em>and</em> engineering</span><i>✳</i><span>played as</span><i>✳</i><span><em>one instrument</em></span><i>✳</i>
+        </div>
+        <div class="credits-row credits-grotesk" data-credits-row="-1">
+          <span>Measured</span><b>/</b><span>Interruptible</span><b>/</b><span>Native</span><b>/</b><span>Explained</span><b>/</b>
+        </div>
+      </section>
+
       <!-- ============================================================ 03 LABS -->
       <section class="labs" id="labs" aria-labelledby="labs-title">
         <div class="wrap labs-head" data-orbit>
           <svg class="orbit-guide" aria-hidden="true" data-orbit-guide></svg>
           <p class="label">03 — Labs</p>
           <h2 class="h1" id="labs-title">Working benches, <em data-redline="underline">not screenshots.</em></h2>
-          <p class="lede">Every specimen below runs on the toolkit, in this page, right now. Change the parameters; the code changes with you.</p>
+          <p class="lede">Seven working specimens, running in this page, right now. Change the parameters; the code changes with you.</p>
           <nav class="lab-index" aria-label="Labs">
             <a href="#lab-motion"><span class="mono">A</span> Motion</a>
             <a href="#lab-interaction"><span class="mono">B</span> Interaction</a>
             <a href="#lab-space"><span class="mono">C</span> Space</a>
             <a href="#lab-interface"><span class="mono">D</span> Interface</a>
             <a href="#lab-effects"><span class="mono">E</span> Effects</a>
-            <a href="#lab-playground"><span class="mono">F</span> Playground</a>
+            <a href="#lab-physics"><span class="mono">F</span> Physics</a>
+            <a href="#lab-playground"><span class="mono">G</span> Playground</a>
           </nav>
         </div>
 
@@ -513,11 +507,34 @@
           </div>
         </article>
 
-        <!-- ------------------------------------------------ F PLAYGROUND -->
+        <!-- ------------------------------------------------ F PHYSICS -->
+        <article class="lab lab-physics" id="lab-physics" aria-labelledby="lab-phys-title" data-lab="physics">
+          <div class="wrap lab-grid">
+            <header class="lab-head">
+              <p class="label"><span class="lab-letter">F</span> Physics lab</p>
+              <h3 class="h2" id="lab-phys-title">Throw the <em>snow.</em></h3>
+              <p class="muted">Real rigid bodies: crystals fall, stack and collide. Drag to throw, tap to drop another, Space adds one, arrows shake the box. With sound on, every hard landing plays a note. The engine loads only when you ask for it — and stops computing the moment the pile settles.</p>
+              <p class="lab-uses mono">Rapier (WASM) · stepPhysics · soundCues</p>
+            </header>
+            <div class="phys-bench">
+              <canvas class="phys-canvas" data-phys-canvas tabindex="0" aria-label="Physics playground: hexagonal snow crystals in a box. Space drops a crystal, arrow keys shake the box."></canvas>
+              <div class="phys-gate">
+                <button class="btn btn-ink btn-island" type="button" data-phys-start>
+                  Start physics <span class="btn-orb" aria-hidden="true"><span class="btn-arrow">↓</span></span>
+                </button>
+                <p class="label phys-cost">Loads Rapier · ≈ 1.3 MB gzip · on demand</p>
+              </div>
+              <p class="label phys-status" role="status" data-phys-status></p>
+              <p class="mono phys-readout" aria-hidden="true" data-phys-readout></p>
+            </div>
+          </div>
+        </article>
+
+        <!-- ------------------------------------------------ G PLAYGROUND -->
         <article class="lab lab-playground" id="lab-playground" aria-labelledby="lab-pg-title">
           <div class="wrap pg-band">
             <div>
-              <p class="label"><span class="lab-letter">F</span> Playground</p>
+              <p class="label"><span class="lab-letter">G</span> Playground</p>
               <h3 class="h2" id="lab-pg-title">Ten patterns. <em>Tune, then take.</em></h3>
               <p class="muted">Every control rebuilds the pattern and rewrites the snippet. Deep-link straight to one:</p>
             </div>
@@ -690,14 +707,13 @@ cp -r creative-engineering/skills/snowbros-creative ~/.claude/skills/</code></pr
             <p class="label">Notes</p>
             <ul>
               <li>MIT OR Apache-2.0</li>
-              <li>Type: Bricolage Grotesque, Instrument Serif, JetBrains Mono (OFL-1.1)</li>
+              <li>Type: Archivo, Geist, Geist Mono (OFL-1.1)</li>
               <li>No images — every visual is generated in code</li>
             </ul>
           </div>
         </div>
         <div class="footer-base">
           <span class="label">© 2026 SNOWBROS · Creative Engineering</span>
-          <span class="label footer-clock" aria-hidden="true">t = <span data-footer-clock>1.000</span></span>
           <a class="label footer-top" href="#top">Back to top <span aria-hidden="true">↑</span></a>
         </div>
       </div>

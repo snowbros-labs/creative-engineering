@@ -3,6 +3,7 @@
  * direction + plan in docs/briefs/FLAGSHIP_DIRECTION.md. Every effect is registered on the shell
  * scope (or a child) so HMR and media-query changes never duplicate work (skill hard rule 8).
  */
+import 'lenis/dist/lenis.css';
 import '../styles/base.css';
 import '../styles/home.css';
 import {
@@ -21,7 +22,6 @@ import {
 import {
   type AnnotationType,
   annotate,
-  createCursor,
   magnetic,
   marquee,
   pressable,
@@ -29,9 +29,13 @@ import {
   scramble,
 } from '@snowbros/fx';
 import { inView, scrollProgress, scrollVelocity, scrub } from '@snowbros/motion';
+import { smoothScroll } from '@snowbros/adapters';
+import Lenis from 'lenis';
 import { buildLattice } from '../lattice/geometry.js';
 import { latticeSvg } from '../lattice/svg.js';
+import { initHeroPlay } from '../sections/hero-play.js';
 import { initInstrument } from '../sections/instrument.js';
+import { createInstrument } from '../sound/instrument.js';
 import { initSystem } from '../sections/system.js';
 import { initShell } from '../shell.js';
 import { initCopyButtons } from '../ui/copy.js';
@@ -114,6 +118,29 @@ const lightBrand = (hash: string | null) => {
 };
 shell.add(() => readoutFx?.dispose());
 
+// ----------------------------------------------------------------- smooth wheel (desktop)
+// Lenis smooths wheel steps through the long pinned instrument. Native scroll position is kept,
+// so sticky pins, scrollProgress and find-in-page keep working. Off on touch and reduced motion
+// (adapter policy); paused while the menu is open; in-page anchors glide via Lenis.
+{
+  const smooth = smoothScroll({
+    create: () => new Lenis({ lerp: 0.11, wheelMultiplier: 0.9, anchors: { offset: -72 } }),
+  });
+  shell.add(smooth);
+  const menuEl = $('[data-menu]');
+  if (menuEl) {
+    const mo = new MutationObserver(() => {
+      if (menuEl.dataset.open === 'true') smooth.instance?.stop();
+      else {
+        smooth.instance?.start();
+        smooth.wake();
+      }
+    });
+    mo.observe(menuEl, { attributes: true, attributeFilter: ['data-open'] });
+    shell.add(() => mo.disconnect());
+  }
+}
+
 // ----------------------------------------------------------------- page clock + nav state
 // One passive progress source for the whole document; the hairline reads it directly.
 const bar = $('[data-page-progress]');
@@ -190,14 +217,17 @@ const movePill = (link: HTMLAnchorElement | null) => {
     });
 };
 shell.add(() => pillOff?.());
-shell.listen(window, 'resize', () => {
+const remeasurePill = () => {
   const active = navLinks.find((l) => l.dataset.active === 'true') ?? null;
   if (active) {
     pillX.jump(active.offsetLeft);
     pillW.jump(active.offsetWidth);
     movePill(active);
   }
-});
+};
+shell.listen(window, 'resize', remeasurePill);
+// Link widths change when the webfont swaps in; the pill must follow.
+void document.fonts.ready.then(remeasurePill);
 for (const link of navLinks) {
   const target = $(link.hash);
   if (!target) continue;
@@ -269,22 +299,74 @@ if (hapticsBtn && canVibrate() && touchDevice) {
   });
 }
 
-// Cursor follower names what the pointer can do here. Augments, never hides, the native cursor.
-shell.add(
-  createCursor({
-    size: 10,
-    states: {
-      strum: { scale: 6.4, label: 'Strum' },
-      drag: { scale: 5.6, label: 'Drag' },
-      open: { scale: 5.6, label: 'Open' },
-      play: { scale: 5.6, label: 'Play' },
-    },
-  }),
-);
+// ----------------------------------------------------------------- header timeline
+// The nav is a transport bar: chapters are markers on a track, the playhead is the reader's
+// position. Within the active chapter it advances by that section's own progress, so markers
+// stay evenly spaced however long each section is. Measured on resize, computed on scroll.
+{
+  const tl = $('[data-tl]');
+  const fill = $('[data-tl-fill]');
+  const head = $('[data-tl-head]');
+  const links = $$<HTMLAnchorElement>('[data-tl] [data-nav]');
+  const targets = links.map((a) => $(a.hash));
+  if (tl && fill && head && links.length) {
+    let tops: number[] = [];
+    let ends: number[] = [];
+    const measure = () => {
+      tops = targets.map((t) => (t ? t.getBoundingClientRect().top + window.scrollY : 0));
+      ends = tops.map((t, i) => tops[i + 1] ?? document.documentElement.scrollHeight);
+    };
+    const paint = () => {
+      const y = window.scrollY + innerHeight * 0.5;
+      let i = tops.findIndex((t, k) => y >= t && y < ends[k]!);
+      if (i < 0) i = y < (tops[0] ?? 0) ? -1 : tops.length - 1;
+      const local = i < 0 ? 0 : Math.min(1, (y - tops[i]!) / Math.max(1, ends[i]! - tops[i]!));
+      const p = i < 0 ? 0 : (i + local) / links.length;
+      fill.style.transform = `scaleX(${p.toFixed(4)})`;
+      head.style.transform = `translateX(${(p * tl.clientWidth).toFixed(1)}px)`;
+    };
+    measure();
+    paint();
+    shell.listen(window, 'scroll', paint, { passive: true });
+    const ro = new ResizeObserver(() => {
+      measure();
+      paint();
+    });
+    ro.observe(document.body);
+    shell.add(() => ro.disconnect());
+  }
+}
 
 // ----------------------------------------------------------------- 01 instrument
 const clock = createSignal(0);
-initInstrument(shell, clock);
+// Sound is opt-in: the lattice is an instrument — six arms, six synthesised notes.
+const instrument = createInstrument(shell);
+const heroTitle = $('[data-hero-title]');
+const heroPlay = heroTitle
+  ? initHeroPlay(shell, heroTitle, (key, strength) => instrument.pluck(key, strength))
+  : null;
+initInstrument(shell, clock, {
+  onPluck: (arm, strength) => {
+    instrument.pluck(arm, strength);
+    // The crystal sits to the right of the headline: its wave enters from that side.
+    heroPlay?.wave(1, strength);
+  },
+});
+{
+  const buttons = $$<HTMLButtonElement>('[data-sound-toggle]');
+  const render = (on: boolean) => {
+    for (const b of buttons) {
+      b.setAttribute('aria-pressed', String(on));
+      const label = b.querySelector('[data-sound-label]');
+      if (label) label.textContent = on ? 'Sound: on' : 'Sound: off';
+    }
+    document.documentElement.dataset.sound = on ? 'on' : 'off';
+  };
+  render(instrument.enabled);
+  shell.add(instrument.subscribe(render));
+  for (const b of buttons)
+    shell.listen(b, 'click', () => instrument.setEnabled(!instrument.enabled));
+}
 
 // ----------------------------------------------------------------- menu: the index
 // The panel opens as a circle grown from the menu button; the lattice glyph turns to point the
@@ -420,12 +502,17 @@ function wrapWords(root: HTMLElement): HTMLElement[] {
 
 // ----------------------------------------------------------------- 03 labs (lazy)
 // Each lab loads its code when it approaches the viewport; heavy 3D stays out of first paint.
-const labs: Record<string, () => Promise<{ init(root: HTMLElement, scope: Scope): void }>> = {
+type LabHooks = { onImpact?: (index: number, strength: number) => void };
+const labs: Record<
+  string,
+  () => Promise<{ init(root: HTMLElement, scope: Scope, hooks?: LabHooks): void }>
+> = {
   motion: () => import('../labs/motion-lab.js'),
   interaction: () => import('../labs/interaction-lab.js'),
   space: () => import('../labs/space-lab.js'),
   interface: () => import('../labs/interface-lab.js'),
   effects: () => import('../labs/effects-lab.js'),
+  physics: () => import('../labs/physics-lab.js'),
 };
 for (const root of $$('[data-lab]')) {
   const load = labs[root.dataset.lab ?? ''];
@@ -439,7 +526,7 @@ for (const root of $$('[data-lab]')) {
         if (started) return;
         started = true;
         load()
-          .then((m) => m.init(root, labScope))
+          .then((m) => m.init(root, labScope, { onImpact: (i, v) => instrument.pluck(i, v * 0.8) }))
           .catch((error) => {
             console.error(`[site] ${root.dataset.lab} lab failed to load`, error);
             root.dataset.labError = 'true';
@@ -478,7 +565,7 @@ const orbit = $('[data-orbit]');
 if (orbit) {
   shell.add(
     createMediaContext({
-      '(min-width: 1000px) and full-motion': (scope) => {
+      '(min-width: 1180px) and full-motion': (scope) => {
         orbit.dataset.orbit = 'on';
         const chips = $$<HTMLAnchorElement>('.lab-index a', orbit);
         const guide = $<SVGSVGElement>('[data-orbit-guide]', orbit);
@@ -580,46 +667,6 @@ if (mark) {
 $('[data-footer-tab]')?.append(
   latticeSvg(buildLattice({ seed: 11, detail: 0.35 }), { nodes: true }),
 );
-
-// Affordance: once the crystal can be played (WebGL mounted), a hand-drawn arrow runs from the
-// visible hint to the crystal — taught once, next to the thing that answers. Phones point up-right
-// out of the plate's caption; desktop points down from the meta row.
-{
-  const host = $('[data-lattice]');
-  let arrows: Array<{ dispose(): void }> = [];
-  const draw = () => {
-    for (const a of arrows) a.dispose();
-    arrows = [];
-    if (host?.dataset.render !== 'webgl') return;
-    for (const hint of $$('.plate-hint, .strum-hint')) {
-      if (!hint.offsetParent || !hint.getClientRects().length) continue;
-      const inPlate = !!hint.closest('[data-hero-plate]');
-      arrows.push(
-        annotate(hint, {
-          type: 'arrow',
-          direction: inPlate ? 'right' : 'down',
-          length: inPlate ? 46 : 54,
-          lean: inPlate ? 0.45 : -0.8,
-          color: 'var(--accent)',
-          strokeWidth: 1.75,
-          roughness: 0.5,
-          seed: 5,
-          duration: 0.7,
-          delay: 0.6,
-        }),
-      );
-    }
-  };
-  if (host) {
-    const mo = new MutationObserver(draw);
-    mo.observe(host, { attributes: true, attributeFilter: ['data-render'] });
-    shell.add(() => mo.disconnect());
-    shell.add(() => {
-      for (const a of arrows) a.dispose();
-    });
-    shell.add(createMediaContext({ '(max-width: 799px)': draw, '(min-width: 800px)': draw }));
-  }
-}
 
 const footerClock = $('[data-footer-clock]');
 if (footerClock) shell.add(page.subscribe((v) => (footerClock.textContent = v.toFixed(3))));

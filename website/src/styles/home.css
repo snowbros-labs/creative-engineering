@@ -6,7 +6,13 @@
   --cream: #f7f4ee;
   --bone: #eee8dc;
   --paper-2: #fbf9f4;
-  --font-sans: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
+  /* Cinema type system — all sans, no italics. One display superfamily (Archivo) whose width
+     axis carries the voice: titles expanded and heavy, emphasis condensed and light. Geist for
+     reading and UI, Geist Mono for the engineer's notes. */
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-display: "Archivo", "Geist", system-ui, sans-serif;
+  --font-title: "Archivo", "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
   --safe-l: max(var(--gutter), env(safe-area-inset-left));
@@ -3007,4 +3013,1328 @@ select:hover {
   select {
     min-height: 48px;
   }
+}
+
+/* Sound toggle: three bars that breathe only while sound is on (a live meter, not decoration).
+   Animated with scaleY so it stays on the compositor. */
+.sound-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+.sound-wave i {
+  width: 2px;
+  height: 12px;
+  border-radius: 1px;
+  background: currentColor;
+  transform-origin: 50% 100%;
+  transform: scaleY(var(--rest, 0.5));
+  transition: transform 0.3s var(--ease-out-expo);
+}
+.sound-wave i:nth-child(1) {
+  --rest: 0.42;
+}
+.sound-wave i:nth-child(2) {
+  --rest: 0.92;
+}
+.sound-wave i:nth-child(3) {
+  --rest: 0.62;
+}
+html[data-sound="on"] .sound-wave i {
+  background: var(--accent);
+  animation: sb-meter 0.9s var(--ease-in-out-quint) infinite alternate;
+}
+html[data-sound="on"] .sound-wave i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+html[data-sound="on"] .sound-wave i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+@keyframes sb-meter {
+  from {
+    transform: scaleY(0.25);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-sound="on"] .sound-wave i {
+    animation: none;
+    transform: scaleY(0.75);
+  }
+}
+html[data-motion="reduced"][data-sound="on"] .sound-wave i {
+  animation: none;
+  transform: scaleY(0.75);
+}
+
+/* ================================================================== header, refined
+   Two keys on the right (sound meter, menu), like instrument controls: same size, same press
+   depth, same ring. Everything else lives in the menu. */
+.header-actions {
+  gap: 6px;
+}
+.key {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--paper-2) 70%, transparent);
+  color: var(--fg);
+  cursor: pointer;
+  box-shadow: 0 calc((1 - var(--sb-press, 0)) * 2px) 0 0 var(--line-strong);
+  translate: 0 calc(var(--sb-press, 0) * 2px);
+  transition:
+    background-color 0.45s cubic-bezier(0.65, 0.05, 0, 1),
+    border-color 0.45s cubic-bezier(0.65, 0.05, 0, 1),
+    color 0.45s cubic-bezier(0.65, 0.05, 0, 1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .key:hover {
+    background: var(--fg);
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+}
+.key:active {
+  scale: 0.96;
+}
+.sound-key[aria-pressed="true"] {
+  border-color: var(--accent);
+}
+.menu-lines {
+  display: grid;
+  gap: 5px;
+  width: 18px;
+}
+.menu-lines i {
+  display: block;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: translate 0.45s cubic-bezier(0.65, 0.05, 0, 1);
+}
+.menu-lines i:last-child {
+  width: 11px;
+  justify-self: end;
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu-toggle:hover .menu-lines i:first-child {
+    translate: -3px 0;
+  }
+  .menu-toggle:hover .menu-lines i:last-child {
+    translate: -7px 0;
+  }
+}
+.site-header .menu-toggle {
+  display: inline-grid;
+}
+.site-header .clock-ring {
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+}
+.site-header .clock-ring circle {
+  /* A rounded-square key gets a rounded ring: drawn as a circle, clipped to the key's corners. */
+  stroke-width: 1.25;
+}
+
+/* Nav text roll: the label slides up and an identical copy (a text-shadow, invisible to
+   assistive tech) follows it in — a quiet, precise acknowledgement of the pointer. Fine pointers
+   only. */
+.roll {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: top;
+  line-height: 1.25;
+}
+.roll > span {
+  display: block;
+}
+@media (hover: hover) and (pointer: fine) {
+  .roll > span {
+    text-shadow: 0 1.25em 0 currentColor;
+    transition: translate 0.55s cubic-bezier(0.65, 0.05, 0, 1);
+  }
+  .nav-links a:hover .roll > span,
+  .nav-links a:focus-visible .roll > span {
+    translate: 0 -1.25em;
+  }
+}
+
+/* ================================================================== title sequence */
+.credits {
+  position: relative;
+  padding-block: clamp(40px, 9vh, 120px);
+  overflow: clip;
+  border-block: 1px solid var(--line);
+  background: var(--bg);
+}
+.credits-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.28em;
+  width: max-content;
+  white-space: nowrap;
+  will-change: transform;
+}
+.credits-row > * {
+  flex: none;
+}
+.credits-serif {
+  font: 400 clamp(5rem, 17vw, 17rem) / 0.86 var(--font-display);
+  letter-spacing: -0.035em;
+}
+.credits-serif em {
+  font-style: italic;
+  color: var(--accent-ink);
+}
+.credits-serif i {
+  font-style: normal;
+  font-size: 0.42em;
+  color: var(--accent);
+  translate: 0 -0.55em;
+}
+/* The counter-voice: condensed grotesk, outlined — engineering read against the serif's
+   romance. */
+.credits-grotesk {
+  margin-top: 0.06em;
+  font: 800 clamp(3.5rem, 11vw, 11rem) / 0.9 var(--font-sans);
+  font-variation-settings:
+    "wdth" 75,
+    "opsz" 96;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  /* Outline without the variable font's internal overlap contours: stroke painted first at
+     double width, the background-coloured fill painted over its inner half. */
+  color: var(--bg);
+  -webkit-text-stroke: 2.5px var(--fg);
+  paint-order: stroke fill;
+}
+.credits-grotesk b {
+  color: var(--accent);
+  -webkit-text-stroke: 0 transparent;
+  font-weight: 300;
+}
+
+/* ================================================================== island CTA (button-in-button) */
+.btn-island {
+  padding-right: 7px;
+  gap: 14px;
+}
+.btn-orb {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--charcoal) 14%, transparent);
+  transition:
+    translate 0.5s var(--ease-out-expo),
+    scale 0.5s var(--ease-out-expo),
+    background-color 0.3s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn-island:hover .btn-orb {
+    translate: 2px 0;
+    scale: 1.06;
+    background: var(--charcoal);
+    color: var(--cream);
+  }
+}
+@media (max-width: 799px) {
+  .hero-ctas .btn-island {
+    padding-right: 8px;
+  }
+}
+
+/* ================================================================== typography: cinema scale
+   One serif voice at film-title scale, one grotesk at reading scale, mono for the engineer's
+   annotations. Tracking tightens as size grows; ligatures, kerning and old-style figures on in
+   the serif; punctuation hangs at the margin on display lines. */
+:root {
+  --h1: clamp(3rem, 7.4vw, 8rem);
+}
+.display,
+.h1,
+.h2,
+.dim-title,
+.closing-title,
+.credits-serif,
+.mi-t {
+  font-kerning: normal;
+  font-feature-settings: "kern", "liga", "dlig";
+  hanging-punctuation: first last;
+}
+.h1 {
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+.lab-head .h2 {
+  font-size: clamp(2.5rem, 4.8vw, 5.25rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+}
+.h1 em,
+.h2 em {
+  letter-spacing: -0.02em;
+}
+body {
+  font-optical-sizing: auto;
+}
+.lede,
+.muted,
+.dim-body,
+.closing-lede {
+  text-wrap: pretty;
+}
+/* Eyebrows: a precise, quiet label system — hairline rule before the number. */
+.labs-head > .label,
+.system-head > .label,
+.start-head > .label,
+.thesis-side > .label,
+.closing-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: 0.14em;
+}
+.labs-head > .label::before,
+.system-head > .label::before,
+.start-head > .label::before,
+.thesis-side > .label::before,
+.closing-label::before {
+  content: "";
+  width: 28px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+.labs-head[data-orbit="on"] > .label::before {
+  display: none;
+}
+.tc-line {
+  padding-bottom: 0.06em;
+}
+
+/* ---- cinema type: per-role tuning for Bodoni Moda / Big Shoulders */
+.display,
+.h1,
+.h2,
+.dim-title,
+.closing-title,
+.credits-serif,
+.specimen-line,
+.step-title,
+.system-detail h3,
+.pass-name,
+.marquee-track,
+.pg-links a {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-weight: 400;
+}
+.hero-title {
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+}
+.hero-title em,
+.h1 em,
+.h2 em,
+.closing-title em {
+  font-weight: 400;
+  letter-spacing: -0.03em;
+}
+.credits-serif {
+  letter-spacing: -0.05em;
+}
+.credits-grotesk {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-variation-settings: normal;
+  letter-spacing: 0.005em;
+}
+.footer-mark {
+  font-family: var(--font-title);
+  letter-spacing: 0.01em;
+  line-height: 0.82;
+}
+.footer-mark span {
+  font-variation-settings: "wght" calc(500 + 400 * var(--sb-proximity, 0));
+}
+.footer-mark.is-measuring span {
+  font-variation-settings: "wght" 900;
+}
+.lab-letter,
+.mi-n,
+.step-n {
+  font-family: var(--font-mono);
+}
+.footer-mark span {
+  font-variation-settings: "wght" calc(780 + 120 * var(--sb-proximity, 0));
+}
+@media (min-width: 800px) {
+  .hero-title {
+    font-size: clamp(3.4rem, 7.6vw, 9rem);
+    max-width: 10ch;
+  }
+}
+.compose,
+.field {
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================== CINEMA TYPE (all sans)
+   Title voice: Archivo expanded (wdth 112–125), heavy, uppercase, tight leading.
+   Emphasis voice: the same family condensed (wdth 62) and light — a change of width, never a
+   slant. Labels: Geist Mono. Reading: Geist. */
+em,
+i,
+.display em,
+.h1 em,
+.h2 em,
+.hero .hero-title em,
+.closing-title em,
+.credits-serif em {
+  font-style: normal;
+}
+.display,
+.h1,
+.h2,
+.dim-title,
+.closing-title,
+.credits-serif,
+.credits-grotesk,
+.specimen-line,
+.step-title,
+.system-detail h3,
+.pass-name,
+.marquee-track,
+.pg-links a,
+.footer-mark,
+.mi-t,
+.magnet-btn {
+  font-family: var(--font-display);
+  font-style: normal;
+}
+.hero-title,
+.h1,
+.closing-title {
+  font-weight: 800;
+  font-variation-settings: "wdth" 116;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.86;
+}
+.hero-title em,
+.h1 em,
+.h2 em,
+.closing-title em {
+  font-weight: 300;
+  font-variation-settings: "wdth" 62;
+  letter-spacing: -0.02em;
+  color: var(--accent-ink);
+}
+.hero .hero-title em {
+  color: var(--accent-ink);
+}
+.theme-dark .h1 em,
+.theme-dark .h2 em {
+  color: var(--accent);
+}
+@media (min-width: 800px) {
+  .hero-title {
+    font-size: clamp(3.2rem, 7vw, 8.25rem);
+    max-width: 9ch;
+  }
+}
+@media (max-width: 799px) {
+  .hero-title {
+    font-size: clamp(2.35rem, 11.4vw, 3.9rem);
+  }
+}
+.h2,
+.lab-head .h2,
+.dim-title,
+.step-title,
+.system-detail h3 {
+  font-weight: 700;
+  font-variation-settings: "wdth" 100;
+  letter-spacing: -0.03em;
+  line-height: 0.94;
+}
+.specimen-line,
+.pass-name,
+.magnet-btn,
+.pg-links a {
+  font-weight: 600;
+  font-variation-settings: "wdth" 88;
+  letter-spacing: -0.02em;
+}
+.specimen-line {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-variation-settings: "wdth" 110;
+  line-height: 0.9;
+}
+.magnet-btn {
+  font-size: 1.125rem;
+  text-transform: uppercase;
+}
+/* Title sequence: expanded heavy against condensed outline — one family, two widths. */
+.credits-serif {
+  font-weight: 900;
+  font-variation-settings: "wdth" 125;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  font-size: clamp(4rem, 13vw, 13rem);
+}
+.credits-serif em {
+  font-weight: 200;
+  font-variation-settings: "wdth" 62;
+}
+.credits-grotesk {
+  font-weight: 800;
+  font-variation-settings: "wdth" 62;
+  letter-spacing: 0;
+}
+.marquee-track {
+  font-weight: 700;
+  font-variation-settings: "wdth" 70;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+.footer-mark {
+  font-variation-settings: "wdth" 62;
+  letter-spacing: 0;
+}
+.footer-mark span {
+  font-variation-settings:
+    "wdth" 62,
+    "wght" calc(700 + 200 * var(--sb-proximity, 0));
+}
+.footer-mark.is-measuring span {
+  font-variation-settings:
+    "wdth" 62,
+    "wght" 900;
+}
+/* Manifesto: Geist words thicken toward the pointer; the carrying words switch to the condensed
+   display voice (no slant). */
+.manifesto {
+  font-family: var(--font-sans);
+  letter-spacing: -0.04em;
+}
+.thesis .manifesto em,
+.thesis .manifesto .w-em {
+  font: 300 1em / 1 var(--font-display);
+  font-variation-settings: "wdth" 62;
+  letter-spacing: -0.02em;
+  padding-inline: 0.02em;
+}
+/* Menu: titles expanded uppercase; hover narrows the word into the emphasis voice. */
+.mi-t {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-variation-settings: "wdth" 112;
+  letter-spacing: -0.03em;
+  transition:
+    translate 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    font-variation-settings 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.2s linear;
+}
+.menu-index a:hover .mi-t,
+.menu-index a:focus-visible .mi-t {
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 300;
+  font-variation-settings: "wdth" 62;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+.brand-word {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 112;
+  letter-spacing: 0.02em;
+}
+.brand-word span {
+  font-variation-settings:
+    "wdth" 112,
+    "wght" calc(560 + 300 * var(--sb-proximity, 0));
+}
+/* Phones: the expanded width axis can't hold "ENGINEERING," in a 343 px column — the title
+   relaxes to normal width there, and the hero grid can never be widened by its content. */
+.hero {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (max-width: 799px) {
+  .hero-title {
+    font-variation-settings: "wdth" 100;
+    font-size: clamp(2.15rem, 10.4vw, 3.6rem);
+    letter-spacing: -0.04em;
+  }
+  .hero-meta {
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  .hero-meta .label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+@media (max-width: 600px) {
+  .h1,
+  .closing-title {
+    font-variation-settings: "wdth" 100;
+    font-size: clamp(2.1rem, 10.2vw, 3.4rem);
+    letter-spacing: -0.035em;
+  }
+  .h1 em,
+  .closing-title em {
+    font-variation-settings: "wdth" 62;
+  }
+  .labs-head > .label,
+  .system-head > .label,
+  .start-head > .label,
+  .closing-label {
+    max-width: 100%;
+  }
+}
+@media (max-width: 799px) {
+  /* Lede stays attached to the headline; the actions keep the thumb zone at the bottom. */
+  .hero-foot {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+  }
+}
+/* Menu index: number | title, description beneath the title — never beside it. */
+.menu-panel .menu-index a {
+  grid-template-columns: 56px minmax(0, 1fr);
+  row-gap: 6px;
+  align-items: end;
+}
+.mi-t {
+  font-size: clamp(2.4rem, 5.4vw, 5.5rem);
+  line-height: 0.92;
+}
+.mi-d {
+  grid-column: 2;
+  text-align: left;
+}
+@media (max-width: 860px) {
+  .mi-t {
+    font-size: clamp(2.1rem, 11vw, 3.4rem);
+  }
+}
+
+/* F — physics */
+.lab-physics {
+  --bg: var(--paper-2);
+}
+.phys-bench {
+  position: relative;
+  height: clamp(420px, 62svh, 640px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--sb-radius-lg);
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 40px 40px,
+    var(--charcoal);
+  --fg: var(--cream);
+  overflow: clip;
+  color: var(--cream);
+}
+.phys-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.phys-canvas:active {
+  cursor: grabbing;
+}
+.phys-canvas:focus-visible {
+  outline-offset: -4px;
+}
+.phys-gate {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  transition: opacity 0.4s var(--ease-out-expo);
+}
+.phys-gate .btn-ink {
+  --btn-bg: var(--cream);
+  --btn-fg: var(--charcoal);
+}
+.phys-gate .btn-orb {
+  background: color-mix(in oklab, var(--charcoal) 10%, transparent);
+}
+.phys-cost,
+.phys-status {
+  color: color-mix(in oklab, var(--cream) 62%, transparent);
+}
+.lab-physics[data-physics="on"] .phys-gate {
+  opacity: 0;
+  pointer-events: none;
+}
+[data-phys-start][data-state="loading"] {
+  opacity: 0.7;
+}
+.phys-status {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  pointer-events: none;
+}
+.phys-readout {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--accent);
+  pointer-events: none;
+}
+.phys-status {
+  top: 14px;
+  bottom: auto;
+}
+
+/* ================================================================== restraint pass
+   One indicator per job: the menu key's ring is the page clock, the nav pill is "where am I".
+   Duplicates go. Orange is reserved for interaction (CTA, hints, redlines, live readouts) —
+   emphasis in type is carried by width and weight alone. */
+.hero-title em,
+.hero .hero-title em,
+.h1 em,
+.h2 em,
+.closing-title em,
+.credits-serif em {
+  color: var(--fg);
+}
+.theme-dark .h1 em,
+.theme-dark .h2 em {
+  color: var(--fg);
+}
+.site-header[data-scrolled="true"] .brand-sub {
+  display: none;
+}
+/* Labels: one size, one tracking, one colour. */
+.label {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+.hero-meta {
+  gap: 0;
+}
+.hero-foot .lede {
+  color: var(--fg-muted);
+  font-size: clamp(1rem, 1.15vw, 1.1875rem);
+  line-height: 1.55;
+}
+/* Display rhythm: section titles share one scale and one leading. */
+.lab-head .h2 {
+  font-size: clamp(2.25rem, 4vw, 4.25rem);
+}
+.labs-head .h1,
+.system-head .h1,
+.start-head .h1 {
+  font-size: clamp(2.6rem, 6.2vw, 6.75rem);
+}
+.bar-name {
+  font-size: 0.75rem;
+}
+@media (max-width: 600px) {
+  .bars {
+    gap: 4px;
+  }
+  .footer-cols a,
+  .text-link {
+    padding-block: 11px;
+  }
+  .fx-scramble {
+    min-height: 48px;
+  }
+  .check {
+    min-height: 44px;
+  }
+}
+
+/* Contact actions, rebuilt as keys: contained fill, arrow in its own orb, press feedback. */
+.closing-actions {
+  display: grid;
+  gap: 10px;
+  border-top: 0;
+}
+.closing-actions li {
+  border-bottom: 0;
+}
+.closing-link {
+  grid-template-columns: 2rem minmax(0, 1fr) 40px;
+  min-height: 64px;
+  padding: 0 10px 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  overflow: clip;
+  transition:
+    border-color 0.3s ease,
+    color 0.3s ease,
+    scale 0.16s ease-out;
+}
+.closing-link::before {
+  inset: 0;
+  border-radius: inherit;
+  background: var(--fg);
+  transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.closing-link:active {
+  scale: 0.985;
+}
+.cl-a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--fg) 7%, transparent);
+  font-size: 1rem;
+  rotate: 0deg;
+  transition:
+    translate 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 0.3s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .closing-link:hover,
+  .closing-link:focus-visible {
+    color: var(--bg);
+    border-color: var(--fg);
+  }
+  .closing-link:hover .cl-k,
+  .closing-link:focus-visible .cl-k {
+    color: color-mix(in oklab, var(--bg) 60%, transparent);
+  }
+  .closing-link:hover .cl-a,
+  .closing-link:focus-visible .cl-a {
+    rotate: 0deg;
+    translate: 2px -2px;
+    background: var(--accent);
+    color: var(--charcoal);
+  }
+}
+.closing-link-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--charcoal);
+}
+.closing-link-primary .cl-k,
+.closing-link-primary .cl-a {
+  color: var(--charcoal);
+}
+.closing-link-primary .cl-a {
+  background: color-mix(in oklab, var(--charcoal) 12%, transparent);
+}
+.closing-link-primary::before {
+  background: var(--charcoal);
+}
+@media (hover: hover) and (pointer: fine) {
+  .closing-link-primary:hover,
+  .closing-link-primary:focus-visible {
+    color: var(--cream);
+    border-color: var(--charcoal);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .closing-link,
+  .cl-a {
+    transition: none;
+  }
+}
+
+/* Phones: the six dimensions as a plain ruled list — no stacked cards sliding over each other. */
+@media (max-width: 799px) {
+  .dim {
+    position: static;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    padding: 24px 0 28px;
+  }
+  .dim-list {
+    gap: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+}
+/* Chart labels: steeper angle so neighbours never collide at narrow bar widths. */
+.bar-name {
+  rotate: -62deg;
+}
+.bar-readout {
+  margin-top: 76px;
+}
+
+/* ================================================================== playable headline */
+.hero-title.is-playable {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.hero-title.is-playable:focus-visible {
+  outline-offset: 10px;
+  border-radius: 6px;
+}
+.hero-title .sb-char {
+  display: inline-block;
+  /* Hammer lift toward the cursor (proximity), compositor-only. */
+  translate: 0 calc(var(--sb-proximity, 0) * -0.16em);
+  transition: color 0.25s ease;
+}
+.hero-title.is-playable .sb-char:hover {
+  color: var(--accent-ink);
+}
+.hero-title .sb-char.is-wave {
+  animation: sb-hammer 0.62s cubic-bezier(0.23, 1, 0.32, 1) calc(var(--d, 0) * 22ms) both;
+}
+@keyframes sb-hammer {
+  0% {
+    transform: translateY(0);
+  }
+  28% {
+    transform: translateY(calc(var(--wave-amp, 0.2em) * -1)) rotate(-2deg);
+  }
+  60% {
+    transform: translateY(calc(var(--wave-amp, 0.2em) * 0.18));
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.hero-title .sb-word {
+  white-space: nowrap;
+}
+@media (min-width: 800px) {
+  .hero-title {
+    max-width: 11.5ch;
+    font-size: clamp(3.2rem, 6.4vw, 7.75rem);
+  }
+}
+
+/* ================================================================== header island
+   One floating instrument panel from the first frame: brand · nav segment · keys. Scrolling
+   only tightens it. Keys live inside the island, so they drop their own frames. */
+.site-header,
+.site-header[data-scrolled="true"] {
+  background: transparent;
+  backdrop-filter: none;
+  border: 0;
+  padding-top: calc(env(safe-area-inset-top) + 10px);
+  height: calc(var(--header-h) + env(safe-area-inset-top) + 10px);
+}
+.site-header .header-row,
+.site-header[data-scrolled="true"] .header-row {
+  max-width: 1240px;
+  width: calc(100% - 24px);
+  padding: 6px 6px 6px 18px;
+  background: color-mix(in oklab, var(--paper-2) 82%, transparent);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 18px 40px -26px rgba(70, 45, 20, 0.32);
+  backdrop-filter: saturate(1.25) blur(14px);
+}
+.site-header[data-scrolled="true"] .header-row {
+  max-width: 1080px;
+}
+.site-header .nav-links,
+.site-header[data-scrolled="true"] .nav-links {
+  padding: 3px;
+  border: 0;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--fg) 4%, transparent);
+}
+.nav-links a {
+  padding: 8px 14px;
+  border-radius: 11px;
+}
+.nav-pill {
+  border-radius: 11px;
+  background: var(--paper-2);
+  box-shadow:
+    0 1px 2px rgba(70, 45, 20, 0.12),
+    inset 0 0 0 1px var(--line);
+}
+.site-header .key {
+  width: 42px;
+  height: 42px;
+  border-color: transparent;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--fg) 5%, transparent);
+  box-shadow: none;
+  translate: none;
+}
+.site-header .menu-toggle.key {
+  background: var(--fg);
+  color: var(--bg);
+}
+@media (hover: hover) and (pointer: fine) {
+  .site-header .menu-toggle.key:hover {
+    background: var(--accent);
+    color: var(--charcoal);
+    border-color: transparent;
+  }
+}
+.site-header .sound-key[aria-pressed="true"] {
+  background: color-mix(in oklab, var(--accent) 16%, transparent);
+  border-color: transparent;
+}
+.site-header .clock-ring {
+  display: none;
+}
+@media (max-width: 760px) {
+  .site-header .header-row,
+  .site-header[data-scrolled="true"] .header-row {
+    width: calc(100% - 16px);
+    padding: 5px 5px 5px 14px;
+    border-radius: 18px;
+  }
+}
+
+/* ================================================================== hero: cinematic title card */
+.hero {
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  row-gap: 0;
+}
+.hero-title {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  align-self: end;
+  text-transform: uppercase;
+  line-height: 0.84;
+}
+.hero-title .ht-row {
+  display: block;
+  width: max-content;
+  max-width: none;
+  white-space: nowrap;
+}
+.ht-a {
+  font-weight: 800;
+  font-variation-settings: "wdth" 125;
+  letter-spacing: -0.035em;
+}
+.ht-b {
+  margin-top: 0.04em;
+  font-weight: 250;
+  font-variation-settings: "wdth" 62;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+.ht-a > span {
+  display: inline;
+}
+.hero-title.is-intro .ht-row {
+  overflow: clip;
+  padding-block: 0.06em;
+  margin-block: -0.06em;
+}
+.hero-foot {
+  margin-top: clamp(20px, 3vh, 36px);
+  padding-top: clamp(16px, 2.4vh, 24px);
+  border-top: 1px solid var(--line);
+  align-items: center;
+}
+.instrument-stage::before {
+  background: radial-gradient(38% 46% at 50% 34%, rgba(255, 200, 150, 0.4), transparent 72%);
+}
+.lattice-host > .lattice-svg {
+  left: 50%;
+}
+@media (max-width: 799px) {
+  .hero {
+    grid-template-rows: auto minmax(42svh, 1fr) auto auto;
+  }
+  .ht-a > span {
+    display: block;
+    width: max-content;
+  }
+  .hero-foot {
+    border-top: 0;
+    padding-top: 0;
+  }
+  .lattice-host > .lattice-svg {
+    top: 30%;
+    width: 78vw;
+    opacity: 1;
+  }
+}
+
+/* ---- keyboard strip */
+.hero-keys {
+  position: relative;
+  display: flex;
+  height: clamp(22px, 3.6vh, 34px);
+  margin-top: clamp(12px, 2vh, 20px);
+  border: 1px solid var(--fg);
+  border-radius: 6px;
+  overflow: clip;
+  background: var(--paper-2);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.hk-w {
+  flex: 1;
+  border-right: 1px solid var(--line-strong);
+  transform-origin: 50% 0;
+}
+.hk-w:last-child {
+  border-right: 0;
+}
+.hk-b {
+  position: absolute;
+  top: -1px;
+  height: 58%;
+  border-radius: 0 0 3px 3px;
+  background: var(--fg);
+  pointer-events: none;
+}
+.hk-w.is-down {
+  animation: sb-key 0.42s cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes sb-key {
+  0% {
+    background: var(--accent);
+  }
+  100% {
+    background: transparent;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .hk-w:hover {
+    background: color-mix(in oklab, var(--accent) 22%, transparent);
+  }
+}
+
+/* ---- tuning dial */
+.hero-dial {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 32svh;
+  width: min(66svh, 88vw);
+  height: min(66svh, 88vw);
+  translate: -50% -50%;
+  pointer-events: none;
+  overflow: visible;
+}
+.hero-dial > * {
+  transform: rotate(var(--spin, 0deg));
+}
+.dial-rim,
+.dial-inner {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 0.3;
+}
+.dial-inner {
+  stroke-dasharray: 0.6 2.4;
+}
+.dial-ticks {
+  stroke: var(--line-strong);
+  stroke-width: 0.35;
+}
+.hero-dial text {
+  font: 500 3.2px var(--font-mono);
+  fill: var(--fg-faint);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.hero-dial .dial-needle {
+  fill: var(--accent);
+  transform: none;
+}
+@media (max-width: 799px) {
+  .hero-dial {
+    top: 29svh;
+    width: 46svh;
+    height: 46svh;
+  }
+}
+.hero-foot {
+  border-top: 0;
+}
+.hero-dial {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 80%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 80%);
+}
+@media (max-width: 799px) {
+  .hero-dial {
+    top: 30svh;
+    width: 40svh;
+    height: 40svh;
+  }
+}
+
+/* Menu key morphs to a close mark while the menu is open (the panel's own close key mirrors it). */
+.menu-lines i {
+  transform-origin: 50% 50%;
+  transition:
+    translate 0.45s cubic-bezier(0.65, 0.05, 0, 1),
+    rotate 0.45s cubic-bezier(0.65, 0.05, 0, 1),
+    width 0s;
+}
+[data-menu-toggle][aria-expanded="true"] .menu-lines i:first-child {
+  translate: 0 3.25px;
+  rotate: 45deg;
+}
+[data-menu-toggle][aria-expanded="true"] .menu-lines i:last-child {
+  width: 18px;
+  translate: 0 -3.25px;
+  rotate: -45deg;
+}
+/* Menu rows: words rise from their masks on open, staggered 50 ms; closing is instant-fast. */
+.menu-panel .mi-row {
+  overflow: clip;
+}
+.menu-panel:not([data-open="true"]) .mi-t,
+.menu-panel:not([data-open="true"]) .mi-d {
+  translate: 0 100%;
+  transition-duration: 0.18s;
+}
+.menu-panel[data-open="true"] .mi-t,
+.menu-panel[data-open="true"] .mi-d {
+  translate: 0 0;
+  transition: translate 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(2) :is(.mi-t, .mi-d) {
+  transition-delay: 0.05s;
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(3) :is(.mi-t, .mi-d) {
+  transition-delay: 0.1s;
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(4) :is(.mi-t, .mi-d) {
+  transition-delay: 0.15s;
+}
+.menu-panel[data-open="true"] .mi-row:nth-child(5) :is(.mi-t, .mi-d) {
+  transition-delay: 0.2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .menu-panel .mi-t,
+  .menu-panel .mi-d {
+    translate: none;
+    transition: none;
+  }
+}
+
+/* ================================================================== header: transport bar */
+.tl {
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  align-items: center;
+  min-width: min(520px, 42vw);
+  padding: 0 4px;
+}
+.tl-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tl-list a {
+  display: grid;
+  gap: 1px;
+  padding: 6px 4px 12px;
+  text-decoration: none;
+  color: var(--fg-muted);
+  transition: color 0.25s ease;
+}
+.tl-n {
+  font: 500 0.625rem / 1 var(--font-mono);
+  letter-spacing: 0.1em;
+  color: var(--fg-faint);
+}
+.tl-t {
+  font: 600 0.8125rem / 1.2 var(--font-display);
+  font-variation-settings: "wdth" 100;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.tl-list a[data-active="true"],
+.tl-list a:hover {
+  color: var(--fg);
+}
+.tl-list a[data-active="true"] .tl-n {
+  color: var(--accent-ink);
+}
+.tl-track {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 6px;
+  height: 1px;
+  background: var(--line-strong);
+}
+.tl-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--fg);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+.tl-head {
+  position: absolute;
+  left: -4px;
+  top: -3.5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 22%, transparent);
+}
+@media (max-width: 1080px) {
+  .tl-n {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .tl {
+    display: none;
+  }
+}
+
+/* hero, simplified: crystal · title · keys · one action row */
+.hero-meta {
+  display: block;
+  height: 0;
+}
+.tl-list {
+  grid-template-columns: repeat(5, auto);
+  justify-content: space-between;
+  column-gap: 18px;
 }

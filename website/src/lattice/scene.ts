@@ -38,6 +38,8 @@ export interface LatticeView {
   setFocus(arm: number, amount: number, all?: number): void;
   /** Called after each render with tip positions in CSS px relative to the container. */
   onTips(cb: (tips: Array<[number, number]>) => void): void;
+  /** Called on every pluck/strum: arm index 0..5 and normalised strength 0..1. */
+  onPluck(cb: (arm: number, strength: number) => void): void;
   readonly canvas: HTMLCanvasElement;
 }
 
@@ -319,6 +321,8 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
     return ((Math.round(ang / (Math.PI / 3)) % 6) + 6) % 6;
   };
   const lastPluck = new Array<number>(6).fill(0);
+  const pluckListeners = new Set<(arm: number, strength: number) => void>();
+  scope.add(() => pluckListeners.clear());
   /** Add velocity to a string: continuous even if it is already ringing (no snapping). */
   const pluck = (arm: number, velocity: number) => {
     const now = performance.now();
@@ -326,6 +330,7 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
     lastPluck[arm] = now;
     strings[arm]!.impulse(velocity);
     haptic('tick');
+    for (const cb of pluckListeners) cb(arm, Math.min(1, Math.abs(velocity) / 1.8));
     stage.invalidate();
   };
 
@@ -429,6 +434,9 @@ export function mountLattice(container: HTMLElement, scope: Scope, lattice: Latt
     onTips(cb) {
       tipsCb = cb;
       stage.invalidate();
+    },
+    onPluck(cb) {
+      pluckListeners.add(cb);
     },
   };
 }

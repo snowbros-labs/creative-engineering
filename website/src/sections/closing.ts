@@ -8,7 +8,7 @@
  */
 import { fromGsap } from '@snowbros/adapters';
 import { createMediaContext, type Scope } from '@snowbros/core';
-import { scrollProgress, scrub } from '@snowbros/motion';
+import { inView, scrollProgress, scrub } from '@snowbros/motion';
 import gsap from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 
@@ -74,6 +74,91 @@ export function initClosing(shell: Scope): void {
                 '-=0.7',
               );
             scrubbed(scope, closing, tl, 'top 85%', 'center 60%');
+          }
+
+          // Title sequence: two rows of giant type travel in opposite directions with scroll,
+          // like credits on a moving camera. quickSetter writes transforms only.
+          for (const row of $$('[data-credits-row]')) {
+            const band = row.closest<HTMLElement>('[data-credits]');
+            if (!band) continue;
+            const dir = Number(row.dataset.creditsRow) || 1;
+            const setX = gsap.quickSetter(row, 'x', 'px');
+            let travel = 0;
+            const measure = () => {
+              travel = Math.max(0, row.scrollWidth - band.clientWidth);
+            };
+            measure();
+            const ro = new ResizeObserver(measure);
+            ro.observe(band);
+            scope.add(() => {
+              ro.disconnect();
+              gsap.set(row, { clearProps: 'transform' });
+            });
+            const p = scrollProgress(band, { start: 'top bottom', end: 'bottom top' });
+            scope.add(p);
+            scope.add(
+              scrub(
+                {
+                  duration: 0,
+                  seek: (v) => setX(dir > 0 ? -v * travel * 0.85 : -(1 - v) * travel * 0.85),
+                },
+                p,
+                { smooth: 6 },
+              ),
+            );
+          }
+
+          // Title cards: section headings arrive like film titles — lines rise out of their own
+          // masks with a slight settle. Headings that carry a hand-drawn redline are not split
+          // (the mark is attached to the <em>); they open as a curtain instead. Only headings
+          // still below the fold are prepared, so nothing already read ever disappears.
+          const headings = $$<HTMLElement>(
+            '.labs-head .h1, .lab-head .h2, .system-head .h1, .start-head .h1, .pg-band .h2',
+          ).filter((h) => h.getBoundingClientRect().top > innerHeight);
+          for (const h of headings) {
+            if (h.querySelector('[data-redline]')) {
+              gsap.set(h, { clipPath: 'inset(-12% -4% 100% -4%)', y: 36 });
+              // Observe the parent: an IntersectionObserver never reports a target whose own
+              // clip-path hides it completely.
+              scope.add(
+                inView(
+                  h.parentElement ?? h,
+                  () => {
+                    gsap.to(h, {
+                      clipPath: 'inset(-12% -4% -12% -4%)',
+                      y: 0,
+                      duration: 1.15,
+                      ease: 'expo.out',
+                    });
+                  },
+                  { amount: 0.3 },
+                ),
+              );
+              scope.add(() => gsap.set(h, { clearProps: 'clipPath,transform' }));
+              continue;
+            }
+            const split = SplitText.create(h, {
+              type: 'lines',
+              mask: 'lines',
+              linesClass: 'tc-line',
+            });
+            gsap.set(split.lines, { yPercent: 108, rotate: 1.5, transformOrigin: '0% 100%' });
+            scope.add(
+              inView(
+                h,
+                () => {
+                  gsap.to(split.lines, {
+                    yPercent: 0,
+                    rotate: 0,
+                    duration: 1.1,
+                    stagger: 0.09,
+                    ease: 'power4.out',
+                  });
+                },
+                { amount: 0.3 },
+              ),
+            );
+            scope.add(() => split.revert());
           }
 
           // Footer wordmark: letters surface from below the baseline as the page ends, each a
