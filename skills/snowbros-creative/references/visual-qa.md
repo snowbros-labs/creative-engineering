@@ -106,3 +106,14 @@ All must hold, or be listed as a known limitation with a reason:
 - You can name the page's one idea and point at where each viewport expresses it.
 
 Report what you inspected (widths, states, interactions), not just that you inspected.
+
+
+## 7. Traps found in production (2026-10-24)
+
+| Symptom                                                  | Cause                                                                                      | Fix                                                                    |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| `scrollWidth` > viewport but no element's rect overflows | hidden (`visibility: hidden`) fallback text, or a fixed canvas at `100vw` with a scrollbar | clip the container; size layers to the document width, not `100vw`     |
+| Buttons render as huge circles                           | a reused `grid-column: 1 / 9` rule inside a different grid created implicit columns        | scope column rules; set `> * { grid-column: 1 / -1 }` in stacked grids |
+| Hover fill invisible                                     | fill colour equals the section colour                                                      | per-section `--fill` override                                          |
+| A test server serves an old build                        | a stale `vite preview` still owns the port                                                 | kill the port owner before e2e (`netstat -ano` → `taskkill`)           |
+| Headless frame times look terrible                       | headless rasterises canvas on the CPU                                                      | confirm in headed GPU Chrome before optimising further                 |

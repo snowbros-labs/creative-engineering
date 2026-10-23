@@ -1,0 +1,290 @@
+/* Founder page: one person, three kinds of things, one principle. Uses the studio system. */
+
+.f-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  min-height: 100svh;
+  padding-top: calc(var(--head-h) + env(safe-area-inset-top));
+  padding-bottom: clamp(40px, 7svh, 80px);
+}
+.f-hero-field {
+  min-height: clamp(220px, 46svh, 560px);
+  touch-action: pan-y;
+}
+.f-hero-copy {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 24px;
+  align-items: end;
+}
+.f-title {
+  grid-column: 1 / 9;
+  font-size: var(--t-xl);
+}
+.f-hero-copy .hero-lede {
+  grid-column: 9 / 13;
+  max-width: 32ch;
+  padding-bottom: 0.4em;
+}
+
+/* ---- the struct */
+.f-struct {
+  background: var(--ink);
+  color: var(--paper);
+  padding-block: var(--gap-section);
+}
+.f-struct-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 24px;
+}
+.f-struct-title {
+  grid-column: 1 / 9;
+}
+.f-struct-note {
+  grid-column: 1 / 7;
+  font-size: var(--t-m);
+  line-height: 1.4;
+  color: #cfcbc2;
+  margin-bottom: clamp(24px, 4vw, 56px);
+}
+.f-code {
+  grid-column: 1 / -1;
+  background: #1a1918;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.f-code pre {
+  margin: 0;
+  padding: clamp(20px, 3vw, 44px);
+  overflow-x: auto;
+  font: 400 clamp(0.82rem, 0.7rem + 0.45vw, 1.12rem) / 1.7 var(--f-code);
+  color: #d8d4cb;
+  tab-size: 4;
+  overscroll-behavior-x: contain;
+}
+.f-code .k {
+  color: #ff8a5c;
+}
+.f-code .t {
+  color: #f2f0eb;
+  font-weight: 600;
+}
+.f-code .s {
+  color: #b8d8a8;
+}
+.f-code .n {
+  color: #ffc48a;
+}
+.f-code .f {
+  color: #9cc7ff;
+}
+.f-field {
+  color: inherit;
+  text-decoration: none;
+  border-radius: 3px;
+  background: linear-gradient(var(--signal), var(--signal)) 0 100% / 100% 1px no-repeat;
+  transition:
+    background-size 360ms var(--ease-out),
+    color var(--t-ui) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .f-field:hover {
+    background-size: 100% 100%;
+    color: var(--ink);
+  }
+  .f-field:hover .s {
+    color: var(--ink);
+  }
+}
+.f-field:focus-visible {
+  outline-color: var(--signal);
+}
+.f-out {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  padding: 18px clamp(20px, 3vw, 44px);
+  background: #0c0c0b;
+  font: 400 clamp(0.85rem, 0.75rem + 0.4vw, 1.1rem) / 1.5 var(--f-code);
+}
+.f-prompt {
+  color: #8f8a80;
+}
+.f-print {
+  color: var(--paper);
+}
+.f-print.is-waiting span::after,
+.f-print.is-typing span::after,
+.f-print.is-done span::after {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: -0.2em;
+  background: var(--signal);
+}
+.f-print.is-done span::after {
+  animation: exe-blink 1s steps(1) infinite;
+}
+
+/* ---- three kinds of things */
+.f-focus {
+  padding-block: var(--gap-section);
+}
+.f-focus .section-title {
+  margin-bottom: clamp(48px, 6vw, 96px);
+}
+.f-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(40px, 4vw, 64px) var(--gutter);
+  counter-reset: none;
+}
+.f-col {
+  display: grid;
+  align-content: start;
+  gap: 18px;
+  scroll-margin-top: calc(var(--head-h) + 32px);
+}
+.f-col-name {
+  font: 820 var(--t-l) / 1 var(--f-display);
+  font-variation-settings: "wdth" 110;
+  letter-spacing: -0.03em;
+}
+.f-col p {
+  font-size: var(--t-body);
+  line-height: 1.55;
+  max-width: 42ch;
+}
+.f-col .f-col-proof {
+  color: var(--ink-soft);
+  font-size: var(--t-small);
+}
+.f-col:target .f-col-name {
+  color: var(--signal-ink);
+}
+.f-col .link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+@media (max-width: 899px) {
+  .f-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- principle */
+.f-principle {
+  background: var(--stone);
+  padding-block: var(--gap-section);
+}
+.f-principle-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: 32px;
+  align-items: center;
+}
+.f-quote {
+  grid-column: 1 / 9;
+  margin: 0;
+  font: 760 var(--t-xl) / 0.92 var(--f-display);
+  font-variation-settings: "wdth" 78;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+.f-quote-note {
+  grid-column: 1 / 7;
+  font-size: var(--t-m);
+  line-height: 1.4;
+}
+.f-mark {
+  grid-column: 9 / 13;
+  grid-row: 1 / 3;
+  aspect-ratio: 1;
+  max-height: 420px;
+  touch-action: pan-y;
+}
+
+/* ---- boot */
+.f-boot {
+  background: var(--ink);
+  color: var(--paper);
+  padding-block: var(--gap-section);
+}
+.f-boot-grid {
+  display: grid;
+  gap: 28px;
+  justify-items: start;
+}
+.f-boot-grid > p {
+  font-size: var(--t-m);
+  line-height: 1.4;
+  max-width: 40ch;
+  color: #e4e0d7;
+}
+.f-boot-key.exe {
+  display: inline-flex;
+  align-items: center;
+  min-height: 88px;
+  padding: 0 clamp(24px, 3vw, 44px);
+  border-radius: 999px;
+  background: var(--signal);
+  color: var(--ink);
+  font: 820 var(--t-l) / 1 var(--f-display);
+  font-variation-settings: "wdth" 110;
+  letter-spacing: -0.02em;
+  touch-action: manipulation;
+  transition:
+    background-color var(--t-ui) ease,
+    scale var(--t-press) var(--ease-out);
+}
+.f-boot-key.exe:active {
+  scale: 0.97;
+}
+.f-boot-key.exe.is-exe {
+  background: var(--paper);
+  padding-inline: clamp(24px, 3vw, 44px);
+  margin-inline: 0;
+}
+.f-boot-key .exe-view {
+  min-width: 0;
+}
+.f-boot .contact-links a {
+  color: var(--paper);
+}
+
+@media (max-width: 899px) {
+  .f-title,
+  .f-hero-copy .hero-lede,
+  .f-struct-title,
+  .f-struct-note,
+  .f-quote,
+  .f-quote-note {
+    grid-column: 1 / -1;
+  }
+  .f-mark {
+    grid-column: 3 / 11;
+    grid-row: auto;
+    width: 100%;
+    max-height: 260px;
+    justify-self: center;
+  }
+}
+@media (max-width: 599px) {
+  .f-hero-field {
+    min-height: clamp(200px, 36svh, 340px);
+  }
+  .f-boot-key.exe {
+    min-height: 72px;
+    width: 100%;
+    justify-content: center;
+  }
+}

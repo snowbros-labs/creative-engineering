@@ -1,0 +1,253 @@
+/* Lab page. Bench rules live in lab-benches.css (carried over from the original toolkit site);
+   this file bridges their tokens onto the studio system and skins them to studio type and colour.
+   Loaded before studio.css, which owns buttons, header, menu, contact and footer. */
+@import "@snowbros/tokens/tokens.css";
+@import "./lab-benches.css";
+
+:root {
+  --bg: #f2f0eb;
+  --bg-raised: #f8f7f3;
+  --fg: #111110;
+  --fg-muted: #4a4741;
+  --fg-faint: #7c776d;
+  --line: color-mix(in oklab, #111110 12%, transparent);
+  --line-strong: color-mix(in oklab, #111110 24%, transparent);
+  --accent: #ff4f1f;
+  --accent-ink: #b8340d;
+  --cream: #f2f0eb;
+  --bone: #e6e2d9;
+  --paper-2: #f8f7f3;
+  --charcoal: #111110;
+  --charcoal-2: #1d1c1a;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-display: "Archivo", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --ease-ui: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --header-h: 64px;
+  --maxw: 1680px;
+}
+.theme-dark {
+  --bg: #111110;
+  --bg-raised: #1d1c1a;
+  --fg: #f2f0eb;
+  --fg-muted: #c4bfb5;
+  --fg-faint: #8f8a80;
+  --line: color-mix(in oklab, #f2f0eb 12%, transparent);
+  --line-strong: color-mix(in oklab, #f2f0eb 24%, transparent);
+  --accent-ink: #ff8a5c;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* ---- utilities the benches use */
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: max(var(--gutter), env(safe-area-inset-left));
+}
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+}
+.h1,
+.h2 {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 80;
+  font-weight: 760;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.h1 {
+  font-size: var(--t-xl);
+}
+.h2 {
+  font-size: clamp(2.25rem, 1rem + 3.4vw, 4.5rem);
+}
+.h1 em,
+.h2 em {
+  font-style: normal;
+}
+.lede {
+  font-size: var(--t-m);
+  line-height: 1.4;
+  max-width: 38ch;
+}
+.label {
+  font: 500 var(--t-small) / 1.3 var(--f-text);
+  color: var(--fg-muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+.muted {
+  color: var(--fg-muted);
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bone);
+  font: 600 0.75rem / 1.4 var(--f-text);
+}
+.chip-hot {
+  background: var(--accent);
+  color: #111110;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.text-link {
+  font-weight: 520;
+}
+
+/* ================================================================== studio skin */
+.labs {
+  padding-bottom: var(--gap-section);
+}
+.lab {
+  padding-block: clamp(88px, 10vw, 160px);
+}
+.lab.theme-dark,
+.start.theme-dark {
+  background: var(--ink);
+}
+.lab-head .label,
+.system-head .label,
+.start-head .label,
+.step-n {
+  font: 600 var(--t-small) / 1.3 var(--f-text);
+  color: var(--fg-muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.lab-letter {
+  display: none;
+}
+.lab-uses {
+  color: var(--accent-ink);
+}
+.btn-accent {
+  background: var(--signal);
+  color: var(--ink);
+  --fill: var(--ink);
+  --fill-ink: var(--paper);
+}
+.btn-ghost {
+  background: var(--bone);
+  color: var(--ink);
+  border: 0;
+  --fill: var(--ink);
+  --fill-ink: var(--paper);
+}
+.theme-dark .btn-ghost {
+  background: #2a2926;
+  color: var(--paper);
+  --fill: var(--signal);
+  --fill-ink: var(--ink);
+}
+.btn-sm {
+  min-height: 44px;
+}
+
+/* ---- lab hero */
+.lab-hero {
+  padding-top: calc(var(--head-h) + env(safe-area-inset-top) + clamp(32px, 6vw, 88px));
+  padding-bottom: clamp(48px, 6vw, 96px);
+}
+.lab-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  align-items: center;
+}
+.lab-hero-copy {
+  grid-column: 1 / 8;
+  display: grid;
+  gap: 28px;
+}
+.lab-hero-copy > * {
+  grid-column: 1 / -1;
+}
+.lab-title {
+  font-size: var(--t-xl);
+}
+.lab-hero .hero-lede {
+  max-width: 34ch;
+}
+.lab-hero-field {
+  grid-column: 8 / 13;
+  aspect-ratio: 1;
+  max-height: 560px;
+  touch-action: pan-y;
+}
+.lab-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: clamp(40px, 5vw, 72px);
+}
+.lab-index a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--bone);
+  font: 600 1rem / 1 var(--f-text);
+  text-decoration: none;
+  transition:
+    background-color var(--t-ui) ease,
+    color var(--t-ui) ease,
+    scale var(--t-press) var(--ease-out);
+}
+.lab-index a:active {
+  scale: 0.97;
+}
+@media (hover: hover) and (pointer: fine) {
+  .lab-index a:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+@media (max-width: 899px) {
+  .lab-hero-copy {
+    grid-column: 1 / -1;
+  }
+  .lab-hero-field {
+    grid-column: 3 / 11;
+    grid-row: 1;
+    max-height: 300px;
+    width: 100%;
+    justify-self: center;
+    margin-bottom: 24px;
+  }
+  .lab-index {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    overscroll-behavior-x: contain;
+  }
+  .lab-index a {
+    flex: none;
+  }
+}
+.contact-strip .contact-title {
+  grid-column: 1 / 10;
+}
+/* Code blocks are always dark: their labels need the light muted tone, whatever the section. */
+.code-head .label {
+  color: #bdb8ae;
+}

@@ -105,6 +105,33 @@ build stands. Newest entries last. Only record what was actually run/verified.
 - Website: phone hero recomposed (figure plate), contact section, footer card, GSAP (lazy, scrubbed
   through `fromGsap`), Bricolage Grotesque, mobile fixes across every section.
 
+## 2026-10-24 — studio redesign (snowbros.me)
+
+- The site is now the SNOWBROS **studio** site, not the toolkit page: `website/index.html` (home:
+  hero, studio, work, capabilities, contact), `lab.html` (the toolkit benches, re-skinned),
+  `founder.html`. Hosted from `VED2107/snowbros` (snowbros.me) via `tools/export-website.mjs`.
+- Signature: **Frost** (`src/studio/frost.ts`) — one crystal material that forms the wordmark,
+  each project's emblem and the studio mark, travels between them with scroll, thaws along the
+  swept pointer/touch path. Document-space canvas sized to the crystals; sleeps at rest.
+  Measured (headed GPU Chrome, wheel-scrolling the whole page): 20.9 ms median frame interval
+  with the swarm travelling vs 16.7 ms without it; 0 frames when frozen.
+- Work rendered from `src/studio/projects.ts` into static HTML at build time; case studies open
+  via `:target` without JS, as a dialog with a shared-element view transition with JS. Order set
+  by the owner: AMR, NOVA, Accounic, SwiftDrop, STC Academy, Atlas. Imagery = captures of each
+  product (Atlas: its own HTML report; Accounic/STC: owner's assets from the old site repo).
+- Living buttons (fill from entry point, letter roll), custom dropdowns (APG select-only
+  combobox over native selects), sentence-form brief → `api/contact.ts` (Resend; themed
+  notification + confirmation that never echoes user text), GSAP ScrollTrigger (lazy) for three
+  scrubbed moments, VED.EXE founder link.
+- Skill: `references/patterns/{material-fields,project-index,living-controls}.md`, three new
+  hard rules in SKILL.md, production traps table in `visual-qa.md`.
+- Removed the old flagship modules (instrument, hero piano, sound, Lenis, old home/base CSS).
+- Verified: typecheck, Biome (0 errors), production build, Playwright 14/14 (home, no-JS work,
+  frost sleep/wake, case history + focus, reduced motion, axe on all three pages, phone overflow
+  + menu, lab benches, founder print, dropdown keyboard, brief form with mocked API).
+  Real email sending NOT tested end to end (would email the owner); API plumbing tested via
+  honeypot path in dev.
+
 ## RESUME HERE (next steps, in order)
 
 1. Import `VED2107/snowbros-website` on Vercel (owner). Re-export after site changes.

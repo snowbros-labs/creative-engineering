@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Runs against the composed production build: the flagship at / and the showcase at /demos/.
+// Runs against the production build: the studio at / and the lab at /lab.html.
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
@@ -11,7 +11,7 @@ export default defineConfig({
   use: { baseURL: 'http://localhost:4174', trace: 'retain-on-failure' },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'pnpm run build:site && pnpm run preview',
+    command: 'pnpm run build && pnpm run preview',
     url: 'http://localhost:4174/',
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,
