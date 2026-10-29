@@ -63,7 +63,10 @@ export function initStudioShell(sections: string[]): StudioShell {
     }
     ind.style.opacity = '1';
     ind.style.transform = `translateX(${link.offsetLeft}px) scaleX(${link.offsetWidth / 100})`;
-    for (const l of navLinks) l.toggleAttribute('aria-current', l === link);
+    for (const l of navLinks) {
+      if (l === link) l.setAttribute('aria-current', 'location');
+      else l.removeAttribute('aria-current');
+    }
   };
   const io = new IntersectionObserver(
     (entries) => {

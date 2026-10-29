@@ -6,14 +6,19 @@
  *   CONTACT_FROM_EMAIL  verified sender, e.g. "SNOWBROS <hello@snowbros.me>"
  *   CONTACT_CONFIRM     "false" to stop the confirmation to the sender (default on)
  *   SITE_URL            absolute origin for email images and links (default https://snowbros.me)
- * Without the key it accepts and logs, so previews work without secrets.
+ * Without email configuration it fails explicitly, so a brief is never silently discarded.
  */
 import { renderBrief, renderConfirmation, validateBrief } from '../src/studio/brief.js';
 
 export async function POST(request: Request): Promise<Response> {
+  if (request.method !== 'POST') return json({ ok: false, error: 'Use the project brief form.' }, 405);
+  // Bound the body before parsing; legitimate briefs fit comfortably within this limit.
+  const text = await request.text();
+  if (new TextEncoder().encode(text).length > 24_000)
+    return json({ ok: false, error: 'That brief is too large.' }, 413);
   let body: unknown;
   try {
-    body = await request.json();
+    body = JSON.parse(text);
   } catch {
     return json({ ok: false, error: 'That did not arrive as a form. Please try again.' }, 400);
   }
@@ -25,25 +30,25 @@ export async function POST(request: Request): Promise<Response> {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
   if (!apiKey || !to) {
-    console.info('[contact] brief received (email not configured)', { name: result.brief.name });
-    return json({ ok: true });
+    return json({ ok: false, error: 'The brief service is unavailable. Please email hello@snowbros.me.' }, 503);
   }
   const site = process.env.SITE_URL || 'https://snowbros.me';
-  const from = process.env.CONTACT_FROM_EMAIL || 'SNOWBROS <onboarding@resend.dev>';
+  const from = process.env.CONTACT_FROM_EMAIL || 'SNOWBROS <hello@snowbros.me>';
   const send = (payload: Record<string, unknown>) =>
     fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ from, ...payload }),
+      signal: AbortSignal.timeout(10_000),
     }).catch(() => null);
 
   const res = await send({ to, reply_to: result.brief.email, ...renderBrief(result.brief, site) });
   if (!res?.ok) {
     return json({ ok: false, error: 'We could not send that just now.' }, 502);
   }
-  // Best effort: the brief is already delivered, so a failed confirmation never fails the request.
+  // Best effort: Resend accepted the brief; confirmation failure must not prompt a duplicate brief.
   if (process.env.CONTACT_CONFIRM !== 'false') {
-    await send({ to: result.brief.email, reply_to: to, ...renderConfirmation(result.brief, site) });
+    await send({ to: result.brief.email, reply_to: 'hello@snowbros.me', ...renderConfirmation(result.brief, site) });
   }
   return json({ ok: true });
 }

@@ -78,6 +78,7 @@ function openCase(slug: string, push: boolean, from?: HTMLElement | null): void 
       if (prev) docsHome?.append(prev);
     }
     openSlug = slug;
+    dialog.setAttribute('aria-labelledby', `doc-${slug}`);
     dialog.replaceChildren(doc);
     if (!dialog.open) dialog.showModal();
     dialog.scrollTop = 0;
@@ -96,13 +97,14 @@ function closeCase(fromHistory: boolean): void {
   const doc = document.getElementById(`case-${slug}`);
   const docMedia = doc ? $('.doc-media', doc) : null;
   const rowMedia = $(`#work-${slug} .case-media`);
+  const returnFocus = opener ?? $(`#work-${slug} [data-case-open]`);
   withTransition([docMedia, rowMedia], () => {
     if (doc) docsHome?.append(doc);
     dialog.close();
     document.documentElement.classList.remove('case-open');
     openSlug = null;
+    returnFocus?.focus({ preventScroll: true });
   });
-  (opener ?? $(`#work-${slug} [data-case-open]`))?.focus({ preventScroll: true });
   opener = null;
   if (!fromHistory) {
     if (pushed && history.state?.case) history.back();
@@ -171,6 +173,7 @@ form?.addEventListener('input', (e) => {
 form?.addEventListener('submit', async (e) => {
   e.preventDefault();
   if (!form || !status || !send) return;
+  if (send.disabled) return;
   const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
   const check = validateBrief(data);
   for (const el of $$('[aria-invalid]', form)) el.removeAttribute('aria-invalid');

@@ -77,7 +77,13 @@ writeFileSync(
         'snowbros.me — the SNOWBROS studio site: work, lab, founder. Vite, static + one Vercel function.',
       license: '(MIT OR Apache-2.0)',
       type: 'module',
-      scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' },
+      scripts: {
+        dev: 'vite',
+        build: 'vite build',
+        preview: 'vite preview',
+        typecheck: 'tsc --noEmit',
+        test: 'node --test scripts/test-contact.mjs',
+      },
       dependencies: deps,
       devDependencies: {
         ...Object.fromEntries(
@@ -160,7 +166,7 @@ export default defineConfig({
 
 writeFileSync(
   join(out, '.gitignore'),
-  'node_modules/\ndist/\n.vercel/\n*.log\n.env\n.env.*\n!.env.example\n',
+  'node_modules/\ndist/\n.vercel/\n*.log\n.env\n.env.*\n!.env.example\n.playwright-mcp/audit/\n',
 );
 writeFileSync(
   join(out, 'vercel.json'),

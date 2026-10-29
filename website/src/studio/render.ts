@@ -46,6 +46,7 @@ function caseRow(p: Project): string {
       <p class="case-line">${esc(p.line)}</p>
       <dl class="case-meta">
         <div><dt>Kind</dt><dd>${esc(p.discipline)}</dd></div>
+        <div><dt>Role</dt><dd>${esc(p.role)}</dd></div>
         <div><dt>Built with</dt><dd>${esc(p.stack)}</dd></div>
         <div><dt>Year</dt><dd>${esc(p.year)}</dd></div>
       </dl>
@@ -69,8 +70,9 @@ function caseDoc(p: Project, i: number): string {
     <a class="doc-close" href="#work-${p.slug}" data-case-close>Close</a>
   </div>
   <header class="frame doc-head">
-    <h2 class="doc-title" id="doc-${p.slug}">${esc(p.name)}</h2>
+    <h2 class="doc-title" id="doc-${p.slug}" tabindex="-1">${esc(p.name)}</h2>
     <p class="doc-line">${esc(p.line)}</p>
+    <p>${esc(p.role)}</p>
   </header>
   <div class="frame">${media(p, 'doc-media', false)}</div>
   <div class="frame doc-grid">

@@ -22,6 +22,7 @@ export interface Project {
   /** One sentence: what it is, for whom. */
   line: string;
   discipline: string;
+  role: string;
   stack: string;
   year: string;
   /** Brand colour of the project itself; used as a field behind its media. */
@@ -45,6 +46,7 @@ export const projects: Project[] = [
     name: 'AMR Screening',
     line: 'AI-assisted screening of approved medicines against four drug-resistant bacteria.',
     discipline: 'Research interface',
+    role: 'Collaborative research software with Yash Prajapati',
     stack: 'Python · RDKit · AutoDock Vina · web dashboard',
     year: '2026',
     tone: '#e7efec',
@@ -79,6 +81,7 @@ export const projects: Project[] = [
     name: 'NOVA',
     line: 'A privacy-first desktop media player: no account, no telemetry, works offline.',
     discipline: 'Desktop product',
+    role: 'Our own product',
     stack: 'Tauri 2 · React 19 · Rust · libmpv',
     year: '2026',
     tone: '#141312',
@@ -113,6 +116,7 @@ export const projects: Project[] = [
     name: 'Accounic',
     line: 'A multi-currency ledger: web, Android and Windows clients on one Postgres schema.',
     discipline: 'Cross-platform product',
+    role: 'Our own product',
     stack: 'Next.js · Flutter · Supabase / Postgres',
     year: '2026',
     tone: '#1b1a17',
@@ -148,6 +152,7 @@ export const projects: Project[] = [
     name: 'SwiftDrop',
     line: 'Photos and files straight between phone and PC over your own Wi-Fi.',
     discipline: 'Cross-platform app',
+    role: 'Our own product',
     stack: 'Flutter · Node · WebRTC',
     year: '2026',
     tone: '#191617',
@@ -181,6 +186,7 @@ export const projects: Project[] = [
     name: 'STC Academy',
     line: 'A teaching platform for CBSE and GSEB students, with an admin command centre behind it.',
     discipline: 'Education platform',
+    role: 'Client project',
     stack: 'Next.js · TypeScript · Supabase',
     year: '2026',
     tone: '#f1ece2',
@@ -212,6 +218,7 @@ export const projects: Project[] = [
     name: 'Atlas',
     line: 'Static analysis for JavaScript and TypeScript that reports only what it can prove.',
     discipline: 'Developer tool',
+    role: 'Our open-source tool',
     stack: 'Rust · tree-sitter · LSP · VS Code',
     year: '2026',
     tone: '#1f2b24',
