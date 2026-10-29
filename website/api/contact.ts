@@ -8,7 +8,7 @@
  *   SITE_URL            absolute origin for email images and links (default https://snowbros.me)
  * Without the key it accepts and logs, so previews work without secrets.
  */
-import { renderBrief, renderConfirmation, validateBrief } from '../src/studio/brief';
+import { renderBrief, renderConfirmation, validateBrief } from '../src/studio/brief.js';
 
 export async function POST(request: Request): Promise<Response> {
   let body: unknown;
@@ -39,10 +39,7 @@ export async function POST(request: Request): Promise<Response> {
 
   const res = await send({ to, reply_to: result.brief.email, ...renderBrief(result.brief, site) });
   if (!res?.ok) {
-    return json(
-      { ok: false, error: 'We could not send that just now. Please email snowbros2107@gmail.com.' },
-      502,
-    );
+    return json({ ok: false, error: 'We could not send that just now.' }, 502);
   }
   // Best effort: the brief is already delivered, so a failed confirmation never fails the request.
   if (process.env.CONTACT_CONFIRM !== 'false') {
