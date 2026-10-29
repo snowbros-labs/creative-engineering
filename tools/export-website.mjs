@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = resolve(process.argv[2] ?? join(root, '..', 'snowbros'));
 const PACKAGES = ['core', 'motion', 'fx', 'scene', 'adapters'];
-const PAGES = ['index.html', 'lab.html', 'founder.html'];
+const PAGES = ['index.html', 'lab.html', 'founder.html', 'privacy.html'];
 const OWNED = [
   ...PAGES,
   'public',
@@ -73,12 +73,20 @@ writeFileSync(
       name: 'snowbros',
       version: '1.0.0',
       private: true,
-      description: 'snowbros.me — the SNOWBROS studio site: work, lab, founder. Vite, static + one Vercel function.',
+      description:
+        'snowbros.me — the SNOWBROS studio site: work, lab, founder. Vite, static + one Vercel function.',
       license: '(MIT OR Apache-2.0)',
       type: 'module',
       scripts: { dev: 'vite', build: 'vite build', preview: 'vite preview' },
       dependencies: deps,
-      devDependencies: { typescript: '^5', vite: sitePkg.devDependencies.vite },
+      devDependencies: {
+        ...Object.fromEntries(
+          Object.entries(sitePkg.devDependencies).filter(([n]) => n.startsWith('@types/')),
+        ),
+        '@types/node': '^24',
+        typescript: '^5',
+        vite: sitePkg.devDependencies.vite,
+      },
       engines: { node: '>=20.19' },
     },
     null,
@@ -98,7 +106,10 @@ writeFileSync(
         strict: true,
         noEmit: true,
         skipLibCheck: true,
-        types: ['vite/client'],
+        types: ['vite/client', 'node'],
+        paths: Object.fromEntries(
+          PACKAGES.map((n) => [`@snowbros/${n}`, [`./toolkit/${n}/src/index.ts`]]),
+        ),
       },
       include: ['src', 'api', 'toolkit'],
     },
@@ -140,14 +151,17 @@ export default defineConfig({
   build: {
     target: 'es2022',
     rollupOptions: {
-      input: { index: here('./index.html'), lab: here('./lab.html'), founder: here('./founder.html') },
+      input: { index: here('./index.html'), lab: here('./lab.html'), founder: here('./founder.html'), privacy: here('./privacy.html') },
     },
   },
 });
 `,
 );
 
-writeFileSync(join(out, '.gitignore'), 'node_modules/\ndist/\n.vercel/\n*.log\n.env\n.env.*\n!.env.example\n');
+writeFileSync(
+  join(out, '.gitignore'),
+  'node_modules/\ndist/\n.vercel/\n*.log\n.env\n.env.*\n!.env.example\n',
+);
 writeFileSync(
   join(out, 'vercel.json'),
   `${JSON.stringify({ framework: 'vite', buildCommand: 'npm run build', outputDirectory: 'dist' }, null, 2)}\n`,
