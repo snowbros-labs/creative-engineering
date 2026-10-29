@@ -166,7 +166,7 @@ export default defineConfig({
 
 writeFileSync(
   join(out, '.gitignore'),
-  'node_modules/\ndist/\n.vercel/\n*.log\n.env\n.env.*\n!.env.example\n.playwright-mcp/audit/\n',
+  'node_modules/\ndist/\n.vercel/\n*.log\n.env\n.env.*\n!.env.example\n.playwright-mcp/\nbrand/content/out/\n',
 );
 writeFileSync(
   join(out, 'vercel.json'),
