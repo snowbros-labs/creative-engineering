@@ -1,5 +1,7 @@
 # SNOWBROS Creative Engineering
 
+<sub>By <a href="https://snowbros.me">SNOWBROS</a> · see it run in <a href="https://snowbros.me/lab.html">the lab</a> and on <a href="https://snowbros.me">snowbros.me</a>, which it builds.</sub>
+
 An AI skill plus a modular TypeScript toolkit for motion, scroll choreography, interactive 3D and
 premium product interfaces. The skill is the judgement — when to be cinematic, when to be quiet,
 which tool fits the project already in front of it. The packages are the hands — small,
@@ -119,3 +121,16 @@ Plans: [`ROADMAP.md`](ROADMAP.md).
 
 Dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option.
 Third-party notices: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
+
+---
+
+<p align="center">
+  <a href="https://snowbros.me">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/snowbros-labs/.github/main/profile/assets/snowbros-lockup-paper.svg">
+      <img src="https://raw.githubusercontent.com/snowbros-labs/.github/main/profile/assets/snowbros-lockup-ink.svg" alt="SNOWBROS" width="160">
+    </picture>
+  </a>
+  <br>
+  <sub>Built by <a href="https://snowbros.me">SNOWBROS</a>, an independent engineering studio · <a href="https://github.com/snowbros-labs">GitHub</a> · <a href="https://www.linkedin.com/company/snowbros-studio/">LinkedIn</a></sub>
+</p>
