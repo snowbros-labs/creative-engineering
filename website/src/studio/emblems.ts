@@ -199,25 +199,32 @@ function emblemSegments(kind: EmblemKind): Seg[] {
       return segs;
     }
     case 'mark': {
-      // The studio mark: six arms, each with one pair of barbs.
-      const segs: Seg[] = [];
-      for (let i = 0; i < 6; i++) {
-        const a = (i * TAU) / 6 - Math.PI / 2;
-        const c = Math.cos(a);
-        const s = Math.sin(a);
-        segs.push([c * 0.12, s * 0.12, c, s]);
-        for (const side of [-1, 1]) {
-          const b = a + side * 0.6;
-          segs.push([
-            c * 0.55,
-            s * 0.55,
-            c * 0.55 + Math.cos(b) * 0.28,
-            s * 0.55 + Math.sin(b) * 0.28,
-          ]);
-        }
-      }
-      segs.push(...hexagon(0, 0, 0.12));
-      return segs;
+      // The studio mark (brand/masters/symbol): a flat-top hexagon cut twice into an S. Three
+      // equal bars; each cut's blind end runs parallel to the hexagon edge.
+      const k = Math.sqrt(3);
+      const top = -k / 2;
+      const cut = 30 / 124;
+      const bar = (k - 2 * cut) / 3;
+      const join = (44 * 2) / k / 124;
+      const rx = (y: number) => 1 - Math.abs(y) / k;
+      const y1 = top + bar;
+      const y2 = y1 + cut;
+      return poly([
+        [-0.5, top],
+        [0.5, top],
+        [rx(y1), y1],
+        [-rx(y1) + join, y1],
+        [-rx(y2) + join, y2],
+        [rx(y2), y2],
+        [1, 0],
+        [0.5, -top],
+        [-0.5, -top],
+        [-rx(y1), -y1],
+        [rx(y1) - join, -y1],
+        [rx(y2) - join, -y2],
+        [-rx(y2), -y2],
+        [-1, 0],
+      ]);
     }
   }
 }
@@ -299,6 +306,44 @@ export function textPoints(
     ctx.fillText(text, (cw - mm.width) / 2, y);
   }
 
+  return sampleCanvas(ctx, cw, ch, scale, w, h, count, lines.join('').length * 31);
+}
+
+/**
+ * Points sampled from the logo artwork itself (an inline `<svg>` of filled paths), fitted to the
+ * zone width and centred. Used for the wordmark so its crystals carry the hexagonal O's.
+ */
+export function svgPoints(svg: SVGSVGElement, w: number, h: number, count: number): Float32Array {
+  const vb = svg.viewBox.baseVal;
+  const scale = Math.min(1, 900 / Math.max(w, h));
+  const cw = Math.max(1, Math.round(w * scale));
+  const ch = Math.max(1, Math.round(h * scale));
+  const canvas = document.createElement('canvas');
+  canvas.width = cw;
+  canvas.height = ch;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  if (!ctx || cw < 8 || ch < 8 || !vb || vb.width <= 0) return emblemPoints('mark', w, h, count);
+
+  const fit = Math.min((cw * 0.94) / vb.width, (ch * 0.98) / vb.height);
+  ctx.translate((cw - vb.width * fit) / 2, (ch - vb.height * fit) / 2);
+  ctx.scale(fit, fit);
+  ctx.fillStyle = '#000';
+  for (const path of svg.querySelectorAll('path')) {
+    ctx.fill(new Path2D(path.getAttribute('d') ?? ''), 'evenodd');
+  }
+  return sampleCanvas(ctx, cw, ch, scale, w, h, count, 8 * 31);
+}
+
+function sampleCanvas(
+  ctx: CanvasRenderingContext2D,
+  cw: number,
+  ch: number,
+  scale: number,
+  w: number,
+  h: number,
+  count: number,
+  seed: number,
+): Float32Array {
   const data = ctx.getImageData(0, 0, cw, ch).data;
   const filled: number[] = [];
   const step = Math.max(1, Math.floor(Math.sqrt((cw * ch) / (count * 6))));
@@ -309,7 +354,7 @@ export function textPoints(
   }
   if (filled.length < 4) return emblemPoints('mark', w, h, count);
 
-  const rand = createRandom(lines.join('').length * 31);
+  const rand = createRandom(seed);
   const out = new Float32Array(count * 2);
   const n = filled.length / 2;
   for (let i = 0; i < count; i++) {

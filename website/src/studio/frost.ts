@@ -26,7 +26,7 @@ import {
   prefersReducedMotion,
   ticker,
 } from '@snowbros/core';
-import { type EmblemKind, emblemPoints, textPoints } from './emblems';
+import { type EmblemKind, emblemPoints, svgPoints, textPoints } from './emblems';
 
 /** The background a crystal is drawn over decides its palette. */
 type Ground = 'paper' | 'ink' | 'signal';
@@ -165,7 +165,11 @@ export function createFrost(canvas: HTMLCanvasElement): Frost {
     let pts: Float32Array;
     if (z.spec === 'wordmark') {
       const lines = z.w / Math.max(1, z.h) < 2.4 ? ['SNOW', 'BROS'] : ['SNOWBROS'];
-      pts = textPoints(lines, z.w, z.h, N, DISPLAY_FONT);
+      const logo = document.querySelector<SVGSVGElement>('.foot-word .logo');
+      pts =
+        lines.length === 1 && logo
+          ? svgPoints(logo, z.w, z.h, N)
+          : textPoints(lines, z.w, z.h, N, DISPLAY_FONT);
     } else if (z.spec.startsWith('text:')) {
       // `text:VED` or `text:VED|CHAUHAN` — one line per `|`.
       pts = textPoints(z.spec.slice(5).split('|'), z.w, z.h, N, DISPLAY_FONT);

@@ -376,10 +376,16 @@ html.frost-on .wordmark-fallback {
   height: var(--head-h);
 }
 .head-mark {
-  font-size: 1.125rem;
-  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
   text-decoration: none;
   margin-right: auto;
+}
+.head-mark .logo {
+  display: block;
+  width: auto;
+  height: 26px;
 }
 .head-nav {
   position: relative;
@@ -931,7 +937,7 @@ html.js .case:not(.is-in) .case-media img {
 .cap summary::after {
   content: "";
   width: 22px;
-  height: 22px;
+  height: 26px;
   justify-self: end;
   background:
     linear-gradient(var(--ink), var(--ink)) center / 100% 2px no-repeat,
@@ -1211,7 +1217,11 @@ html.js .case:not(.is-in) .case-media img {
   font-weight: 900;
   line-height: 0.8;
   letter-spacing: -0.045em;
-  margin-left: -0.04em;
+}
+.foot-word .logo {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .foot-row {
   display: grid;
@@ -1223,6 +1233,12 @@ html.js .case:not(.is-in) .case-media img {
 }
 .foot-row a {
   color: var(--paper);
+}
+.foot-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  align-items: start;
 }
 .foot-row > a {
   display: inline-flex;
