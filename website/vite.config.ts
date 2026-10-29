@@ -1,7 +1,7 @@
 import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
-import { renderWork } from './src/studio/render';
+import { renderWork } from './src/studio/render.ts';
 
 const packagesDir = fileURLToPath(new URL('../packages/', import.meta.url));
 

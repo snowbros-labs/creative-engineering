@@ -4,7 +4,7 @@
  * studies open through `:target`; scripts only upgrade them to a dialog with a shared-element
  * transition.
  */
-import { alsoShipped, type Project, projects } from './projects';
+import { alsoShipped, type Project, projects } from './projects.ts';
 
 const esc = (s: string): string =>
   s

@@ -3,7 +3,7 @@
  * Every claim comes from the project's own README or live site (checked 2026-10-24); nothing is
  * invented. Images are captures of the products themselves, in /public/work.
  */
-import type { EmblemKind } from './emblems';
+import type { EmblemKind } from './emblems.ts';
 
 export interface ProjectImage {
   desktop: string;

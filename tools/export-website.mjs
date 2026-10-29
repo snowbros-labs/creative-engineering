@@ -111,6 +111,7 @@ writeFileSync(
         lib: ['ES2023', 'DOM', 'DOM.Iterable'],
         strict: true,
         noEmit: true,
+        allowImportingTsExtensions: true,
         skipLibCheck: true,
         types: ['vite/client', 'node'],
         paths: Object.fromEntries(
