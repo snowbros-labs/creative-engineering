@@ -136,7 +136,7 @@ export function renderConfirmation(
     `<tr><td style="padding:14px 0;border-top:2px solid #2a2926;"><a href="${href}" style="text-decoration:none;"><span style="display:block;font:900 20px/1.2 ${HEAVY};color:#f2f0eb;letter-spacing:-0.3px;">${label}</span><span style="display:block;margin-top:4px;font:400 14px/1.5 ${TEXT};color:#c4bfb5;">${sub}</span></a></td></tr>`;
   const inner = `
 <tr><td style="background:#ffffff;padding:40px 32px 8px;font:900 44px/1.02 ${HEAVY};color:#111110;letter-spacing:-1.5px;">Got it, ${esc(first)}.<br><span style="color:#ff4f1f;">It is frozen in.</span></td></tr>
-<tr><td style="background:#ffffff;padding:20px 32px 36px;font:400 17px/1.6 ${TEXT};color:#111110;">Your brief reached the studio. We read every one ourselves, and we will write back from <a href="mailto:snowbros2107@gmail.com" style="color:#111110;font-weight:700;">snowbros2107@gmail.com</a> with questions or a first plan.<br><br>Nothing else to do for now. If something changes, reply to that email when it arrives.</td></tr>
+<tr><td style="background:#ffffff;padding:20px 32px 36px;font:400 17px/1.6 ${TEXT};color:#111110;">Your brief reached the studio. We read every one ourselves, and we will write back from <a href="mailto:hello@snowbros.me" style="color:#111110;font-weight:700;">hello@snowbros.me</a> with questions or a first plan.<br><br>Nothing else to do for now. If something changes, reply to that email when it arrives.</td></tr>
 <tr><td style="background:#111110;padding:30px 32px 18px;">
   <p style="margin:0 0 12px;font:700 13px/1.4 ${TEXT};color:#ff4f1f;">While you wait</p>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
@@ -146,7 +146,7 @@ export function renderConfirmation(
   </table>
 </td></tr>
 <tr><td style="padding:22px 4px 0;font:400 12px/1.6 ${TEXT};color:#6b6760;">You are receiving this because this address was entered in the form on snowbros.me. If that was not you, you can ignore it; nothing else will be sent.</td></tr>`;
-  const text = `Got it, ${first}. It is frozen in.\n\nYour brief reached the studio. We read every one ourselves, and we will write back from snowbros2107@gmail.com with questions or a first plan.\n\nWhile you wait:\nSelected work  ${site}/#work\nThe lab        ${site}/lab.html\nThe founder    ${site}/founder.html\n\nYou are receiving this because this address was entered in the form on snowbros.me. If that was not you, ignore it.\n`;
+  const text = `Got it, ${first}. It is frozen in.\n\nYour brief reached the studio. We read every one ourselves, and we will write back from hello@snowbros.me with questions or a first plan.\n\nWhile you wait:\nSelected work  ${site}/#work\nThe lab        ${site}/lab.html\nThe founder    ${site}/founder.html\n\nYou are receiving this because this address was entered in the form on snowbros.me. If that was not you, ignore it.\n`;
   return {
     subject: 'We have your brief — SNOWBROS',
     html: frame('Your brief reached the studio.', inner, site),

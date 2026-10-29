@@ -201,7 +201,7 @@ form?.addEventListener('submit', async (e) => {
     form.reset();
   } catch (err) {
     status.dataset.tone = 'error';
-    status.textContent = `${err instanceof Error ? err.message : 'We could not send that just now.'} You can also email snowbros2107@gmail.com.`;
+    status.textContent = `${err instanceof Error ? err.message : 'We could not send that just now.'} You can also email hello@snowbros.me.`;
   } finally {
     send.disabled = false;
     form.removeAttribute('aria-busy');
